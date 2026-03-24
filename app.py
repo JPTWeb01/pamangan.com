@@ -171,7 +171,10 @@ def chat():
         return jsonify({"reply": reply})
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        import traceback
+        error_details = traceback.format_exc()
+        print(f"ERROR: {error_details}")
+        return jsonify({"error": str(e), "details": error_details}), 500
 
 
 @app.route("/health", methods=["GET"])
