@@ -163,9 +163,24 @@ def chat():
             timeout=30
         )
 
-        result = response.json()
+result = response.json()
+
+        # Debug: print full response
+        print(f"Gemini response: {result}")
+
+        # Check for API errors
+        if "error" in result:
+            print(f"Gemini API error: {result['error']}")
+            return jsonify({"error": result["error"]["message"]}), 500
+
+        # Check for blocked content
+        if "promptFeedback" in result:
+            print(f"Prompt feedback: {result['promptFeedback']}")
 
         # Extract reply text
+        if not result.get("candidates"):
+            return jsonify({"error": "No response from Gemini"}), 500
+
         reply = result["candidates"][0]["content"]["parts"][0]["text"]
 
         return jsonify({"reply": reply})
