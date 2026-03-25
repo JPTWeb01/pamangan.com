@@ -110,26 +110,40 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function appendMessage(sender, text) {
-        const div = document.createElement('div');
-        div.className = `chat-msg ${sender}-msg`;
+function linkify(text) {
+    // Remove parentheses around URLs first
+    text = text.replace(/\((https?:\/\/[^\s)]+)\)/g, '$1');
+    // Convert plain URLs to clickable links
+    text = text.replace(/(https?:\/\/[^\s<]+)/g,
+        '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+    // Convert plain email addresses to clickable mailto links
+    text = text.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g,
+        '<a href="mailto:$1">$1</a>');
+    // Convert line breaks to <br>
+    text = text.replace(/\n/g, '<br>');
+    return text;
+}
 
-        if (sender === 'bot') {
-            const avatar = document.createElement('div');
-            avatar.className = 'bot-avatar';
-            avatar.textContent = 'P';
-            div.appendChild(avatar);
-        }
+function appendMessage(sender, text, extraClass = '') {
+    const div = document.createElement('div');
+    div.className = `chat-msg ${sender}-msg`;
 
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble';
-        bubble.textContent = text;
-        div.appendChild(bubble);
-
-        messages.appendChild(div);
-        scrollToBottom();
-        return div;
+    if (sender === 'bot') {
+        const avatar = document.createElement('div');
+        avatar.className = 'bot-avatar';
+        avatar.textContent = 'P';
+        div.appendChild(avatar);
     }
+
+    const bubble = document.createElement('div');
+    bubble.className = 'bubble';
+    bubble.innerHTML = sender === 'bot' ? linkify(text) : text;
+    div.appendChild(bubble);
+
+    messages.appendChild(div);
+    scrollToBottom();
+    return div;
+}
 
     function appendTyping() {
         const id = 'typing-' + Date.now();

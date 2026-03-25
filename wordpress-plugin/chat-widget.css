@@ -305,3 +305,14 @@
         right: 16px;
     }
 }
+
+/* Clickable links inside chat bubbles */
+.bot-msg .bubble a {
+    color: #0073aa;
+    text-decoration: underline;
+    word-break: break-all;
+}
+
+.bot-msg .bubble a:hover {
+    color: #005f8d;
+}
