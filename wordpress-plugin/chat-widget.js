@@ -14,10 +14,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Suggested questions
     const suggestions = [
-        "What are Paulo's skills?",
-        "What's his work experience?",
-        "Can he build WordPress sites?",
-        "How can I hire Paulo?"
+    "What are your skills?",
+    "Tell me about your experience",
+    "Can you build WordPress sites?",
+    "How can I hire you?"
     ];
 
     function openChat() {
