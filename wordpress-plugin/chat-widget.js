@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!greeted) {
             greeted = true;
             setTimeout(() => {
-                appendMessage('bot', "Hi there! 👋 I'm Paulo's AI assistant. I can answer any questions about his skills, experience, and portfolio.");
+                appendMessage('bot', "Hey there! 👋 I'm Paulo. Thanks for visiting my portfolio! Feel free to ask me anything about my skills, experience, or projects.");
                 setTimeout(() => appendSuggestions(), 600);
             }, 300);
         }
