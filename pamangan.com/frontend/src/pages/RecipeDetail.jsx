@@ -33,7 +33,12 @@ export default function RecipeDetail() {
 
   const addToPlanner = () => {
     if (!recipe) return;
-    const saved = JSON.parse(localStorage.getItem("mealPlan") || "{}");
+    let saved;
+    try {
+      saved = JSON.parse(localStorage.getItem("mealPlan") || "{}");
+    } catch {
+      saved = {};
+    }
     const today = new Date().toISOString().split("T")[0];
     if (!saved[today]) saved[today] = {};
     const slots = ["breakfast", "lunch", "dinner"];

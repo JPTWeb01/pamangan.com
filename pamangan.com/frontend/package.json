@@ -1,6 +1,7 @@
 {
   "name": "pamangan",
   "version": "1.0.0",
+  "author": "Jose Paulo Timbang",
   "private": true,
   "dependencies": {
     "react": "^18.3.1",

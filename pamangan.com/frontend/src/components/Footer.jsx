@@ -17,6 +17,7 @@ export default function Footer() {
                 <a
                   key={icon}
                   href="#"
+                  rel="noopener noreferrer"
                   className="d-flex align-items-center justify-content-center rounded-circle"
                   style={{
                     width: 36,

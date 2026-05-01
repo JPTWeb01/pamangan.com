@@ -1,3 +1,5 @@
+import logging
+import re
 from flask import Blueprint, request, jsonify
 from services.recipe_service import (
     search_recipes,
@@ -13,6 +15,19 @@ from services.recipe_service import (
 from services.ai_service import generate_grocery_list
 
 api_bp = Blueprint("api", __name__)
+logger = logging.getLogger(__name__)
+
+
+def _int_param(value, default, *, minimum=None, maximum=None):
+    try:
+        result = int(value)
+    except (ValueError, TypeError):
+        result = default
+    if minimum is not None:
+        result = max(minimum, result)
+    if maximum is not None:
+        result = min(maximum, result)
+    return result
 
 
 def ok(data, status=200):
@@ -31,8 +46,8 @@ def list_recipes():
     query = request.args.get("q", "")
     cuisine = request.args.get("cuisine", "")
     difficulty = request.args.get("difficulty", "")
-    page = max(1, int(request.args.get("page", 1)))
-    limit = min(int(request.args.get("limit", 12)), 50)
+    page = _int_param(request.args.get("page"), 1, minimum=1)
+    limit = _int_param(request.args.get("limit"), 12, maximum=50)
     return ok(search_recipes(query, cuisine, difficulty, limit, page))
 
 
@@ -64,6 +79,7 @@ def search():
 
 
 # ── AI Generation ─────────────────────────────────────────────────────────────
+# TODO: add flask-limiter rate limiting to this endpoint to prevent API quota abuse
 
 
 @api_bp.route("/generate", methods=["POST"])
@@ -72,11 +88,17 @@ def generate():
     name = body.get("name", "").strip()
     if not name:
         return err("name is required")
+    if len(name) > 100:
+        return err("name must be 100 characters or fewer")
+    name = re.sub(r'["\'\n\r\\]', '', name).strip()
+    if not name:
+        return err("name contains invalid characters")
     try:
         recipe, created = generate_and_save(name)
         return ok(recipe, 201 if created else 200)
     except Exception as exc:
-        return err(str(exc), 500)
+        logger.exception("Error in /generate for name=%r", name)
+        return err("An unexpected error occurred", 500)
 
 
 # ── Grocery List ──────────────────────────────────────────────────────────────
@@ -101,7 +123,8 @@ def grocery():
     try:
         return ok(generate_grocery_list(ingredients))
     except Exception as exc:
-        return err(str(exc), 500)
+        logger.exception("Error in /grocery")
+        return err("An unexpected error occurred", 500)
 
 
 # ── Nutrition ─────────────────────────────────────────────────────────────────
@@ -117,7 +140,8 @@ def nutrition():
         data = get_or_generate_nutrition(recipe_id)
         return (ok(data) if data else err("Recipe not found", 404))
     except Exception as exc:
-        return err(str(exc), 500)
+        logger.exception("Error in /nutrition for recipe_id=%r", recipe_id)
+        return err("An unexpected error occurred", 500)
 
 
 # ── Food History ──────────────────────────────────────────────────────────────
@@ -133,7 +157,8 @@ def history():
         data = get_or_generate_history(recipe_id)
         return (ok(data) if data else err("Recipe not found", 404))
     except Exception as exc:
-        return err(str(exc), 500)
+        logger.exception("Error in /history for recipe_id=%r", recipe_id)
+        return err("An unexpected error occurred", 500)
 
 
 # ── Discovery ─────────────────────────────────────────────────────────────────
@@ -141,7 +166,7 @@ def history():
 
 @api_bp.route("/popular", methods=["GET"])
 def popular():
-    limit = min(int(request.args.get("limit", 8)), 20)
+    limit = _int_param(request.args.get("limit"), 8, maximum=20)
     return ok(get_popular_recipes(limit))
 
 
@@ -152,6 +177,6 @@ def categories():
 
 @api_bp.route("/cuisine/<cuisine>", methods=["GET"])
 def by_cuisine(cuisine):
-    page = max(1, int(request.args.get("page", 1)))
-    limit = min(int(request.args.get("limit", 12)), 50)
+    page = _int_param(request.args.get("page"), 1, minimum=1)
+    limit = _int_param(request.args.get("limit"), 12, maximum=50)
     return ok(get_recipes_by_cuisine(cuisine, limit, page))

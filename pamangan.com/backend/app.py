@@ -12,6 +12,17 @@ def create_app():
 
     app.register_blueprint(api_bp, url_prefix="/api")
 
+    @app.after_request
+    def add_security_headers(response):
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+        response.headers["Content-Security-Policy"] = "default-src 'none'"
+        if not app.config.get("DEBUG"):
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        return response
+
     @app.route("/health")
     def health():
         return {"status": "ok", "app": "pamangan.com"}
