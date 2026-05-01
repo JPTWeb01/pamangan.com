@@ -13,3 +13,9 @@ env/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Other projects — not part of this repository
+paulo-ai-chatbot/
+ai-blog-generator/
+astra-child/
+Image reference/
