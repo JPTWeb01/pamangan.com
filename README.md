@@ -200,6 +200,100 @@ The app will be available at `http://localhost:3000`.
 
 ---
 
+## Deployment
+
+### Production Stack
+
+| Part | Service | Cost |
+|---|---|---|
+| Frontend | Hostinger (shared hosting) | Already paid |
+| Backend | Koyeb | Free |
+| Database | MongoDB Atlas | Free |
+| Domain | Hostinger | Already paid |
+
+---
+
+### Step 1 — MongoDB Atlas (Database)
+
+1. Sign up at [mongodb.com/atlas](https://www.mongodb.com/atlas)
+2. Create a free **M0 cluster**
+3. Create a database user (save username and password)
+4. Under **Network Access** → Add IP → `0.0.0.0/0`
+5. Click **Connect → Drivers** and copy your connection string:
+   ```
+   mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/pamangan
+   ```
+
+---
+
+### Step 2 — Deploy Backend to Koyeb
+
+1. Sign up at [koyeb.com](https://www.koyeb.com) with GitHub
+2. Click **Create App → GitHub**
+3. Select the `pamangan.com` repository
+4. Configure:
+   - **Root Directory:** `pamangan.com/backend`
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Run Command:** `gunicorn wsgi:app`
+5. Add environment variables:
+   - `MONGODB_URI` → your Atlas connection string
+   - `GEMINI_API_KEY` → your Gemini API key
+   - `GROQ_API_KEY` → your Groq API key
+   - `SECRET_KEY` → a long random string
+   - `DEBUG` → `False`
+   - `FLASK_ENV` → `production`
+   - `CORS_ORIGINS` → `https://yourdomain.com`
+6. Deploy → copy your Koyeb URL (e.g. `https://pamangan-api-yourname.koyeb.app`)
+
+---
+
+### Step 3 — Build the Frontend
+
+Create `pamangan.com/frontend/.env` with your Koyeb backend URL:
+
+```
+REACT_APP_API_URL=https://pamangan-api-yourname.koyeb.app/api
+REACT_APP_SITE_NAME=pamangan.com
+```
+
+Then build:
+
+```bash
+cd pamangan.com/frontend
+npm install
+npm run build
+```
+
+---
+
+### Step 4 — Upload Frontend to Hostinger
+
+1. In **hPanel → File Manager** → go to `public_html/`
+2. Delete any existing default files
+3. Upload all contents of `pamangan.com/frontend/build/` to `public_html/`
+4. Create a `.htaccess` file in `public_html/` with:
+
+```apache
+Options -MultiViews
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.html [QR,L]
+```
+
+---
+
+### Architecture Overview
+
+```
+yourdomain.com                → Hostinger (React frontend)
+       ↓ API calls
+pamangan-api.koyeb.app        → Koyeb (Flask backend)
+       ↓ database queries
+MongoDB Atlas                 → Database
+```
+
+---
+
 ## API Endpoints
 
 | Method | Endpoint | Description |
