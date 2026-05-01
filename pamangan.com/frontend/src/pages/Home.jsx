@@ -147,7 +147,7 @@ export default function Home() {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="Try "Chicken Adobo", "Sinigang", "Pasta"…"
+                    placeholder={'Try "Chicken Adobo", "Sinigang", "Pasta"…'}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                   />
