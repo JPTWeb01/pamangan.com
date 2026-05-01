@@ -1,0 +1,30 @@
+name: Deploy to Hugging Face Spaces
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'pamangan.com/backend/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy backend to Hugging Face Spaces
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_USERNAME: ${{ vars.HF_USERNAME }}
+        run: |
+          git config --global user.email "josepaulotimbang@gmail.com"
+          git config --global user.name "Jose Paulo Timbang"
+          git clone https://$HF_USERNAME:$HF_TOKEN@huggingface.co/spaces/$HF_USERNAME/pamangan-api hf-space
+          rsync -av --exclude='.git' pamangan.com/backend/ hf-space/
+          cp pamangan.com/backend/hf_readme.md hf-space/README.md
+          cd hf-space
+          git add -A
+          git diff --staged --quiet || git commit -m "Deploy $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push
