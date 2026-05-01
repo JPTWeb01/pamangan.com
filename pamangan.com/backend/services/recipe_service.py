@@ -1,0 +1,149 @@
+import re
+from datetime import datetime, timezone
+from bson import ObjectId
+from services.db_service import get_db
+from services.ai_service import (
+    generate_recipe,
+    generate_nutrition,
+    generate_history,
+)
+from models.recipe import create_recipe, serialize_recipe
+
+
+def _normalize(text):
+    return re.sub(r"[^a-z0-9\s]", "", text.lower()).strip()
+
+
+def search_recipes(query="", cuisine="", difficulty="", limit=12, page=1):
+    db = get_db()
+    filt = {}
+    if query:
+        filt["$text"] = {"$search": query}
+    if cuisine and cuisine.lower() not in ("all", ""):
+        filt["cuisine"] = {"$regex": re.escape(cuisine), "$options": "i"}
+    if difficulty and difficulty.lower() not in ("all", ""):
+        filt["difficulty"] = {"$regex": re.escape(difficulty), "$options": "i"}
+
+    skip = (page - 1) * limit
+    cursor = db.recipes.find(filt).skip(skip).limit(limit).sort("created_at", -1)
+    total = db.recipes.count_documents(filt)
+    return {
+        "recipes": [serialize_recipe(r) for r in cursor],
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "pages": max(1, -(-total // limit)),
+    }
+
+
+def get_recipe_by_id(recipe_id):
+    db = get_db()
+    recipe = None
+    try:
+        recipe = db.recipes.find_one({"_id": ObjectId(recipe_id)})
+    except Exception:
+        pass
+    if not recipe:
+        recipe = db.recipes.find_one({"slug": recipe_id})
+    if recipe:
+        db.recipes.update_one({"_id": recipe["_id"]}, {"$inc": {"views": 1}})
+    return serialize_recipe(recipe)
+
+
+def get_recipe_by_name(name):
+    db = get_db()
+    recipe = db.recipes.find_one({"$text": {"$search": name}})
+    if not recipe:
+        recipe = db.recipes.find_one(
+            {"name": {"$regex": re.escape(name), "$options": "i"}}
+        )
+    return serialize_recipe(recipe) if recipe else None
+
+
+def generate_and_save(name):
+    existing = get_recipe_by_name(name)
+    if existing:
+        return existing, False
+
+    data = generate_recipe(name)
+    doc = create_recipe(data, source="ai")
+    db = get_db()
+
+    slug = doc["slug"]
+    base = slug
+    counter = 1
+    while db.recipes.find_one({"slug": slug}):
+        slug = f"{base}-{counter}"
+        counter += 1
+    doc["slug"] = slug
+
+    result = db.recipes.insert_one(doc)
+    doc["_id"] = result.inserted_id
+    return serialize_recipe(doc), True
+
+
+def get_or_generate_nutrition(recipe_id):
+    recipe = get_recipe_by_id(recipe_id)
+    if not recipe:
+        return None
+    if recipe.get("nutrition"):
+        return recipe["nutrition"]
+    nutrition = generate_nutrition(recipe["name"], recipe.get("ingredients", []))
+    get_db().recipes.update_one(
+        {"_id": ObjectId(recipe["id"])},
+        {"$set": {"nutrition": nutrition, "updated_at": datetime.now(timezone.utc)}},
+    )
+    return nutrition
+
+
+def get_or_generate_history(recipe_id):
+    recipe = get_recipe_by_id(recipe_id)
+    if not recipe:
+        return None
+    if recipe.get("history"):
+        return recipe["history"]
+    history = generate_history(recipe["name"])
+    get_db().recipes.update_one(
+        {"_id": ObjectId(recipe["id"])},
+        {"$set": {"history": history, "updated_at": datetime.now(timezone.utc)}},
+    )
+    return history
+
+
+def get_popular_recipes(limit=8):
+    db = get_db()
+    cursor = db.recipes.find().sort("views", -1).limit(limit)
+    return [serialize_recipe(r) for r in cursor]
+
+
+def get_recipes_by_cuisine(cuisine, limit=12, page=1):
+    return search_recipes(cuisine=cuisine, limit=limit, page=page)
+
+
+def get_categories():
+    db = get_db()
+    pipeline = [
+        {"$unwind": "$tags"},
+        {"$group": {"_id": "$tags", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}},
+        {"$limit": 30},
+    ]
+    return [{"name": r["_id"], "count": r["count"]} for r in db.recipes.aggregate(pipeline)]
+
+
+def get_similar_recipes(recipe_id, limit=4):
+    recipe = get_recipe_by_id(recipe_id)
+    if not recipe:
+        return []
+    db = get_db()
+    tags = recipe.get("tags", [])
+    cuisine = recipe.get("cuisine", "")
+    filt = {
+        "_id": {"$ne": ObjectId(recipe["id"])},
+        "$or": [
+            {"tags": {"$in": tags}},
+            {"cuisine": {"$regex": re.escape(cuisine), "$options": "i"}},
+        ],
+    }
+    cursor = db.recipes.find(filt).limit(limit)
+    return [serialize_recipe(r) for r in cursor]
