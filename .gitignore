@@ -1,18 +1,51 @@
-# Environment variables - NEVER upload this
-.env
-
-# Python cache
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
-
-# Virtual environment
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
 venv/
 env/
+*.egg
 
-# OS files
+# Environment
+.env
+*.env
+.env.local
+.env.*.local
+
+# Node / React
+node_modules/
+frontend/build/
+frontend/.cache/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
 .DS_Store
 Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Claude Code
+.claude/
+.claude/settings.local.json
+
+# Logs
+*.log
+logs/
 
 # Other projects — not part of this repository
 paulo-ai-chatbot/
