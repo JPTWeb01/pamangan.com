@@ -53,49 +53,53 @@ An AI-powered recipe platform celebrating Filipino cuisine and global flavors. D
 ## Project Structure
 
 ```
-pamangan.com/
-├── backend/
-│   ├── app.py                  # Flask app factory
-│   ├── config.py               # Environment config
-│   ├── wsgi.py                 # Gunicorn entry point
-│   ├── seed.py                 # Database seed script
-│   ├── requirements.txt
-│   ├── .env.example
-│   ├── models/
-│   │   └── recipe.py           # Recipe data model
-│   ├── routes/
-│   │   └── api.py              # All API endpoints
-│   └── services/
-│       ├── ai_service.py       # Gemini & Groq AI calls
-│       ├── db_service.py       # MongoDB connection
-│       └── recipe_service.py   # Recipe business logic
-└── frontend/
-    ├── package.json
-    ├── .env.example
-    └── src/
-        ├── App.js
-        ├── index.js
-        ├── index.css
-        ├── components/
-        │   ├── Navbar.jsx
-        │   ├── Footer.jsx
-        │   ├── RecipeCard.jsx
-        │   ├── LoadingSpinner.jsx
-        │   ├── Modal.jsx
-        │   ├── GroceryModal.jsx
-        │   ├── NutritionModal.jsx
-        │   └── HistoryModal.jsx
-        ├── pages/
-        │   ├── Home.jsx
-        │   ├── Recipes.jsx
-        │   ├── RecipeDetail.jsx
-        │   ├── Categories.jsx
-        │   ├── MealPlanner.jsx
-        │   └── About.jsx
-        ├── context/
-        │   └── AppContext.js
-        └── services/
-            └── api.js
+pamangan.com/          ← repository root
+├── README.md
+├── SECURITY.md
+├── .gitignore
+└── pamangan.com/
+    ├── backend/
+    │   ├── app.py                  # Flask app factory
+    │   ├── config.py               # Environment config
+    │   ├── wsgi.py                 # Gunicorn entry point
+    │   ├── seed.py                 # Database seed script
+    │   ├── requirements.txt
+    │   ├── .env.example
+    │   ├── models/
+    │   │   └── recipe.py           # Recipe data model
+    │   ├── routes/
+    │   │   └── api.py              # All API endpoints
+    │   └── services/
+    │       ├── ai_service.py       # Gemini & Groq AI calls
+    │       ├── db_service.py       # MongoDB connection
+    │       └── recipe_service.py   # Recipe business logic
+    └── frontend/
+        ├── package.json
+        ├── .env.example
+        └── src/
+            ├── App.js
+            ├── index.js
+            ├── index.css
+            ├── components/
+            │   ├── Navbar.jsx
+            │   ├── Footer.jsx
+            │   ├── RecipeCard.jsx
+            │   ├── LoadingSpinner.jsx
+            │   ├── Modal.jsx
+            │   ├── GroceryModal.jsx
+            │   ├── NutritionModal.jsx
+            │   └── HistoryModal.jsx
+            ├── pages/
+            │   ├── Home.jsx
+            │   ├── Recipes.jsx
+            │   ├── RecipeDetail.jsx
+            │   ├── Categories.jsx
+            │   ├── MealPlanner.jsx
+            │   └── About.jsx
+            ├── context/
+            │   └── AppContext.js
+            └── services/
+                └── api.js
 ```
 
 ---
@@ -112,7 +116,7 @@ pamangan.com/
 ### Backend Setup
 
 ```bash
-cd backend
+cd pamangan.com/backend
 
 # Create and activate virtual environment
 python -m venv venv
@@ -129,7 +133,7 @@ cp .env.example .env
 ### Frontend Setup
 
 ```bash
-cd frontend
+cd pamangan.com/frontend
 
 # Install dependencies
 npm install
@@ -143,7 +147,7 @@ cp .env.example .env
 
 ## Environment Variables
 
-### Backend (`backend/.env`)
+### Backend (`pamangan.com/backend/.env`)
 
 | Variable | Description |
 |---|---|
@@ -157,7 +161,7 @@ cp .env.example .env
 | `PORT` | Port for the Flask server (default: `5000`) |
 | `CORS_ORIGINS` | Comma-separated list of allowed frontend origins |
 
-### Frontend (`frontend/.env`)
+### Frontend (`pamangan.com/frontend/.env`)
 
 | Variable | Description |
 |---|---|
@@ -171,7 +175,7 @@ cp .env.example .env
 ### Start the backend
 
 ```bash
-cd backend
+cd pamangan.com/backend
 source venv/bin/activate        # Windows: venv\Scripts\activate
 python app.py
 ```
@@ -181,14 +185,14 @@ The API will be available at `http://localhost:5000`.
 ### Seed the database (optional)
 
 ```bash
-cd backend
+cd pamangan.com/backend
 python seed.py
 ```
 
 ### Start the frontend
 
 ```bash
-cd frontend
+cd pamangan.com/frontend
 npm start
 ```
 
