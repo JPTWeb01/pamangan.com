@@ -1,4 +1,5 @@
 import re
+import requests
 from datetime import datetime, timezone
 from bson import ObjectId
 from services.db_service import get_db
@@ -12,6 +13,31 @@ from models.recipe import create_recipe, serialize_recipe
 
 def _normalize(text):
     return re.sub(r"[^a-z0-9\s]", "", text.lower()).strip()
+
+
+def _fetch_and_store_image(recipe_id, recipe_name, cuisine=""):
+    from config import Config
+    if not Config.PEXELS_API_KEY:
+        return None
+    try:
+        query = f"{recipe_name} {cuisine} food dish".strip()
+        resp = requests.get(
+            "https://api.pexels.com/v1/search",
+            params={"query": query, "per_page": 1, "orientation": "landscape"},
+            headers={"Authorization": Config.PEXELS_API_KEY},
+            timeout=8,
+        )
+        photos = resp.json().get("photos", []) if resp.ok else []
+        if not photos:
+            return None
+        image_url = photos[0]["src"]["large"]
+        get_db().recipes.update_one(
+            {"_id": ObjectId(recipe_id)},
+            {"$set": {"image_url": image_url}},
+        )
+        return image_url
+    except Exception:
+        return None
 
 
 def search_recipes(query="", cuisine="", difficulty="", limit=12, page=1):
@@ -47,7 +73,12 @@ def get_recipe_by_id(recipe_id):
         recipe = db.recipes.find_one({"slug": recipe_id})
     if recipe:
         db.recipes.update_one({"_id": recipe["_id"]}, {"$inc": {"views": 1}})
-    return serialize_recipe(recipe)
+    result = serialize_recipe(recipe)
+    if result and not result.get("image_url"):
+        image_url = _fetch_and_store_image(result["id"], result["name"], result.get("cuisine", ""))
+        if image_url:
+            result["image_url"] = image_url
+    return result
 
 
 def get_recipe_by_name(name):
@@ -79,7 +110,11 @@ def generate_and_save(name):
 
     result = db.recipes.insert_one(doc)
     doc["_id"] = result.inserted_id
-    return serialize_recipe(doc), True
+    serialized = serialize_recipe(doc)
+    image_url = _fetch_and_store_image(serialized["id"], serialized["name"], serialized.get("cuisine", ""))
+    if image_url:
+        serialized["image_url"] = image_url
+    return serialized, True
 
 
 def get_or_generate_nutrition(recipe_id):
@@ -188,7 +223,11 @@ def create_recipe_manual(data):
     doc["slug"] = slug
     result = db.recipes.insert_one(doc)
     doc["_id"] = result.inserted_id
-    return serialize_recipe(doc)
+    serialized = serialize_recipe(doc)
+    image_url = _fetch_and_store_image(serialized["id"], serialized["name"], serialized.get("cuisine", ""))
+    if image_url:
+        serialized["image_url"] = image_url
+    return serialized
 
 
 def get_similar_recipes(recipe_id, limit=4):

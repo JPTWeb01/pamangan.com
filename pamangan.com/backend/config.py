@@ -12,6 +12,7 @@ class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "pamangan-dev-secret-change-in-prod")
     ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
     ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")
+    PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "")
     DEBUG = os.getenv("DEBUG", "False").lower() == "true"
     CORS_ORIGINS = [
         o.strip()
