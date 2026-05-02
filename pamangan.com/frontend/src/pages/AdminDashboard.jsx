@@ -8,6 +8,7 @@ const emptyForm = {
   name: "", description: "", cuisine: "", cooking_time: "",
   prep_time: "", servings: 4, difficulty: "Medium",
   ingredients: "", instructions: "", tags: "", substitutions: "",
+  image_url: "",
 };
 
 function recipeToForm(r) {
@@ -25,6 +26,7 @@ function recipeToForm(r) {
     instructions: (r.instructions || []).join("\n"),
     tags: (r.tags || []).join(", "),
     substitutions: (r.substitutions || []).join("\n"),
+    image_url: r.image_url || "",
   };
 }
 
@@ -57,6 +59,7 @@ export default function AdminDashboard() {
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const navigate = useNavigate();
 
@@ -127,6 +130,23 @@ export default function AdminDashboard() {
   const handleFormChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    setFormError("");
+    try {
+      const res = await adminApiService.uploadImage(file);
+      const url = res?.url ?? res?.data?.url;
+      setForm((f) => ({ ...f, image_url: url }));
+    } catch (err) {
+      setFormError("Image upload failed: " + (err?.message || "unknown error"));
+    } finally {
+      setUploading(false);
+      e.target.value = "";
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -224,6 +244,50 @@ export default function AdminDashboard() {
               <div className="col-md-6">
                 <label className="form-label">Substitution Tips <small className="text-secondary">(one per line)</small></label>
                 <textarea className="form-control" name="substitutions" rows={2} value={form.substitutions} onChange={handleFormChange} />
+              </div>
+
+              {/* Image */}
+              <div className="col-12">
+                <label className="form-label fw-medium">Recipe Image</label>
+                <div className="d-flex gap-3 align-items-start flex-wrap">
+                  {form.image_url && (
+                    <div className="position-relative" style={{ width: 140 }}>
+                      <img
+                        src={form.image_url}
+                        alt="preview"
+                        className="rounded-3 border"
+                        style={{ width: 140, height: 100, objectFit: "cover" }}
+                      />
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle p-0"
+                        style={{ width: 22, height: 22, fontSize: ".7rem", lineHeight: 1 }}
+                        onClick={() => setForm((f) => ({ ...f, image_url: "" }))}
+                      >×</button>
+                    </div>
+                  )}
+                  <div className="flex-grow-1">
+                    <label className="btn btn-outline-primary btn-sm rounded-pill px-3 me-2" style={{ cursor: "pointer" }}>
+                      <i className="bi bi-upload me-1"></i>
+                      {uploading ? "Uploading…" : "Upload from computer"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="d-none"
+                        onChange={handleImageUpload}
+                        disabled={uploading}
+                      />
+                    </label>
+                    <small className="text-secondary d-block mt-2">JPG, PNG, WEBP — max 32MB</small>
+                    <input
+                      className="form-control form-control-sm mt-2"
+                      name="image_url"
+                      value={form.image_url}
+                      onChange={handleFormChange}
+                      placeholder="Or paste an image URL"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
             <div className="mt-3 d-flex gap-2">

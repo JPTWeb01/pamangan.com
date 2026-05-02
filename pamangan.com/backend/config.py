@@ -13,6 +13,7 @@ class Config:
     ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
     ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")
     PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "")
+    IMGBB_API_KEY = os.getenv("IMGBB_API_KEY", "")
     DEBUG = os.getenv("DEBUG", "False").lower() == "true"
     CORS_ORIGINS = [
         o.strip()

@@ -1,5 +1,7 @@
 import jwt
+import base64
 import logging
+import requests
 from datetime import datetime, timezone, timedelta
 from functools import wraps
 from flask import Blueprint, request, jsonify
@@ -90,3 +92,27 @@ def add_recipe():
     except Exception as exc:
         logger.exception("Error creating manual recipe")
         return jsonify({"success": False, "error": "An unexpected error occurred"}), 500
+
+
+@admin_bp.route("/upload-image", methods=["POST"])
+@token_required
+def upload_image():
+    if not Config.IMGBB_API_KEY:
+        return jsonify({"success": False, "error": "Image upload not configured"}), 503
+    file = request.files.get("image")
+    if not file:
+        return jsonify({"success": False, "error": "No image file provided"}), 400
+    try:
+        image_b64 = base64.b64encode(file.read()).decode("utf-8")
+        resp = requests.post(
+            "https://api.imgbb.com/1/upload",
+            data={"key": Config.IMGBB_API_KEY, "image": image_b64},
+            timeout=15,
+        )
+        result = resp.json()
+        if not result.get("success"):
+            return jsonify({"success": False, "error": "Upload to ImgBB failed"}), 500
+        return jsonify({"success": True, "url": result["data"]["display_url"]})
+    except Exception:
+        logger.exception("Image upload error")
+        return jsonify({"success": False, "error": "Upload failed"}), 500

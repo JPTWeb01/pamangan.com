@@ -63,6 +63,13 @@ export const adminApiService = {
   listRecipes: (page = 1, limit = 20) =>
     adminApi.get("/admin/recipes", { params: { page, limit } }),
   updateRecipe: (id, data) => adminApi.patch(`/admin/recipes/${id}`, data),
+  uploadImage: (file) => {
+    const form = new FormData();
+    form.append("image", file);
+    return adminApi.post("/admin/upload-image", form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
   deleteRecipe: (id) => adminApi.delete(`/admin/recipes/${id}`),
   createRecipe: (data) => adminApi.post("/admin/recipes", data),
 };
