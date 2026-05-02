@@ -40,10 +40,11 @@ export default function AdminDashboard() {
       setTotal(data?.total ?? 0);
       setPages(data?.pages ?? 1);
     } catch (err) {
-      if (err.message.includes("Token")) {
+      console.error("load() error:", err?.message, err?.stack);
+      if (err?.message?.includes("Token")) {
         logout();
       } else {
-        setError(err.message);
+        setError(err?.message || "Unknown error");
       }
     } finally {
       setLoading(false);
