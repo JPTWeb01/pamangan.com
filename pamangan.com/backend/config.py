@@ -10,6 +10,8 @@ class Config:
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
     GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
     SECRET_KEY = os.getenv("SECRET_KEY", "pamangan-dev-secret-change-in-prod")
+    ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
+    ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")
     DEBUG = os.getenv("DEBUG", "False").lower() == "true"
     CORS_ORIGINS = [
         o.strip()

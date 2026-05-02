@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 from config import Config
 from routes.api import api_bp
+from routes.admin import admin_bp
 
 
 def create_app():
@@ -11,6 +12,7 @@ def create_app():
     CORS(app, origins=Config.CORS_ORIGINS, supports_credentials=True)
 
     app.register_blueprint(api_bp, url_prefix="/api")
+    app.register_blueprint(admin_bp, url_prefix="/api/admin")
 
     @app.after_request
     def add_security_headers(response):

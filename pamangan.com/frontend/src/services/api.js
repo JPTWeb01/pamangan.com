@@ -36,4 +36,34 @@ export const categoryApi = {
   list: () => api.get("/categories"),
 };
 
+const adminApi = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || "/api",
+  timeout: 45000,
+  headers: { "Content-Type": "application/json" },
+});
+
+adminApi.interceptors.request.use((config) => {
+  const token = localStorage.getItem("adminToken");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+adminApi.interceptors.response.use(
+  (res) => res.data,
+  (err) => {
+    const message =
+      err.response?.data?.error || err.message || "Something went wrong";
+    return Promise.reject(new Error(message));
+  }
+);
+
+export const adminApiService = {
+  login: (username, password) =>
+    adminApi.post("/admin/login", { username, password }),
+  listRecipes: (page = 1, limit = 20) =>
+    adminApi.get("/admin/recipes", { params: { page, limit } }),
+  deleteRecipe: (id) => adminApi.delete(`/admin/recipes/${id}`),
+  createRecipe: (data) => adminApi.post("/admin/recipes", data),
+};
+
 export default api;

@@ -131,6 +131,45 @@ def get_categories():
     return [{"name": r["_id"], "count": r["count"]} for r in db.recipes.aggregate(pipeline)]
 
 
+def get_all_recipes_admin(page=1, limit=20):
+    db = get_db()
+    skip = (page - 1) * limit
+    cursor = db.recipes.find().skip(skip).limit(limit).sort("created_at", -1)
+    total = db.recipes.count_documents({})
+    return {
+        "recipes": [serialize_recipe(r) for r in cursor],
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "pages": max(1, -(-total // limit)),
+    }
+
+
+def delete_recipe(recipe_id):
+    db = get_db()
+    try:
+        result = db.recipes.delete_one({"_id": ObjectId(recipe_id)})
+        return result.deleted_count > 0
+    except Exception:
+        return False
+
+
+def create_recipe_manual(data):
+    from models.recipe import create_recipe
+    doc = create_recipe(data, source="manual")
+    db = get_db()
+    slug = doc["slug"]
+    base = slug
+    counter = 1
+    while db.recipes.find_one({"slug": slug}):
+        slug = f"{base}-{counter}"
+        counter += 1
+    doc["slug"] = slug
+    result = db.recipes.insert_one(doc)
+    doc["_id"] = result.inserted_id
+    return serialize_recipe(doc)
+
+
 def get_similar_recipes(recipe_id, limit=4):
     recipe = get_recipe_by_id(recipe_id)
     if not recipe:
