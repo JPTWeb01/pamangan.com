@@ -1,0 +1,45 @@
+name: Deploy Frontend to Hostinger
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'pamangan.com/frontend/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: pamangan.com/frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: pamangan.com/frontend
+        run: npm ci
+
+      - name: Build
+        working-directory: pamangan.com/frontend
+        env:
+          REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
+          REACT_APP_SITE_NAME: pamangan.com
+        run: npm run build
+
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.HOSTINGER_FTP_SERVER }}
+          username: ${{ secrets.HOSTINGER_FTP_USERNAME }}
+          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          local-dir: pamangan.com/frontend/build/
+          server-dir: /public_html/
+          dangerous-clean-slate: false
