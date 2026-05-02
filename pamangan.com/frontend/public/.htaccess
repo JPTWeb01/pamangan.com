@@ -8,3 +8,8 @@ RewriteRule ^ index.html [QSA,L]
   Header set Pragma "no-cache"
   Header set Expires "0"
 </Files>
+
+<IfModule LiteSpeed>
+  CacheLookup off
+  RewriteRule index\.html$ - [E=cache-control:no-cache]
+</IfModule>
