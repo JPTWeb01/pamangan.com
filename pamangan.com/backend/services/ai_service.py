@@ -71,7 +71,13 @@ def _call_gemini(prompt):
 
     genai.configure(api_key=Config.GEMINI_API_KEY)
     model = genai.GenerativeModel("gemini-2.0-flash")
-    response = model.generate_content(prompt)
+    response = model.generate_content(
+        prompt,
+        generation_config=genai.GenerationConfig(
+            response_mime_type="application/json",
+            temperature=0.2,
+        ),
+    )
     return response.text
 
 
@@ -82,8 +88,9 @@ def _call_groq(prompt):
     completion = client.chat.completions.create(
         messages=[{"role": "user", "content": prompt}],
         model="llama-3.1-8b-instant",
-        temperature=0.7,
+        temperature=0.2,
         max_tokens=2048,
+        response_format={"type": "json_object"},
     )
     return completion.choices[0].message.content
 
