@@ -9,7 +9,7 @@ _RECIPE_SCHEMA = """
 {
   "name": "string",
   "description": "brief appetizing description",
-  "cuisine": "string (e.g. Filipino, Italian, Thai)",
+  "cuisine": "string — the dish's actual country or region of origin (e.g. Italian, Japanese, Mexican, Filipino, Indian)",
   "cooking_time": "string (e.g. '45 minutes')",
   "prep_time": "string (e.g. '15 minutes')",
   "servings": number,
@@ -109,7 +109,8 @@ def _generate(prompt):
 def generate_recipe(name):
     prompt = (
         f'Generate a detailed and authentic recipe for "{name}".\n'
-        "If this is a Filipino dish, provide traditional Filipino preparation methods.\n"
+        "Set the cuisine to the dish's actual country or region of origin — do not default to Filipino unless it is genuinely a Filipino dish.\n"
+        "Use traditional and authentic preparation methods for whatever cuisine the dish belongs to.\n"
         f"Return ONLY a valid JSON object with this exact schema (no extra text):\n{_RECIPE_SCHEMA}"
     )
     return _generate(prompt)
@@ -145,7 +146,7 @@ def generate_nutrition(recipe_name, ingredients):
 def generate_history(recipe_name):
     prompt = (
         f'Provide cultural and historical background for the dish "{recipe_name}".\n'
-        "Focus on Filipino culinary heritage if applicable.\n\n"
+        "Focus on the dish's actual country or region of origin and its culinary heritage.\n\n"
         f"Return ONLY a valid JSON object:\n{_HISTORY_SCHEMA}"
     )
     return _generate(prompt)
