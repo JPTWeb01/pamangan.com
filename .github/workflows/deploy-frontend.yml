@@ -42,11 +42,6 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
           set -euo pipefail
-          echo "SSH_HOST set: $([ -n "$SSH_HOST" ] && echo yes || echo NO)"
-          echo "SSH_PORT set: $([ -n "$SSH_PORT" ] && echo yes || echo NO)"
-          echo "SSH_USERNAME set: $([ -n "$SSH_USERNAME" ] && echo yes || echo NO)"
-          echo "DEPLOY_PATH set: $([ -n "$DEPLOY_PATH" ] && echo yes || echo NO)"
-          echo "SSH_PRIVATE_KEY set: $([ -n "$SSH_PRIVATE_KEY" ] && echo yes || echo NO)"
           mkdir -p ~/.ssh
           printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
@@ -69,13 +64,4 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          script: |
-            echo "=== Bundle in DEPLOY_PATH ==="
-            grep -o 'main\.[a-f0-9]*\.js' ${{ secrets.DEPLOY_PATH }}/index.html 2>/dev/null || echo "NOT FOUND"
-            echo "=== All index.html locations and their bundles ==="
-            find $HOME -name "index.html" 2>/dev/null | while read f; do
-              bundle=$(grep -o 'main\.[a-f0-9]*\.js' "$f" 2>/dev/null)
-              if [ -n "$bundle" ]; then
-                echo "$f → $bundle"
-              fi
-            done
+          script: grep -o 'main\.[a-f0-9]*\.js' ${{ secrets.DEPLOY_PATH }}/index.html
