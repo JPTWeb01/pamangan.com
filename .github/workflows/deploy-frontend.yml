@@ -31,9 +31,6 @@ jobs:
 
       - name: Build
         working-directory: pamangan.com/frontend
-        env:
-          REACT_APP_API_URL: ${{ vars.REACT_APP_API_URL }}
-          REACT_APP_SITE_NAME: pamangan.com
         run: npm run build
 
       - name: Deploy via rsync over SSH
