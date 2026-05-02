@@ -55,6 +55,11 @@ jobs:
             -e "ssh -i ~/.ssh/deploy_key -p $SSH_PORT -o StrictHostKeyChecking=no" \
             pamangan.com/frontend/build/ \
             "$SSH_USERNAME@$SSH_HOST:$DEPLOY_PATH/"
+          # Force LiteSpeed to drop cached index.html by rewriting it in place
+          ssh -i ~/.ssh/deploy_key -p "$SSH_PORT" \
+            -o StrictHostKeyChecking=no \
+            "$SSH_USERNAME@$SSH_HOST" \
+            "cat $DEPLOY_PATH/index.html > /tmp/_idx.html && mv /tmp/_idx.html $DEPLOY_PATH/index.html"
           rm -f ~/.ssh/deploy_key
 
       - name: Verify deployment
