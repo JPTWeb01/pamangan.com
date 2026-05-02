@@ -69,4 +69,13 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          script: ls -la ${{ secrets.DEPLOY_PATH }}/static/js/ | tail -5
+          script: |
+            echo "=== Bundle in DEPLOY_PATH ==="
+            grep -o 'main\.[a-f0-9]*\.js' ${{ secrets.DEPLOY_PATH }}/index.html 2>/dev/null || echo "NOT FOUND"
+            echo "=== All index.html locations and their bundles ==="
+            find $HOME -name "index.html" 2>/dev/null | while read f; do
+              bundle=$(grep -o 'main\.[a-f0-9]*\.js' "$f" 2>/dev/null)
+              if [ -n "$bundle" ]; then
+                echo "$f → $bundle"
+              fi
+            done
