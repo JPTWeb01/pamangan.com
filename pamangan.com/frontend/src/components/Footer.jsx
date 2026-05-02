@@ -14,22 +14,21 @@ export default function Footer() {
             </p>
             <div className="d-flex gap-3 mt-3">
               {["facebook", "instagram", "youtube"].map((icon) => (
-                <a
+                <button
                   key={icon}
-                  href="#"
-                  rel="noopener noreferrer"
-                  className="d-flex align-items-center justify-content-center rounded-circle"
+                  className="d-flex align-items-center justify-content-center rounded-circle border-0"
                   style={{
                     width: 36,
                     height: 36,
                     background: "rgba(255,255,255,.1)",
                     transition: "background .2s",
+                    cursor: "default",
                   }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,.2)")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,.1)")}
                 >
                   <i className={`bi bi-${icon}`} style={{ color: "#fff", fontSize: ".9rem" }}></i>
-                </a>
+                </button>
               ))}
             </div>
           </div>

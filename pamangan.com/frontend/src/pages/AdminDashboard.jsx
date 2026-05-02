@@ -24,10 +24,10 @@ export default function AdminDashboard() {
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const navigate = useNavigate();
 
-  const logout = () => {
+  const logout = useCallback(() => {
     localStorage.removeItem("adminToken");
     navigate("/admin/login");
-  };
+  }, [navigate]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -46,7 +46,7 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, [page, logout]);
 
   useEffect(() => {
     if (!localStorage.getItem("adminToken")) {
