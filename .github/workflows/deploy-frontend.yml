@@ -9,15 +9,15 @@ on:
 
 jobs:
   build-and-deploy:
+    name: Build & Deploy Frontend
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af  # v4
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
@@ -34,12 +34,26 @@ jobs:
           REACT_APP_SITE_NAME: pamangan.com
         run: npm run build
 
-      - name: Deploy to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@c11a93cf6e44a18f1b6e3a73c3ab73a3667aacb7  # v4.3.5
+      - name: Deploy to Hostinger via SSH
+        uses: appleboy/scp-action@v0.1.7
         with:
-          server: ${{ secrets.HOSTINGER_FTP_SERVER }}
-          username: ${{ secrets.HOSTINGER_FTP_USERNAME }}
-          password: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
-          local-dir: pamangan.com/frontend/build/
-          server-dir: /public_html/
-          dangerous-clean-slate: false
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          source: pamangan.com/frontend/build/
+          target: ${{ secrets.DEPLOY_PATH }}
+          strip_components: 3
+          overwrite: true
+
+      - name: Verify deployment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            echo "Deployed files:"
+            ls -la ${{ secrets.DEPLOY_PATH }}
+            echo "Deploy complete at $(date)"
