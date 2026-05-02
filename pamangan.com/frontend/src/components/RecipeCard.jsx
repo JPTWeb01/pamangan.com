@@ -25,7 +25,7 @@ function difficultyClass(d) {
 export default function RecipeCard({ recipe }) {
   const imgSrc =
     recipe.image_url ||
-    `https://picsum.photos/seed/${encodeURIComponent(recipe.slug || recipe.name)}/400/300`;
+    `https://loremflickr.com/400/300/${encodeURIComponent(recipe.name)},food`;
 
   return (
     <div className="recipe-card h-100">
@@ -36,7 +36,7 @@ export default function RecipeCard({ recipe }) {
             alt={recipe.name}
             loading="lazy"
             onError={(e) => {
-              e.target.src = `https://picsum.photos/seed/${Math.random()}/400/300`;
+              e.target.src = `https://loremflickr.com/400/300/food`;
             }}
           />
           {recipe.cuisine && (

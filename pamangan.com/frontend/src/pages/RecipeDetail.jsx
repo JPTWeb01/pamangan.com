@@ -64,7 +64,7 @@ export default function RecipeDetail() {
 
   const imgSrc =
     recipe.image_url ||
-    `https://picsum.photos/seed/${encodeURIComponent(recipe.slug || recipe.name)}/800/450`;
+    `https://loremflickr.com/800/450/${encodeURIComponent(recipe.slug || recipe.name)},food`;
 
   return (
     <>
