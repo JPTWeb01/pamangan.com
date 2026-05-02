@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -12,12 +12,31 @@ import About from "./pages/About";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 
-function PublicLayout() {
+function AppContent() {
+  const { pathname } = useLocation();
+  const isAdmin = pathname.startsWith("/admin");
+
+  if (isAdmin) {
+    return (
+      <Routes>
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      </Routes>
+    );
+  }
+
   return (
     <div className="d-flex flex-column min-vh-100">
       <Navbar />
       <main className="flex-grow-1">
-        <Outlet />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/recipes" element={<Recipes />} />
+          <Route path="/recipe/:id" element={<RecipeDetail />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/meal-planner" element={<MealPlanner />} />
+          <Route path="/about" element={<About />} />
+        </Routes>
       </main>
       <Footer />
     </div>
@@ -28,18 +47,7 @@ export default function App() {
   return (
     <AppProvider>
       <BrowserRouter>
-        <Routes>
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route element={<PublicLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/recipes" element={<Recipes />} />
-            <Route path="/recipe/:id" element={<RecipeDetail />} />
-            <Route path="/categories" element={<Categories />} />
-            <Route path="/meal-planner" element={<MealPlanner />} />
-            <Route path="/about" element={<About />} />
-          </Route>
-        </Routes>
+        <AppContent />
       </BrowserRouter>
     </AppProvider>
   );
