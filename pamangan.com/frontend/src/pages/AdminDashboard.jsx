@@ -26,7 +26,7 @@ export default function AdminDashboard() {
 
   const logout = useCallback(() => {
     localStorage.removeItem("adminToken");
-    navigate("/admin/login");
+    navigate("/manage/login");
   }, [navigate]);
 
   const load = useCallback(async () => {
@@ -50,7 +50,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (!localStorage.getItem("adminToken")) {
-      navigate("/admin/login");
+      navigate("/manage/login");
       return;
     }
     load();

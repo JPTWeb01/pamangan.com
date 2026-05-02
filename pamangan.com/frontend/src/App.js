@@ -14,13 +14,13 @@ import AdminDashboard from "./pages/AdminDashboard";
 
 function AppContent() {
   const { pathname } = useLocation();
-  const isAdmin = pathname.startsWith("/admin");
+  const isAdmin = pathname.startsWith("/manage");
 
   if (isAdmin) {
     return (
       <Routes>
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/manage/login" element={<AdminLogin />} />
+        <Route path="/manage/dashboard" element={<AdminDashboard />} />
       </Routes>
     );
   }

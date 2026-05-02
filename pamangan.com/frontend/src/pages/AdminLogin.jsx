@@ -16,7 +16,7 @@ export default function AdminLogin() {
     try {
       const res = await adminApiService.login(username, password);
       localStorage.setItem("adminToken", res.token);
-      navigate("/admin/dashboard");
+      navigate("/manage/dashboard");
     } catch (err) {
       setError(err.message || "Invalid credentials");
     } finally {
