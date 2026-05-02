@@ -34,9 +34,10 @@ export default function AdminDashboard() {
     setError("");
     try {
       const res = await adminApiService.listRecipes(page, 20);
-      setRecipes(res.data.recipes);
-      setTotal(res.data.total);
-      setPages(res.data.pages);
+      const data = res?.data ?? res;
+      setRecipes(data?.recipes ?? []);
+      setTotal(data?.total ?? 0);
+      setPages(data?.pages ?? 1);
     } catch (err) {
       if (err.message.includes("Token")) {
         logout();
