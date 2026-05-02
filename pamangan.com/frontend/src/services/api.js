@@ -62,6 +62,7 @@ export const adminApiService = {
     adminApi.post("/admin/login", { username, password }),
   listRecipes: (page = 1, limit = 20) =>
     adminApi.get("/admin/recipes", { params: { page, limit } }),
+  updateRecipe: (id, data) => adminApi.patch(`/admin/recipes/${id}`, data),
   deleteRecipe: (id) => adminApi.delete(`/admin/recipes/${id}`),
   createRecipe: (data) => adminApi.post("/admin/recipes", data),
 };

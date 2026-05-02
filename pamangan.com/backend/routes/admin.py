@@ -8,6 +8,7 @@ from services.recipe_service import (
     get_all_recipes_admin,
     delete_recipe,
     create_recipe_manual,
+    update_recipe,
 )
 
 admin_bp = Blueprint("admin", __name__)
@@ -55,6 +56,16 @@ def list_recipes():
     page = _int_param(request.args.get("page"), 1, minimum=1)
     limit = _int_param(request.args.get("limit"), 20, maximum=100)
     return jsonify({"success": True, "data": get_all_recipes_admin(page, limit)})
+
+
+@admin_bp.route("/recipes/<recipe_id>", methods=["PATCH"])
+@token_required
+def edit_recipe(recipe_id):
+    body = request.get_json(silent=True) or {}
+    recipe = update_recipe(recipe_id, body)
+    if recipe:
+        return jsonify({"success": True, "data": recipe})
+    return jsonify({"success": False, "error": "Recipe not found"}), 404
 
 
 @admin_bp.route("/recipes/<recipe_id>", methods=["DELETE"])

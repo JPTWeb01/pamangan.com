@@ -145,6 +145,27 @@ def get_all_recipes_admin(page=1, limit=20):
     }
 
 
+def update_recipe(recipe_id, data):
+    from datetime import datetime, timezone
+    db = get_db()
+    try:
+        obj_id = ObjectId(recipe_id)
+    except Exception:
+        return None
+    allowed = [
+        "name", "description", "cuisine", "cooking_time", "prep_time",
+        "servings", "difficulty", "ingredients", "instructions", "tags", "substitutions",
+    ]
+    patch = {k: v for k, v in data.items() if k in allowed}
+    patch["updated_at"] = datetime.now(timezone.utc)
+    updated = db.recipes.find_one_and_update(
+        {"_id": obj_id},
+        {"$set": patch},
+        return_document=True,
+    )
+    return serialize_recipe(updated)
+
+
 def delete_recipe(recipe_id):
     db = get_db()
     try:

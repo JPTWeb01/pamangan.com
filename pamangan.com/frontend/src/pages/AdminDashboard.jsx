@@ -10,6 +10,41 @@ const emptyForm = {
   ingredients: "", instructions: "", tags: "", substitutions: "",
 };
 
+function recipeToForm(r) {
+  return {
+    name: r.name || "",
+    description: r.description || "",
+    cuisine: r.cuisine || "",
+    cooking_time: r.cooking_time || "",
+    prep_time: r.prep_time || "",
+    servings: r.servings || 4,
+    difficulty: r.difficulty || "Medium",
+    ingredients: (r.ingredients || [])
+      .map((i) => i.quantity ? `${i.quantity} ${i.item}` : i.item)
+      .join("\n"),
+    instructions: (r.instructions || []).join("\n"),
+    tags: (r.tags || []).join(", "),
+    substitutions: (r.substitutions || []).join("\n"),
+  };
+}
+
+function buildPayload(form) {
+  return {
+    ...form,
+    servings: parseInt(form.servings) || 4,
+    ingredients: form.ingredients
+      .split("\n")
+      .filter(Boolean)
+      .map((line) => {
+        const [quantity, ...rest] = line.split(" ");
+        return { item: rest.join(" ") || quantity, quantity: rest.length ? quantity : "", notes: null };
+      }),
+    instructions: form.instructions.split("\n").filter(Boolean),
+    tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+    substitutions: form.substitutions.split("\n").filter(Boolean),
+  };
+}
+
 export default function AdminDashboard() {
   const [recipes, setRecipes] = useState([]);
   const [total, setTotal] = useState(0);
@@ -18,6 +53,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [editId, setEditId] = useState(null);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState("");
@@ -57,6 +93,27 @@ export default function AdminDashboard() {
     load();
   }, [load, navigate]);
 
+  const openCreate = () => {
+    setEditId(null);
+    setForm(emptyForm);
+    setFormError("");
+    setShowForm(true);
+  };
+
+  const openEdit = (r) => {
+    setEditId(r.id);
+    setForm(recipeToForm(r));
+    setFormError("");
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    setEditId(null);
+    setForm(emptyForm);
+  };
+
   const handleDelete = async (id) => {
     try {
       await adminApiService.deleteRecipe(id);
@@ -72,28 +129,18 @@ export default function AdminDashboard() {
     setForm((f) => ({ ...f, [name]: value }));
   };
 
-  const handleCreate = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError("");
     setSaving(true);
     try {
-      const data = {
-        ...form,
-        servings: parseInt(form.servings) || 4,
-        ingredients: form.ingredients
-          .split("\n")
-          .filter(Boolean)
-          .map((line) => {
-            const [quantity, ...rest] = line.split(" ");
-            return { item: rest.join(" ") || quantity, quantity: rest.length ? quantity : "", notes: null };
-          }),
-        instructions: form.instructions.split("\n").filter(Boolean),
-        tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
-        substitutions: form.substitutions.split("\n").filter(Boolean),
-      };
-      await adminApiService.createRecipe(data);
-      setForm(emptyForm);
-      setShowForm(false);
+      const payload = buildPayload(form);
+      if (editId) {
+        await adminApiService.updateRecipe(editId, payload);
+      } else {
+        await adminApiService.createRecipe(payload);
+      }
+      closeForm();
       load();
     } catch (err) {
       setFormError(err.message);
@@ -113,7 +160,7 @@ export default function AdminDashboard() {
         <div className="d-flex gap-2">
           <button
             className="btn btn-primary btn-sm rounded-pill px-3"
-            onClick={() => { setShowForm(!showForm); setFormError(""); }}
+            onClick={showForm ? closeForm : openCreate}
           >
             <i className="bi bi-plus-lg me-1"></i>{showForm ? "Cancel" : "Add Recipe"}
           </button>
@@ -125,12 +172,12 @@ export default function AdminDashboard() {
 
       {error && <div className="alert alert-danger">{error}</div>}
 
-      {/* Create Recipe Form */}
+      {/* Create / Edit Form */}
       {showForm && (
         <div className="card border-0 shadow-sm rounded-3 p-4 mb-4">
-          <h6 className="fw-bold mb-3">Create Recipe Manually</h6>
+          <h6 className="fw-bold mb-3">{editId ? "Edit Recipe" : "Create Recipe Manually"}</h6>
           {formError && <div className="alert alert-danger py-2">{formError}</div>}
-          <form onSubmit={handleCreate}>
+          <form onSubmit={handleSubmit}>
             <div className="row g-3">
               <div className="col-md-6">
                 <label className="form-label">Name *</label>
@@ -181,9 +228,9 @@ export default function AdminDashboard() {
             </div>
             <div className="mt-3 d-flex gap-2">
               <button type="submit" className="btn btn-primary rounded-pill px-4" disabled={saving}>
-                {saving ? "Saving…" : "Create Recipe"}
+                {saving ? "Saving…" : editId ? "Save Changes" : "Create Recipe"}
               </button>
-              <button type="button" className="btn btn-outline-secondary rounded-pill px-4" onClick={() => setShowForm(false)}>
+              <button type="button" className="btn btn-outline-secondary rounded-pill px-4" onClick={closeForm}>
                 Cancel
               </button>
             </div>
@@ -233,12 +280,20 @@ export default function AdminDashboard() {
                           </button>
                         </div>
                       ) : (
-                        <button
-                          className="btn btn-outline-danger btn-sm rounded-pill px-2"
-                          onClick={() => setDeleteConfirm(r.id)}
-                        >
-                          <i className="bi bi-trash"></i>
-                        </button>
+                        <div className="d-flex gap-1">
+                          <button
+                            className="btn btn-outline-primary btn-sm rounded-pill px-2"
+                            onClick={() => openEdit(r)}
+                          >
+                            <i className="bi bi-pencil"></i>
+                          </button>
+                          <button
+                            className="btn btn-outline-danger btn-sm rounded-pill px-2"
+                            onClick={() => setDeleteConfirm(r.id)}
+                          >
+                            <i className="bi bi-trash"></i>
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>
