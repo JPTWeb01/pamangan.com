@@ -14,7 +14,6 @@ import AdminDashboard from "./pages/AdminDashboard";
 
 function AppContent() {
   const { pathname } = useLocation();
-  console.log("pathname:", pathname);
   const isAdmin = pathname.startsWith("/manage");
 
   if (isAdmin) {
