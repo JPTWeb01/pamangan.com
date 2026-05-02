@@ -58,8 +58,9 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
-            echo "index.html contents:"
+            echo "=== HOME DIR ==="
+            echo $HOME
+            echo "=== ALL asset-manifest.json locations ==="
+            find $HOME -name "asset-manifest.json" 2>/dev/null
+            echo "=== DEPLOY_PATH index.html ==="
             cat ${{ secrets.DEPLOY_PATH }}/index.html
-            echo ""
-            echo "JS files in static/js:"
-            ls -la ${{ secrets.DEPLOY_PATH }}/static/js/
