@@ -34,6 +34,7 @@ export default function AdminDashboard() {
     setError("");
     try {
       const res = await adminApiService.listRecipes(page, 20);
+      console.log("listRecipes raw response:", JSON.stringify(res));
       const data = res?.data ?? res;
       setRecipes(data?.recipes ?? []);
       setTotal(data?.total ?? 0);
