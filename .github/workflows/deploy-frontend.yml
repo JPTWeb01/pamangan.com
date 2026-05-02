@@ -36,19 +36,19 @@ jobs:
           REACT_APP_SITE_NAME: pamangan.com
         run: npm run build
 
-      - name: Deploy to Hostinger via SSH
+      - name: Upload build to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
-          source: pamangan.com/frontend/build/
-          target: ${{ secrets.DEPLOY_PATH }}
-          strip_components: 3
+          source: pamangan.com/frontend/build
+          target: /tmp/
+          strip_components: 2
           overwrite: true
 
-      - name: Verify deployment
+      - name: Move build to public_html
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -56,6 +56,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
-            echo "Deployed files:"
-            ls -la ${{ secrets.DEPLOY_PATH }}
+            cp -rf /tmp/build/. ${{ secrets.DEPLOY_PATH }}/
+            rm -rf /tmp/build/
             echo "Deploy complete at $(date)"
+            ls -la ${{ secrets.DEPLOY_PATH }}
