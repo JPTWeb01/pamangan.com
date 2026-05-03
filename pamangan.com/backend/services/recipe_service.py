@@ -190,6 +190,7 @@ def update_recipe(recipe_id, data):
     allowed = [
         "name", "description", "cuisine", "cooking_time", "prep_time",
         "servings", "difficulty", "ingredients", "instructions", "tags", "substitutions",
+        "image_url",
     ]
     patch = {k: v for k, v in data.items() if k in allowed}
     patch["updated_at"] = datetime.now(timezone.utc)
