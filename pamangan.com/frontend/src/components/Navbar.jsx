@@ -3,6 +3,7 @@ import { Link, NavLink, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
@@ -17,6 +18,7 @@ export default function Navbar() {
     if (query.trim()) {
       navigate(`/recipes?q=${encodeURIComponent(query.trim())}`);
       setQuery("");
+      setMenuOpen(false);
     }
   };
 
@@ -51,16 +53,13 @@ export default function Navbar() {
         <button
           className="navbar-toggler border-0"
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navMenu"
-          aria-controls="navMenu"
-          aria-expanded="false"
           aria-label="Toggle navigation"
+          onClick={() => setMenuOpen((o) => !o)}
         >
-          <i className="bi bi-list fs-4"></i>
+          <i className={`bi ${menuOpen ? "bi-x" : "bi-list"} fs-4`}></i>
         </button>
 
-        <div className="collapse navbar-collapse" id="navMenu">
+        <div className={`collapse navbar-collapse ${menuOpen ? "show" : ""}`} id="navMenu">
           {/* Nav links */}
           <ul className="navbar-nav me-auto ms-3 gap-1">
             {[
@@ -77,6 +76,7 @@ export default function Navbar() {
                   className={({ isActive }) =>
                     `nav-link px-2 ${isActive ? "text-primary fw-semibold" : "text-secondary"}`
                   }
+                  onClick={() => setMenuOpen(false)}
                 >
                   {label}
                 </NavLink>
@@ -104,6 +104,7 @@ export default function Navbar() {
               to="/recipes?generate=1"
               className="btn btn-sm rounded-pill px-3 fw-semibold"
               style={{ background: "#0038A8", color: "#fff", whiteSpace: "nowrap" }}
+              onClick={() => setMenuOpen(false)}
             >
               <i className="bi bi-stars me-1"></i>Request a Recipe
             </Link>
