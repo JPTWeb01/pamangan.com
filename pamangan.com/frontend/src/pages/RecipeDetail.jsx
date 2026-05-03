@@ -92,9 +92,7 @@ export default function RecipeDetail() {
                 {recipe.cuisine && (
                   <span className="badge rounded-pill bg-primary">{recipe.cuisine}</span>
                 )}
-                {recipe.source === "ai" && (
-                  <span className="ai-badge"><i className="bi bi-stars"></i> AI Generated</span>
-                )}
+
                 {recipe.difficulty && (
                   <span
                     className={`difficulty-badge ${
