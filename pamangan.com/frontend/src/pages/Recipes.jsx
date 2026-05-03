@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import RecipeCard from "../components/RecipeCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import Modal from "../components/Modal";
@@ -20,6 +20,7 @@ export default function Recipes() {
   const [generating, setGenerating] = useState(false);
   const [generateError, setGenerateError] = useState("");
 
+  const navigate = useNavigate();
   const q = searchParams.get("q") || "";
   const cuisine = searchParams.get("cuisine") || "";
   const difficulty = searchParams.get("difficulty") || "";
@@ -59,10 +60,8 @@ export default function Recipes() {
     setGenerating(true);
     setGenerateError("");
     try {
-      await recipeApi.generate(generateName.trim());
-      setGenerateModal(false);
-      setGenerateName("");
-      load();
+      const res = await recipeApi.generate(generateName.trim());
+      navigate(`/recipe/${res.data.id}`);
     } catch (err) {
       setGenerateError(err.message);
     } finally {
