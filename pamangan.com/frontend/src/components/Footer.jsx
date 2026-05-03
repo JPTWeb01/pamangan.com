@@ -70,7 +70,7 @@ export default function Footer() {
               className="btn btn-sm rounded-pill px-4 fw-semibold"
               style={{ background: "#FCD116", color: "#111" }}
             >
-              <i className="bi bi-stars me-2"></i>Generate a Recipe
+              <i className="bi bi-stars me-2"></i>Request a Recipe
             </Link>
           </div>
         </div>

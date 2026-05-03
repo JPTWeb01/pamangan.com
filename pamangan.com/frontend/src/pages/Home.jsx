@@ -170,7 +170,7 @@ export default function Home() {
                   style={{ background: "#FCD116", color: "#111" }}
                   onClick={() => setGenerateModal(true)}
                 >
-                  <i className="bi bi-stars me-2"></i>Generate AI Recipe
+                  <i className="bi bi-stars me-2"></i>Request a Recipe
                 </button>
               </div>
             </div>
@@ -291,7 +291,7 @@ export default function Home() {
             style={{ background: "#FCD116", color: "#111", fontSize: "1.05rem" }}
             onClick={() => setGenerateModal(true)}
           >
-            <i className="bi bi-stars me-2"></i>Generate a Recipe Now
+            <i className="bi bi-stars me-2"></i>Request a Recipe
           </button>
         </div>
       </section>
@@ -308,9 +308,9 @@ export default function Home() {
             disabled={generating || !generateName.trim()}
           >
             {generating ? (
-              <><span className="spinner-border spinner-border-sm me-2"></span>Generating…</>
+              <><span className="spinner-border spinner-border-sm me-2"></span>Requesting…</>
             ) : (
-              <><i className="bi bi-stars me-2"></i>Generate Recipe</>
+              <><i className="bi bi-stars me-2"></i>Request a Recipe</>
             )}
           </button>
         }

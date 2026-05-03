@@ -85,7 +85,7 @@ export default function Recipes() {
             className="btn btn-primary rounded-pill px-4 fw-semibold"
             onClick={() => setGenerateModal(true)}
           >
-            <i className="bi bi-stars me-2"></i>Generate with AI
+            <i className="bi bi-stars me-2"></i>Request a Recipe
           </button>
         </div>
 
@@ -161,12 +161,12 @@ export default function Recipes() {
           <div className="text-center py-5">
             <i className="bi bi-search display-4 text-secondary d-block mb-3" style={{ opacity: .4 }}></i>
             <h5 className="text-secondary">No recipes found</h5>
-            <p className="text-secondary mb-4">Try generating one with AI!</p>
+            <p className="text-secondary mb-4">Try requesting one!</p>
             <button
               className="btn btn-primary rounded-pill px-4"
               onClick={() => { setGenerateName(q); setGenerateModal(true); }}
             >
-              <i className="bi bi-stars me-2"></i>Generate "{q || "a recipe"}"
+              <i className="bi bi-stars me-2"></i>Request "{q || "a recipe"}"
             </button>
           </div>
         ) : (
@@ -215,9 +215,9 @@ export default function Recipes() {
             disabled={generating || !generateName.trim()}
           >
             {generating ? (
-              <><span className="spinner-border spinner-border-sm me-2"></span>Generating…</>
+              <><span className="spinner-border spinner-border-sm me-2"></span>Requesting…</>
             ) : (
-              <><i className="bi bi-stars me-2"></i>Generate Recipe</>
+              <><i className="bi bi-stars me-2"></i>Request a Recipe</>
             )}
           </button>
         }

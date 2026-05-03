@@ -105,7 +105,7 @@ export default function Navbar() {
               className="btn btn-sm rounded-pill px-3 fw-semibold"
               style={{ background: "#0038A8", color: "#fff", whiteSpace: "nowrap" }}
             >
-              <i className="bi bi-stars me-1"></i>AI Generate
+              <i className="bi bi-stars me-1"></i>Request a Recipe
             </Link>
           </form>
         </div>
