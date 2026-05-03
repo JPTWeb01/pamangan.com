@@ -83,11 +83,9 @@ def get_recipe_by_id(recipe_id):
 
 def get_recipe_by_name(name):
     db = get_db()
-    recipe = db.recipes.find_one({"$text": {"$search": name}})
-    if not recipe:
-        recipe = db.recipes.find_one(
-            {"name": {"$regex": re.escape(name), "$options": "i"}}
-        )
+    recipe = db.recipes.find_one(
+        {"name": {"$regex": f"^{re.escape(name)}$", "$options": "i"}}
+    )
     return serialize_recipe(recipe) if recipe else None
 
 
