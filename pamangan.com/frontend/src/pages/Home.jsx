@@ -11,36 +11,42 @@ const CATEGORIES = [
     emoji: "🇵🇭",
     bg: "linear-gradient(135deg,#0038A8,#002d87)",
     count: "Classic dishes",
+    link: "/recipes?cuisine=Filipino",
   },
   {
     name: "Asian",
     emoji: "🍜",
     bg: "linear-gradient(135deg,#CE1126,#8b0011)",
     count: "Pan-Asian flavors",
+    link: "/recipes?cuisine=Asian",
   },
   {
     name: "Healthy",
     emoji: "🥗",
     bg: "linear-gradient(135deg,#16a34a,#0f6b31)",
     count: "Nutritious picks",
+    link: "/recipes?q=healthy",
   },
   {
     name: "Quick & Easy",
     emoji: "⚡",
     bg: "linear-gradient(135deg,#d97706,#b45309)",
     count: "30 min or less",
+    link: "/recipes?q=quick",
   },
   {
     name: "Soup",
     emoji: "🍲",
     bg: "linear-gradient(135deg,#7c3aed,#5b21b6)",
     count: "Warm & comforting",
+    link: "/recipes?q=soup",
   },
   {
     name: "Snack",
     emoji: "🍢",
     bg: "linear-gradient(135deg,#0891b2,#0e7490)",
     count: "Light bites",
+    link: "/recipes?q=snack",
   },
 ];
 
@@ -244,7 +250,7 @@ export default function Home() {
             {CATEGORIES.map((cat) => (
               <div className="col-6 col-md-4 col-lg-2" key={cat.name}>
                 <Link
-                  to={`/recipes?cuisine=${encodeURIComponent(cat.name)}`}
+                  to={cat.link}
                   className="text-decoration-none"
                 >
                   <div
