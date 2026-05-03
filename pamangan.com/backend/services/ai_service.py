@@ -117,7 +117,10 @@ def _generate(prompt):
 def generate_recipe(name):
     prompt = (
         f'The user requested a recipe for: "{name}".\n'
-        "First, identify the correct dish name — fix any spelling mistakes and use the properly spelled name in the \"name\" field of your response.\n"
+        "First, identify the correct dish name — fix any spelling mistakes.\n"
+        "If the user included a specific ingredient or variant (e.g. 'Squash Pinakbet', 'Beef Kare-Kare', 'Chicken Adobo'), "
+        "preserve it in the name using the format 'Base Dish (Variant)' — e.g. 'Pinakbet (Squash)', 'Kare-Kare (Beef)', 'Adobo (Chicken)'. "
+        "Only apply this format when the user clearly specified a variant; if the ingredient is already part of the official dish name (e.g. 'Beef Steak', 'Pork Sinigang'), keep the name as-is.\n"
         "Generate a detailed and authentic recipe for that dish.\n"
         "Set the cuisine to the dish's actual country or region of origin — do not default to Filipino unless it is genuinely a Filipino dish.\n"
         "Use traditional and authentic preparation methods for whatever cuisine the dish belongs to.\n"
