@@ -63,6 +63,13 @@ const CATEGORIES = [
     count: "Fresh from the sea",
     link: "/recipes?cuisine=Seafood",
   },
+  {
+    name: "Vegetarian",
+    emoji: "🥦",
+    bg: "linear-gradient(135deg,#15803d,#166534)",
+    count: "Plant-based picks",
+    link: "/recipes?cuisine=Vegetarian",
+  },
 ];
 
 const FEATURES = [

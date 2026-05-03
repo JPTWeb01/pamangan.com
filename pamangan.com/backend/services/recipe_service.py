@@ -64,6 +64,10 @@ _CATEGORY_GROUPS = {
         {"tags": {"$regex": r"seafood|fish|shrimp|prawn|crab|lobster|squid|clam|oyster|mussel", "$options": "i"}},
         {"name": {"$regex": r"fish|shrimp|prawn|crab|lobster|squid|clam|mussel|oyster|salmon|tuna|bangus|tilapia|galunggong|kinilaw|paksiw|ceviche|calamari|scallop|tahong|halaan", "$options": "i"}},
     ]},
+    "vegetarian": {"$or": [
+        {"tags": {"$regex": r"vegetarian|vegan|meatless|plant.based|meat.free|veggie", "$options": "i"}},
+        {"name": {"$regex": r"vegetarian|vegan|tofu|tempeh|veggie|vegetable|lentil|chickpea|bean|mushroom|eggplant|spinach|cauliflower|broccoli|zucchini|paneer", "$options": "i"}},
+    ]},
 }
 
 
