@@ -294,6 +294,10 @@ img { max-width: 100%; height: auto; }
   transition: transform var(--transition), box-shadow var(--transition);
   border: 1px solid var(--border);
   background: var(--surface-card);
+  height: 100%;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
 }
 .feature-card:hover {
   transform: translateY(-3px);
