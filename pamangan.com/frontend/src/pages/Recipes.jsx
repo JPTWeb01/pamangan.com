@@ -47,7 +47,7 @@ export default function Recipes() {
 
   const setParam = (key, value) => {
     const next = new URLSearchParams(searchParams);
-    if (value && value.toLowerCase() !== "all") next.set(key, value);
+    if (value && String(value).toLowerCase() !== "all") next.set(key, value);
     else next.delete(key);
     if (key !== "page") next.delete("page");
     setSearchParams(next);
