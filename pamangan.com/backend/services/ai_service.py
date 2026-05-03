@@ -17,7 +17,8 @@ _RECIPE_SCHEMA = """
   "ingredients": [{"item": "string", "quantity": "string", "notes": "string or null"}],
   "instructions": ["Step 1...", "Step 2..."],
   "tags": ["tag1", "tag2"],
-  "substitutions": ["tip 1", "tip 2"]
+  "substitutions": ["tip 1", "tip 2"],
+  "image_search_query": "3-5 word descriptive search term for finding an accurate photo of this specific dish (e.g. 'beef adobo braised soy sauce', 'kare-kare peanut oxtail stew', 'tiramisu italian dessert coffee')"
 }"""
 
 _GROCERY_SCHEMA = """

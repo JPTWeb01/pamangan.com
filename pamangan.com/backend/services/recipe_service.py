@@ -15,12 +15,12 @@ def _normalize(text):
     return re.sub(r"[^a-z0-9\s]", "", text.lower()).strip()
 
 
-def _fetch_and_store_image(recipe_id, recipe_name, cuisine=""):
+def _fetch_and_store_image(recipe_id, recipe_name, cuisine="", search_query=None):
     from config import Config
     if not Config.PEXELS_API_KEY:
         return None
     try:
-        query = f"{recipe_name} {cuisine} food dish".strip()
+        query = search_query.strip() if search_query else f"{recipe_name} {cuisine} food dish".strip()
         resp = requests.get(
             "https://api.pexels.com/v1/search",
             params={"query": query, "per_page": 1, "orientation": "landscape"},
@@ -95,6 +95,7 @@ def generate_and_save(name):
         return existing, False
 
     data = generate_recipe(name)
+    search_query = data.get("image_search_query", "")
     doc = create_recipe(data, source="ai")
     db = get_db()
 
@@ -109,7 +110,7 @@ def generate_and_save(name):
     result = db.recipes.insert_one(doc)
     doc["_id"] = result.inserted_id
     serialized = serialize_recipe(doc)
-    image_url = _fetch_and_store_image(serialized["id"], serialized["name"], serialized.get("cuisine", ""))
+    image_url = _fetch_and_store_image(serialized["id"], serialized["name"], serialized.get("cuisine", ""), search_query)
     if image_url:
         serialized["image_url"] = image_url
     return serialized, True
