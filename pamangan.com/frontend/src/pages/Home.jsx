@@ -9,6 +9,7 @@ const CATEGORIES = [
   {
     name: "Filipino",
     emoji: "🇵🇭",
+    image: "https://flagcdn.com/w40/ph.png",
     bg: "linear-gradient(135deg,#0038A8,#002d87)",
     count: "Classic dishes",
     link: "/recipes?cuisine=Filipino",
@@ -269,7 +270,11 @@ export default function Home() {
                       e.currentTarget.style.boxShadow = "";
                     }}
                   >
-                    <div style={{ fontSize: "2rem", marginBottom: ".35rem" }}>{cat.emoji}</div>
+                    <div style={{ fontSize: "2rem", marginBottom: ".35rem" }}>
+                      {cat.image
+                        ? <img src={cat.image} alt={cat.name} style={{ width: 38, height: "auto", borderRadius: 3, display: "block", margin: "0 auto" }} />
+                        : cat.emoji}
+                    </div>
                     <div className="fw-bold" style={{ fontSize: ".95rem" }}>{cat.name}</div>
                     <div style={{ fontSize: ".72rem", opacity: .75 }}>{cat.count}</div>
                   </div>
