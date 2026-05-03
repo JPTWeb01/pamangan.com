@@ -115,7 +115,9 @@ def _generate(prompt):
 
 def generate_recipe(name):
     prompt = (
-        f'Generate a detailed and authentic recipe for "{name}".\n'
+        f'The user requested a recipe for: "{name}".\n'
+        "First, identify the correct dish name — fix any spelling mistakes and use the properly spelled name in the \"name\" field of your response.\n"
+        "Generate a detailed and authentic recipe for that dish.\n"
         "Set the cuisine to the dish's actual country or region of origin — do not default to Filipino unless it is genuinely a Filipino dish.\n"
         "Use traditional and authentic preparation methods for whatever cuisine the dish belongs to.\n"
         f"Return ONLY a valid JSON object with this exact schema (no extra text):\n{_RECIPE_SCHEMA}"
