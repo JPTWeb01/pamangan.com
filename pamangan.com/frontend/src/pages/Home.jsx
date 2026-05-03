@@ -195,13 +195,7 @@ export default function Home() {
           <div className="row g-3">
             {FEATURES.map((f) => (
               <div className="col-6 col-lg-3" key={f.label}>
-                {f.to ? (
-                  <Link to={f.to} className="text-decoration-none d-block">
-                    <FeatureCard feature={f} />
-                  </Link>
-                ) : (
-                  <FeatureCard feature={f} />
-                )}
+                <FeatureCard feature={f} />
               </div>
             ))}
           </div>
@@ -349,7 +343,7 @@ export default function Home() {
 }
 
 function FeatureCard({ feature: f }) {
-  return (
+  const inner = (
     <div className="feature-card h-100">
       <div className="feature-icon" style={{ background: f.bg, color: f.color }}>
         <i className={`bi ${f.icon}`}></i>
@@ -358,4 +352,7 @@ function FeatureCard({ feature: f }) {
       <div className="text-secondary" style={{ fontSize: ".82rem" }}>{f.desc}</div>
     </div>
   );
+
+  if (f.to) return <Link to={f.to} className="text-decoration-none d-block h-100">{inner}</Link>;
+  return inner;
 }
