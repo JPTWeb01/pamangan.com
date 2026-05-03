@@ -40,13 +40,22 @@ def _fetch_and_store_image(recipe_id, recipe_name, cuisine="", search_query=None
         return None
 
 
+_CUISINE_GROUPS = {
+    "asian": (
+        r"Japanese|Chinese|Korean|Thai|Vietnamese|Indonesian|"
+        r"Malaysian|Taiwanese|Singaporean|Burmese|Cambodian|Laotian|Asian"
+    ),
+}
+
+
 def search_recipes(query="", cuisine="", difficulty="", limit=12, page=1):
     db = get_db()
     filt = {}
     if query:
         filt["$text"] = {"$search": query}
     if cuisine and cuisine.lower() not in ("all", ""):
-        filt["cuisine"] = {"$regex": re.escape(cuisine), "$options": "i"}
+        pattern = _CUISINE_GROUPS.get(cuisine.lower(), re.escape(cuisine))
+        filt["cuisine"] = {"$regex": pattern, "$options": "i"}
     if difficulty and difficulty.lower() not in ("all", ""):
         filt["difficulty"] = {"$regex": re.escape(difficulty), "$options": "i"}
 

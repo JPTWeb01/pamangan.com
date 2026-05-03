@@ -19,7 +19,7 @@ const CATEGORIES = [
     emoji: "🍜",
     bg: "linear-gradient(135deg,#CE1126,#8b0011)",
     count: "Pan-Asian flavors",
-    link: "/recipes?q=asian",
+    link: "/recipes?cuisine=Asian",
   },
   {
     name: "Healthy",
