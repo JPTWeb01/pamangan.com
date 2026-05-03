@@ -207,7 +207,7 @@ export default function Recipes() {
       <Modal
         show={generateModal}
         onClose={() => { setGenerateModal(false); setGenerateError(""); }}
-        title={<span><i className="bi bi-stars me-2 text-primary"></i>AI Recipe Generator</span>}
+        title={<span><i className="bi bi-stars me-2 text-primary"></i>Request a Recipe</span>}
         footer={
           <button
             className="btn btn-primary rounded-pill px-4 fw-semibold"
@@ -223,7 +223,7 @@ export default function Recipes() {
         }
       >
         <p className="text-secondary mb-3">
-          Enter any dish name and our AI will create a complete recipe, saved to the database instantly.
+          Enter any dish name and we'll create a complete recipe, saved instantly.
         </p>
         <form onSubmit={handleGenerate}>
           <input

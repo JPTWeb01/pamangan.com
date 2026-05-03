@@ -12,7 +12,7 @@ const TECH_STACK = [
 
 const FEATURES = [
   { icon: "bi-search", title: "Smart Recipe Search", desc: "Search by name, ingredient, or cuisine with instant results from the database." },
-  { icon: "bi-stars", title: "AI Recipe Generation", desc: "Can't find a recipe? Our AI generates complete, authentic recipes on demand — saved automatically." },
+  { icon: "bi-stars", title: "Recipe on Request", desc: "Can't find a recipe? Request one and get a complete, authentic recipe on demand — saved automatically." },
   { icon: "bi-cart3", title: "Grocery List Generator", desc: "Combine ingredients from multiple recipes, deduplicate, and organize by store section." },
   { icon: "bi-bar-chart-fill", title: "Nutrition Estimation", desc: "AI-powered nutritional breakdown with calories, macros, allergens, and health notes." },
   { icon: "bi-book", title: "Food History & Culture", desc: "Explore the cultural stories, regional variations, and fun facts behind every dish." },
@@ -57,7 +57,7 @@ export default function About() {
               — from home cooks to professional chefs.
             </p>
             <p style={{ fontSize: "1.05rem", lineHeight: 1.75, color: "var(--text-secondary)" }}>
-              Our smart caching system ensures that every AI-generated recipe is saved for future users,
+              Our smart caching system ensures that every requested recipe is saved for future users,
               building an ever-growing global recipe library that gets better over time — while keeping
               AI costs minimal.
             </p>
@@ -120,7 +120,7 @@ export default function About() {
               <p className="text-secondary mb-3" style={{ lineHeight: 1.75 }}>
                 Every search first checks MongoDB. Only when a recipe doesn't exist does the system
                 call an AI provider — using Google Gemini as the primary and Groq as an automatic
-                fallback. The generated recipe is instantly saved, so the next user gets it instantly.
+                fallback. The requested recipe is instantly saved, so the next user gets it instantly.
               </p>
               <div className="d-flex flex-column gap-2" style={{ fontSize: ".9rem" }}>
                 {[
@@ -158,7 +158,7 @@ export default function About() {
         <div className="text-center">
           <h2 className="h3 fw-black mb-3">Start Cooking Today</h2>
           <p className="text-secondary mb-4">
-            Browse our growing collection or generate your first AI recipe.
+            Browse our growing collection or request your first recipe.
           </p>
           <div className="d-flex gap-3 justify-content-center flex-wrap">
             <Link to="/recipes" className="btn btn-primary rounded-pill px-5 fw-semibold">

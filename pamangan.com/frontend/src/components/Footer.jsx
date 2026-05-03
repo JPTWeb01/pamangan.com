@@ -61,9 +61,9 @@ export default function Footer() {
           </div>
 
           <div className="col-lg-4 col-md-6">
-            <h6>AI Recipe Generator</h6>
+            <h6>Request a Recipe</h6>
             <p style={{ fontSize: ".85rem", color: "rgba(255,255,255,.6)" }}>
-              Can't find a recipe? Let our AI create one for you instantly.
+              Can't find a recipe? You can request one and it'll be ready instantly.
             </p>
             <Link
               to="/recipes?generate=1"

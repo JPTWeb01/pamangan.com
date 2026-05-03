@@ -137,8 +137,8 @@ export default function Home() {
                 <span style={{ color: "#FCD116" }}>Global Recipes</span>
               </h1>
               <p className="text-white mb-4" style={{ opacity: 0.8, fontSize: "1.05rem" }}>
-                Search thousands of authentic recipes or let our AI generate a custom one
-                for you — instantly.
+                Search thousands of authentic recipes or request a custom one
+                — ready instantly.
               </p>
 
               <div className="hero-search-wrapper mx-auto mb-4">
@@ -284,7 +284,7 @@ export default function Home() {
             Can't find a recipe?
           </h2>
           <p className="mb-4" style={{ opacity: .8 }}>
-            Our AI can generate any recipe you crave — instantly saved for everyone.
+            You can request any recipe you crave — instantly saved for everyone.
           </p>
           <button
             className="btn rounded-pill px-5 py-2 fw-bold"
@@ -300,7 +300,7 @@ export default function Home() {
       <Modal
         show={generateModal}
         onClose={() => { setGenerateModal(false); setGenerateError(""); }}
-        title={<span><i className="bi bi-stars me-2 text-primary"></i>AI Recipe Generator</span>}
+        title={<span><i className="bi bi-stars me-2 text-primary"></i>Request a Recipe</span>}
         footer={
           <button
             className="btn btn-primary rounded-pill px-4 fw-semibold"
@@ -316,7 +316,7 @@ export default function Home() {
         }
       >
         <p className="text-secondary mb-3">
-          Type any dish name and our AI will generate a complete recipe with ingredients,
+          Type any dish name and we'll create a complete recipe with ingredients,
           instructions, and more.
         </p>
         <form onSubmit={handleGenerate}>
