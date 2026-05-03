@@ -49,7 +49,7 @@ export default function Recipes() {
     const next = new URLSearchParams(searchParams);
     if (value && value.toLowerCase() !== "all") next.set(key, value);
     else next.delete(key);
-    next.delete("page");
+    if (key !== "page") next.delete("page");
     setSearchParams(next);
   };
 
