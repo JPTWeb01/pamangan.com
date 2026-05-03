@@ -47,6 +47,25 @@ _CUISINE_GROUPS = {
     ),
 }
 
+_CATEGORY_GROUPS = {
+    "healthy": {"$or": [
+        {"tags": {"$regex": r"healthy|nutritious|light|vegetarian|vegan|low.fat|diet|salad", "$options": "i"}},
+        {"name": {"$regex": r"healthy|salad|vegetable|veggie|light|nutritious", "$options": "i"}},
+    ]},
+    "snack": {"$or": [
+        {"tags": {"$regex": r"snack|appetizer|merienda|finger.food|bites|street.food", "$options": "i"}},
+        {"name": {"$regex": r"snack|lumpia|spring.roll|bites|merienda|chips|empanada|kropek", "$options": "i"}},
+    ]},
+    "dessert": {"$or": [
+        {"tags": {"$regex": r"dessert|sweet|pastry|baked|cake|cookie|pudding|ice.cream|kakanin", "$options": "i"}},
+        {"name": {"$regex": r"cake|pie|tart|pudding|ice.cream|brownie|cookie|donut|leche.flan|halo.halo|bibingka|puto|kutsinta|palitaw|maja|sapin|biko|mochi|tiramisu|crepe|waffle|pastry|flan|cheesecake|brownie|macaron", "$options": "i"}},
+    ]},
+    "seafood": {"$or": [
+        {"tags": {"$regex": r"seafood|fish|shrimp|prawn|crab|lobster|squid|clam|oyster|mussel", "$options": "i"}},
+        {"name": {"$regex": r"fish|shrimp|prawn|crab|lobster|squid|clam|mussel|oyster|salmon|tuna|bangus|tilapia|galunggong|kinilaw|paksiw|ceviche|calamari|scallop|tahong|halaan", "$options": "i"}},
+    ]},
+}
+
 
 def search_recipes(query="", cuisine="", difficulty="", limit=12, page=1):
     db = get_db()
@@ -54,8 +73,12 @@ def search_recipes(query="", cuisine="", difficulty="", limit=12, page=1):
     if query:
         filt["$text"] = {"$search": query}
     if cuisine and cuisine.lower() not in ("all", ""):
-        pattern = _CUISINE_GROUPS.get(cuisine.lower(), re.escape(cuisine))
-        filt["cuisine"] = {"$regex": pattern, "$options": "i"}
+        key = cuisine.lower()
+        if key in _CATEGORY_GROUPS:
+            filt.update(_CATEGORY_GROUPS[key])
+        else:
+            pattern = _CUISINE_GROUPS.get(key, re.escape(cuisine))
+            filt["cuisine"] = {"$regex": pattern, "$options": "i"}
     if difficulty and difficulty.lower() not in ("all", ""):
         filt["difficulty"] = {"$regex": re.escape(difficulty), "$options": "i"}
 

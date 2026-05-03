@@ -26,7 +26,7 @@ const CATEGORIES = [
     emoji: "🥗",
     bg: "linear-gradient(135deg,#16a34a,#0f6b31)",
     count: "Nutritious picks",
-    link: "/recipes?q=healthy",
+    link: "/recipes?cuisine=Healthy",
   },
   {
     name: "Quick & Easy",
@@ -47,7 +47,21 @@ const CATEGORIES = [
     emoji: "🍢",
     bg: "linear-gradient(135deg,#0891b2,#0e7490)",
     count: "Light bites",
-    link: "/recipes?q=snack",
+    link: "/recipes?cuisine=Snack",
+  },
+  {
+    name: "Dessert",
+    emoji: "🍰",
+    bg: "linear-gradient(135deg,#db2777,#9d174d)",
+    count: "Sweet treats",
+    link: "/recipes?cuisine=Dessert",
+  },
+  {
+    name: "Seafood",
+    emoji: "🐟",
+    bg: "linear-gradient(135deg,#0369a1,#075985)",
+    count: "Fresh from the sea",
+    link: "/recipes?cuisine=Seafood",
   },
 ];
 
