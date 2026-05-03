@@ -272,7 +272,9 @@ export default function Home() {
                   >
                     <div style={{ fontSize: "2rem", marginBottom: ".35rem" }}>
                       {cat.image
-                        ? <img src={cat.image} alt={cat.name} style={{ width: 38, height: "auto", borderRadius: 3, display: "block", margin: "0 auto" }} />
+                        ? <div style={{ height: "2rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            <img src={cat.image} alt={cat.name} style={{ height: "100%", width: "auto", borderRadius: 3 }} />
+                          </div>
                         : cat.emoji}
                     </div>
                     <div className="fw-bold" style={{ fontSize: ".95rem" }}>{cat.name}</div>
