@@ -163,9 +163,9 @@ export default function Recipes() {
             <p className="text-secondary mb-4">Try requesting one!</p>
             <button
               className="btn btn-primary rounded-pill px-4"
-              onClick={() => { setGenerateName(q); setGenerateModal(true); }}
+              onClick={() => { setGenerateName(q || cuisine); setGenerateModal(true); }}
             >
-              <i className="bi bi-stars me-2"></i>Request "{q || "a recipe"}"
+              <i className="bi bi-stars me-2"></i>Request "{q || cuisine || "a recipe"}"
             </button>
           </div>
         ) : (
