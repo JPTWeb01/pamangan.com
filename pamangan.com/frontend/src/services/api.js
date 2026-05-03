@@ -66,9 +66,9 @@ export const adminApiService = {
   uploadImage: (file) => {
     const form = new FormData();
     form.append("image", file);
-    return adminApi.post("/admin/upload-image", form, {
+    return axios.post("/recipe-upload.php", form, {
       headers: { "Content-Type": "multipart/form-data" },
-    });
+    }).then((res) => res.data);
   },
   deleteRecipe: (id) => adminApi.delete(`/admin/recipes/${id}`),
   createRecipe: (data) => adminApi.post("/admin/recipes", data),
