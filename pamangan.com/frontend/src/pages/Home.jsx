@@ -270,12 +270,10 @@ export default function Home() {
                       e.currentTarget.style.boxShadow = "";
                     }}
                   >
-                    <div style={{ fontSize: "2rem", marginBottom: ".35rem" }}>
+                    <div style={{ height: "2.5rem", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: ".35rem" }}>
                       {cat.image
-                        ? <div style={{ height: "2rem", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <img src={cat.image} alt={cat.name} style={{ height: "100%", width: "auto", borderRadius: 3 }} />
-                          </div>
-                        : cat.emoji}
+                        ? <img src={cat.image} alt={cat.name} style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "contain", borderRadius: 3 }} />
+                        : <span style={{ fontSize: "2rem", lineHeight: 1 }}>{cat.emoji}</span>}
                     </div>
                     <div className="fw-bold" style={{ fontSize: ".95rem" }}>{cat.name}</div>
                     <div style={{ fontSize: ".72rem", opacity: .75 }}>{cat.count}</div>
