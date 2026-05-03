@@ -509,20 +509,6 @@ img { max-width: 100%; height: auto; }
 }
 .spinner-border { color: var(--ph-blue); }
 
-/* ── AI badge ─────────────────────────────────────────────────────────────── */
-.ai-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: linear-gradient(135deg, var(--ph-blue), #6e28d9);
-  color: #fff;
-  font-size: .7rem;
-  font-weight: 700;
-  padding: 3px 10px;
-  border-radius: var(--radius-pill);
-  text-transform: uppercase;
-  letter-spacing: .5px;
-}
 
 /* ── About page ───────────────────────────────────────────────────────────── */
 .tech-stack-item {

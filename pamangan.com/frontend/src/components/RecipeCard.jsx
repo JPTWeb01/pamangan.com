@@ -42,14 +42,6 @@ export default function RecipeCard({ recipe }) {
           {recipe.cuisine && (
             <span className="recipe-card-badge">{recipe.cuisine}</span>
           )}
-          {recipe.source === "ai" && (
-            <span
-              className="ai-badge position-absolute"
-              style={{ bottom: 10, right: 10 }}
-            >
-              <i className="bi bi-stars"></i> AI
-            </span>
-          )}
         </div>
 
         <div className="recipe-card-body">
