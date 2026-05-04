@@ -33,7 +33,7 @@ export default function Navbar() {
       <div className="container">
         {/* Brand */}
         <Link to="/" className="navbar-brand">
-          <img src={logo} alt="Pamangan" style={{ height: 36, width: "auto" }} />
+          <img src={logo} alt="Pamangan" className="navbar-logo" />
         </Link>
 
         {/* Hamburger */}
