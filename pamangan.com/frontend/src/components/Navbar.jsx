@@ -28,7 +28,7 @@ export default function Navbar() {
       className={`navbar navbar-expand-lg sticky-top ${
         scrolled ? "bg-white shadow-sm" : "bg-white border-bottom"
       }`}
-      style={{ transition: "box-shadow .25s" }}
+      style={{ transition: "box-shadow .25s", paddingTop: 0, paddingBottom: 0 }}
     >
       <div className="container">
         {/* Brand */}

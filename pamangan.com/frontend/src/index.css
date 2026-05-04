@@ -104,13 +104,19 @@ img { max-width: 100%; height: auto; }
 }
 
 .navbar-logo {
-  height: 52px;
+  height: 100px;
   width: auto;
+}
+
+@media (max-width: 991px) {
+  .navbar-logo {
+    height: 72px;
+  }
 }
 
 @media (max-width: 576px) {
   .navbar-logo {
-    height: 40px;
+    height: 56px;
   }
 }
 
