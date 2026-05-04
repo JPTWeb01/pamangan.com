@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { adminApiService } from "../services/api";
+import Modal from "../components/Modal";
 
 const DIFFICULTIES = ["Easy", "Medium", "Hard"];
 
@@ -62,6 +63,7 @@ export default function AdminDashboard() {
   const [uploading, setUploading] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [refreshingImage, setRefreshingImage] = useState(null);
+  const [imageModal, setImageModal] = useState(null);
   const navigate = useNavigate();
 
   const logout = useCallback(() => {
@@ -345,7 +347,8 @@ export default function AdminDashboard() {
                         <img
                           src={r.image_url}
                           alt={r.name}
-                          style={{ width: 56, height: 40, objectFit: "cover", borderRadius: 4 }}
+                          onClick={() => setImageModal({ url: r.image_url, name: r.name })}
+                          style={{ width: 56, height: 40, objectFit: "cover", borderRadius: 4, cursor: "zoom-in" }}
                         />
                       ) : (
                         <div
@@ -426,6 +429,18 @@ export default function AdminDashboard() {
           )}
         </>
       )}
+      {/* Image preview modal */}
+      <Modal
+        show={!!imageModal}
+        onClose={() => setImageModal(null)}
+        title={imageModal?.name}
+      >
+        <img
+          src={imageModal?.url}
+          alt={imageModal?.name}
+          style={{ width: "100%", borderRadius: 8, objectFit: "contain", maxHeight: "70vh" }}
+        />
+      </Modal>
     </div>
   );
 }
