@@ -72,6 +72,7 @@ export const adminApiService = {
   },
   deleteRecipe: (id) => adminApi.delete(`/admin/recipes/${id}`),
   createRecipe: (data) => adminApi.post("/admin/recipes", data),
+  refreshImage: (id) => adminApi.post(`/admin/recipes/${id}/refresh-image`),
 };
 
 export default api;

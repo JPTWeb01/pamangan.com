@@ -278,6 +278,13 @@ def create_recipe_manual(data):
     return serialized
 
 
+def refresh_recipe_image(recipe_id):
+    recipe = get_recipe_by_id(recipe_id)
+    if not recipe:
+        return None
+    return _fetch_and_store_image(recipe["id"], recipe["name"], recipe.get("cuisine", ""))
+
+
 def get_similar_recipes(recipe_id, limit=4):
     recipe = get_recipe_by_id(recipe_id)
     if not recipe:

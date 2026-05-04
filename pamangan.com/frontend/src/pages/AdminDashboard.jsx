@@ -61,6 +61,7 @@ export default function AdminDashboard() {
   const [formError, setFormError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [refreshingImage, setRefreshingImage] = useState(null);
   const navigate = useNavigate();
 
   const logout = useCallback(() => {
@@ -115,6 +116,22 @@ export default function AdminDashboard() {
     setShowForm(false);
     setEditId(null);
     setForm(emptyForm);
+  };
+
+  const handleRefreshImage = async (id) => {
+    setRefreshingImage(id);
+    setError("");
+    try {
+      const res = await adminApiService.refreshImage(id);
+      const url = res?.data?.image_url ?? res?.image_url;
+      if (url) {
+        setRecipes((prev) => prev.map((r) => (r.id === id ? { ...r, image_url: url } : r)));
+      }
+    } catch (err) {
+      setError("Image refresh failed: " + err.message);
+    } finally {
+      setRefreshingImage(null);
+    }
   };
 
   const handleDelete = async (id) => {
@@ -311,6 +328,7 @@ export default function AdminDashboard() {
             <table className="table table-hover align-middle">
               <thead className="table-light">
                 <tr>
+                  <th style={{ width: 64 }}>Image</th>
                   <th>Name</th>
                   <th>Cuisine</th>
                   <th>Difficulty</th>
@@ -322,6 +340,21 @@ export default function AdminDashboard() {
               <tbody>
                 {recipes.map((r) => (
                   <tr key={r.id}>
+                    <td>
+                      {r.image_url ? (
+                        <img
+                          src={r.image_url}
+                          alt={r.name}
+                          style={{ width: 56, height: 40, objectFit: "cover", borderRadius: 4 }}
+                        />
+                      ) : (
+                        <div
+                          style={{ width: 56, height: 40, background: "#f3f4f6", borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center" }}
+                        >
+                          <i className="bi bi-image text-secondary" style={{ fontSize: ".9rem" }}></i>
+                        </div>
+                      )}
+                    </td>
                     <td className="fw-medium">{r.name}</td>
                     <td>{r.cuisine}</td>
                     <td>{r.difficulty}</td>
@@ -350,6 +383,17 @@ export default function AdminDashboard() {
                             onClick={() => openEdit(r)}
                           >
                             <i className="bi bi-pencil"></i>
+                          </button>
+                          <button
+                            className="btn btn-outline-secondary btn-sm rounded-pill px-2"
+                            onClick={() => handleRefreshImage(r.id)}
+                            disabled={refreshingImage === r.id}
+                            title="Refresh image from Pexels"
+                          >
+                            {refreshingImage === r.id
+                              ? <span className="spinner-border spinner-border-sm" style={{ width: ".75rem", height: ".75rem" }}></span>
+                              : <i className="bi bi-arrow-clockwise"></i>
+                            }
                           </button>
                           <button
                             className="btn btn-outline-danger btn-sm rounded-pill px-2"

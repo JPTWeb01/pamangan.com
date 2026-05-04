@@ -11,6 +11,7 @@ from services.recipe_service import (
     delete_recipe,
     create_recipe_manual,
     update_recipe,
+    refresh_recipe_image,
 )
 
 admin_bp = Blueprint("admin", __name__)
@@ -92,6 +93,15 @@ def add_recipe():
     except Exception as exc:
         logger.exception("Error creating manual recipe")
         return jsonify({"success": False, "error": "An unexpected error occurred"}), 500
+
+
+@admin_bp.route("/recipes/<recipe_id>/refresh-image", methods=["POST"])
+@token_required
+def refresh_image(recipe_id):
+    image_url = refresh_recipe_image(recipe_id)
+    if image_url:
+        return jsonify({"success": True, "image_url": image_url})
+    return jsonify({"success": False, "error": "Could not fetch image"}), 404
 
 
 @admin_bp.route("/upload-image", methods=["POST"])
