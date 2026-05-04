@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -31,22 +32,8 @@ export default function Navbar() {
     >
       <div className="container">
         {/* Brand */}
-        <Link to="/" className="navbar-brand d-flex align-items-center gap-2">
-          <span
-            style={{
-              background: "linear-gradient(135deg, #0038A8, #CE1126)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
-          >
-            pamangan
-          </span>
-          <span
-            className="badge rounded-pill"
-            style={{ background: "#FCD116", color: "#111", fontSize: ".6rem" }}
-          >
-            .com
-          </span>
+        <Link to="/" className="navbar-brand">
+          <img src={logo} alt="Pamangan" style={{ height: 36, width: "auto" }} />
         </Link>
 
         {/* Hamburger */}
