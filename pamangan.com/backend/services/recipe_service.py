@@ -23,15 +23,27 @@ def _fetch_and_store_image(recipe_id, recipe_name, cuisine="", search_query=None
         query = search_query.strip() if search_query else f"{recipe_name} {cuisine} food dish".strip()
         resp = requests.get(
             "https://api.pexels.com/v1/search",
-            params={"query": query, "per_page": 1, "orientation": "landscape"},
+            params={"query": query, "per_page": 5, "orientation": "landscape"},
             headers={"Authorization": Config.PEXELS_API_KEY},
             timeout=8,
         )
         photos = resp.json().get("photos", []) if resp.ok else []
         if not photos:
             return None
-        image_url = photos[0]["src"]["large"]
-        get_db().recipes.update_one(
+        db = get_db()
+        used_urls = set(
+            r["image_url"]
+            for r in db.recipes.find(
+                {"image_url": {"$regex": r"pexels\.com", "$options": "i"}},
+                {"image_url": 1},
+            )
+            if r.get("image_url")
+        )
+        image_url = next(
+            (p["src"]["large"] for p in photos if p["src"]["large"] not in used_urls),
+            photos[0]["src"]["large"],
+        )
+        db.recipes.update_one(
             {"_id": ObjectId(recipe_id)},
             {"$set": {"image_url": image_url}},
         )
