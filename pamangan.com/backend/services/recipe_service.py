@@ -15,38 +15,76 @@ def _normalize(text):
     return re.sub(r"[^a-z0-9\s]", "", text.lower()).strip()
 
 
-def _fetch_and_store_image(recipe_id, recipe_name, cuisine="", search_query=None):
+def _fetch_pexels_image(recipe_name, cuisine, search_query, used_urls):
     from config import Config
     if not Config.PEXELS_API_KEY:
         return None
     try:
         query = search_query.strip() if search_query else f"{recipe_name} {cuisine} food dish".strip()
+        for page in (1, 2):
+            resp = requests.get(
+                "https://api.pexels.com/v1/search",
+                params={"query": query, "per_page": 15, "page": page, "orientation": "landscape"},
+                headers={"Authorization": Config.PEXELS_API_KEY},
+                timeout=8,
+            )
+            photos = resp.json().get("photos", []) if resp.ok else []
+            url = next(
+                (p["src"]["large"] for p in photos if p["src"]["large"] not in used_urls),
+                None,
+            )
+            if url:
+                return url
+    except Exception:
+        pass
+    return None
+
+
+def _fetch_wikipedia_image(recipe_name):
+    try:
         resp = requests.get(
-            "https://api.pexels.com/v1/search",
-            params={"query": query, "per_page": 5, "orientation": "landscape"},
-            headers={"Authorization": Config.PEXELS_API_KEY},
+            "https://en.wikipedia.org/w/api.php",
+            params={
+                "action": "query",
+                "titles": recipe_name,
+                "prop": "pageimages",
+                "pithumbsize": 800,
+                "format": "json",
+                "redirects": 1,
+            },
             timeout=8,
+            headers={"User-Agent": "pamangan.com/1.0 (recipe platform)"},
         )
-        photos = resp.json().get("photos", []) if resp.ok else []
-        if not photos:
-            return None
+        pages = resp.json().get("query", {}).get("pages", {})
+        for page in pages.values():
+            thumb = page.get("thumbnail", {}).get("source")
+            if thumb:
+                return thumb
+    except Exception:
+        pass
+    return None
+
+
+def _fetch_and_store_image(recipe_id, recipe_name, cuisine="", search_query=None):
+    try:
         db = get_db()
         used_urls = set(
             r["image_url"]
             for r in db.recipes.find(
-                {"image_url": {"$regex": r"pexels\.com", "$options": "i"}},
+                {"image_url": {"$exists": True, "$ne": None}},
                 {"image_url": 1},
             )
             if r.get("image_url")
         )
-        image_url = next(
-            (p["src"]["large"] for p in photos if p["src"]["large"] not in used_urls),
-            photos[0]["src"]["large"],
+        image_url = (
+            _fetch_pexels_image(recipe_name, cuisine, search_query, used_urls)
+            or _fetch_wikipedia_image(recipe_name)
         )
-        db.recipes.update_one(
-            {"_id": ObjectId(recipe_id)},
-            {"$set": {"image_url": image_url}},
-        )
+        if image_url:
+            db.recipes.update_one(
+                {"_id": ObjectId(recipe_id)},
+                {"$set": {"image_url": image_url}},
+            )
         return image_url
     except Exception:
         return None
