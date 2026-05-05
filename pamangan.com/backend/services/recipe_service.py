@@ -251,11 +251,15 @@ def get_categories():
     return [{"name": r["_id"], "count": r["count"]} for r in db.recipes.aggregate(pipeline)]
 
 
-def get_all_recipes_admin(page=1, limit=20):
+def get_all_recipes_admin(page=1, limit=20, q=""):
     db = get_db()
     skip = (page - 1) * limit
-    cursor = db.recipes.find().skip(skip).limit(limit).sort("created_at", -1)
-    total = db.recipes.count_documents({})
+    filt = {}
+    if q and q.strip():
+        pattern = {"$regex": re.escape(q.strip()), "$options": "i"}
+        filt["$or"] = [{"name": pattern}, {"cuisine": pattern}, {"tags": pattern}]
+    cursor = db.recipes.find(filt).skip(skip).limit(limit).sort("created_at", -1)
+    total = db.recipes.count_documents(filt)
     return {
         "recipes": [serialize_recipe(r) for r in cursor],
         "total": total,

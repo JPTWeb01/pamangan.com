@@ -60,8 +60,8 @@ adminApi.interceptors.response.use(
 export const adminApiService = {
   login: (username, password) =>
     adminApi.post("/admin/login", { username, password }),
-  listRecipes: (page = 1, limit = 20) =>
-    adminApi.get("/admin/recipes", { params: { page, limit } }),
+  listRecipes: (page = 1, limit = 20, q = "") =>
+    adminApi.get("/admin/recipes", { params: { page, limit, ...(q ? { q } : {}) } }),
   updateRecipe: (id, data) => adminApi.patch(`/admin/recipes/${id}`, data),
   uploadImage: (file) => {
     const form = new FormData();

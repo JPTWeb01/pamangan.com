@@ -51,6 +51,8 @@ function buildPayload(form) {
 
 export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState("recipes");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
   const [recipes, setRecipes] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -73,11 +75,16 @@ export default function AdminDashboard() {
     navigate("/manage/login");
   }, [navigate]);
 
+  useEffect(() => {
+    const t = setTimeout(() => { setDebouncedQuery(searchQuery); setPage(1); }, 400);
+    return () => clearTimeout(t);
+  }, [searchQuery]);
+
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
-      const res = await adminApiService.listRecipes(page, 20);
+      const res = await adminApiService.listRecipes(page, 20, debouncedQuery);
       const data = res?.data ?? res;
       setRecipes(data?.recipes ?? []);
       setTotal(data?.total ?? 0);
@@ -91,7 +98,7 @@ export default function AdminDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [page, logout]);
+  }, [page, debouncedQuery, logout]);
 
   useEffect(() => {
     if (!localStorage.getItem("adminToken")) {
@@ -238,17 +245,35 @@ export default function AdminDashboard() {
       {/* ── Recipes ── */}
       {activeSection === "recipes" && (
         <div>
-          <div className="d-flex justify-content-between align-items-center mb-4">
+          <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
             <div>
               <h5 className="fw-bold mb-0">Recipes</h5>
-              <small className="text-secondary">{total} total</small>
+              <small className="text-secondary">
+                {debouncedQuery ? `${total} result${total !== 1 ? "s" : ""} for "${debouncedQuery}"` : `${total} total`}
+              </small>
             </div>
-            <button
-              className="btn btn-primary btn-sm rounded-pill px-3"
-              onClick={showForm ? closeForm : openCreate}
-            >
-              <i className="bi bi-plus-lg me-1"></i>{showForm ? "Cancel" : "Add Recipe"}
-            </button>
+            <div className="d-flex gap-2 align-items-center flex-wrap">
+              <div className="position-relative">
+                <i
+                  className="bi bi-search position-absolute top-50 translate-middle-y"
+                  style={{ left: 12, color: "#9ca3af", fontSize: ".82rem", pointerEvents: "none" }}
+                ></i>
+                <input
+                  type="search"
+                  className="form-control form-control-sm rounded-pill"
+                  placeholder="Search by name, cuisine, tag…"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  style={{ paddingLeft: 34, minWidth: 240 }}
+                />
+              </div>
+              <button
+                className="btn btn-primary btn-sm rounded-pill px-3"
+                onClick={showForm ? closeForm : openCreate}
+              >
+                <i className="bi bi-plus-lg me-1"></i>{showForm ? "Cancel" : "Add Recipe"}
+              </button>
+            </div>
           </div>
 
           {/* Create / Edit Form */}
@@ -381,6 +406,15 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody>
+                      {recipes.length === 0 && (
+                        <tr>
+                          <td colSpan={7} className="text-center py-5 text-secondary">
+                            {debouncedQuery
+                              ? <><i className="bi bi-search d-block mb-2" style={{ fontSize: "1.5rem" }}></i>No recipes found for "<strong>{debouncedQuery}</strong>"</>
+                              : "No recipes yet."}
+                          </td>
+                        </tr>
+                      )}
                       {recipes.map((r) => (
                         <tr key={r.id}>
                           <td>

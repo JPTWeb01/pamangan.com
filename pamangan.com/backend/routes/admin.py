@@ -58,7 +58,8 @@ def list_recipes():
     from routes.api import _int_param
     page = _int_param(request.args.get("page"), 1, minimum=1)
     limit = _int_param(request.args.get("limit"), 20, maximum=100)
-    return jsonify({"success": True, "data": get_all_recipes_admin(page, limit)})
+    q = request.args.get("q", "").strip()
+    return jsonify({"success": True, "data": get_all_recipes_admin(page, limit, q)})
 
 
 @admin_bp.route("/recipes/<recipe_id>", methods=["PATCH"])
