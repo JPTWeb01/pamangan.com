@@ -40,7 +40,7 @@ def _fetch_pexels_image(recipe_name, cuisine, search_query, used_urls):
     return None
 
 
-def _fetch_wikipedia_image(recipe_name):
+def _fetch_wikipedia_image(recipe_name, used_urls=None):
     try:
         resp = requests.get(
             "https://en.wikipedia.org/w/api.php",
@@ -58,7 +58,7 @@ def _fetch_wikipedia_image(recipe_name):
         pages = resp.json().get("query", {}).get("pages", {})
         for page in pages.values():
             thumb = page.get("thumbnail", {}).get("source")
-            if thumb:
+            if thumb and (used_urls is None or thumb not in used_urls):
                 return thumb
     except Exception:
         pass
@@ -78,7 +78,7 @@ def _fetch_and_store_image(recipe_id, recipe_name, cuisine="", search_query=None
         )
         image_url = (
             _fetch_pexels_image(recipe_name, cuisine, search_query, used_urls)
-            or _fetch_wikipedia_image(recipe_name)
+            or _fetch_wikipedia_image(recipe_name, used_urls)
         )
         if image_url:
             db.recipes.update_one(
