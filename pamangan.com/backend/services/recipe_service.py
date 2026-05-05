@@ -15,12 +15,21 @@ def _normalize(text):
     return re.sub(r"[^a-z0-9\s]", "", text.lower()).strip()
 
 
+def _clean_name_for_search(name):
+    # Strip parenthetical variants: "Pinakbet (Squash)" → "Pinakbet Squash"
+    return re.sub(r"[()]", "", name).strip()
+
+
 def _fetch_pexels_image(recipe_name, cuisine, search_query, used_urls):
     from config import Config
     if not Config.PEXELS_API_KEY:
         return None
     try:
-        query = search_query.strip() if search_query else f"{recipe_name} {cuisine} food dish".strip()
+        if search_query:
+            query = search_query.strip()
+        else:
+            clean = _clean_name_for_search(recipe_name)
+            query = f"{clean} {cuisine} recipe food photography".strip()
         for page in (1, 2):
             resp = requests.get(
                 "https://api.pexels.com/v1/search",
@@ -324,7 +333,23 @@ def refresh_recipe_image(recipe_id):
     recipe = get_recipe_by_id(recipe_id)
     if not recipe:
         return None
-    return _fetch_and_store_image(recipe["id"], recipe["name"], recipe.get("cuisine", ""))
+    db = get_db()
+    used_urls = set(
+        r["image_url"]
+        for r in db.recipes.find(
+            {"image_url": {"$exists": True, "$ne": None}},
+            {"image_url": 1},
+        )
+        if r.get("image_url")
+    )
+    # Only use Pexels on manual refresh — Wikipedia can return non-food images
+    image_url = _fetch_pexels_image(recipe["name"], recipe.get("cuisine", ""), None, used_urls)
+    if image_url:
+        db.recipes.update_one(
+            {"_id": ObjectId(recipe["id"])},
+            {"$set": {"image_url": image_url}},
+        )
+    return image_url
 
 
 def get_similar_recipes(recipe_id, limit=4):
