@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import RecipeCard from "../components/RecipeCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import GroceryModal from "../components/GroceryModal";
 import NutritionModal from "../components/NutritionModal";
 import HistoryModal from "../components/HistoryModal";
+import { RecipePDFDocument } from "../components/RecipePDF";
 import { recipeApi } from "../services/api";
 
 export default function RecipeDetail() {
@@ -161,6 +163,21 @@ export default function RecipeDetail() {
                 <i className={`bi ${addedToPlanner ? "bi-check2" : "bi-calendar-plus"} me-2`}></i>
                 {addedToPlanner ? "Added!" : "Add to Planner"}
               </button>
+              <PDFDownloadLink
+                document={<RecipePDFDocument recipe={recipe} />}
+                fileName={`${recipe.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.pdf`}
+                style={{ textDecoration: "none" }}
+              >
+                {({ loading: pdfLoading }) => (
+                  <span
+                    className="btn btn-sm rounded-pill fw-semibold px-3"
+                    style={{ background: "#e0f2fe", color: "#0369a1" }}
+                  >
+                    <i className={`bi ${pdfLoading ? "bi-hourglass-split" : "bi-download"} me-2`}></i>
+                    {pdfLoading ? "Preparing…" : "Download Recipe"}
+                  </span>
+                )}
+              </PDFDownloadLink>
             </div>
 
             {/* Ingredients */}

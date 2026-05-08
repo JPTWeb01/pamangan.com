@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import Modal from "./Modal";
 import LoadingSpinner from "./LoadingSpinner";
 import { aiApi } from "../services/api";
+import { GroceryPDFDocument } from "./GroceryPDF";
 
 export default function GroceryModal({ show, onClose, recipeIds, recipeNames }) {
   const [data, setData] = useState(null);
@@ -52,9 +54,23 @@ export default function GroceryModal({ show, onClose, recipeIds, recipeNames }) 
       }
       footer={
         data && (
-          <button className="btn btn-sm btn-outline-primary rounded-pill" onClick={handlePrint}>
-            <i className="bi bi-printer me-1"></i>Print
-          </button>
+          <div className="d-flex gap-2">
+            <button className="btn btn-sm btn-outline-secondary rounded-pill" onClick={handlePrint}>
+              <i className="bi bi-printer me-1"></i>Print
+            </button>
+            <PDFDownloadLink
+              document={<GroceryPDFDocument grouped={data.grouped} recipeNames={recipeNames} />}
+              fileName="grocery-list.pdf"
+              style={{ textDecoration: "none" }}
+            >
+              {({ loading: pdfLoading }) => (
+                <span className="btn btn-sm btn-primary rounded-pill">
+                  <i className={`bi ${pdfLoading ? "bi-hourglass-split" : "bi-download"} me-1`}></i>
+                  {pdfLoading ? "Preparing…" : "Download PDF"}
+                </span>
+              )}
+            </PDFDownloadLink>
+          </div>
         )
       }
     >
