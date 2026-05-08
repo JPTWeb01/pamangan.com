@@ -564,6 +564,31 @@ img { max-width: 100%; height: auto; }
   .planner-day-col { margin-bottom: .75rem; }
 }
 
+/* ── Recipe card heart button ──────────────────────────────────────────────── */
+.recipe-card-like {
+  position: absolute;
+  bottom: 54px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.92);
+  border: none;
+  border-radius: 20px;
+  padding: 4px 9px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: .8rem;
+  color: #9ca3af;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .12);
+  transition: transform .15s, color .15s;
+  z-index: 2;
+  line-height: 1;
+}
+.recipe-card-like:hover { transform: scale(1.1); color: #e11d48; }
+.recipe-card-like.liked { color: #e11d48; }
+.recipe-card-like.liked .bi-heart-fill { color: #e11d48; }
+
 /* ── Admin layout ──────────────────────────────────────────────────────────── */
 .admin-shell {
   display: flex;

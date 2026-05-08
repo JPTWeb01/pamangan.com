@@ -11,6 +11,7 @@ from services.recipe_service import (
     get_popular_recipes,
     get_recipes_by_cuisine,
     get_similar_recipes,
+    like_recipe,
 )
 from services.ai_service import generate_grocery_list
 
@@ -62,6 +63,18 @@ def get_recipe(recipe_id):
 @api_bp.route("/recipes/<recipe_id>/similar", methods=["GET"])
 def similar(recipe_id):
     return ok(get_similar_recipes(recipe_id))
+
+
+@api_bp.route("/recipes/<recipe_id>/like", methods=["POST"])
+def like(recipe_id):
+    body = request.get_json(silent=True) or {}
+    action = body.get("action", "like")
+    if action not in ("like", "unlike"):
+        return err("action must be 'like' or 'unlike'")
+    result = like_recipe(recipe_id, action)
+    if result is None:
+        return err("Recipe not found", 404)
+    return ok(result)
 
 
 # ── Search ────────────────────────────────────────────────────────────────────

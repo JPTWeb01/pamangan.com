@@ -352,6 +352,26 @@ def refresh_recipe_image(recipe_id):
     return image_url
 
 
+def like_recipe(recipe_id, action="like"):
+    db = get_db()
+    try:
+        obj_id = ObjectId(recipe_id)
+    except Exception:
+        return None
+    delta = 1 if action == "like" else -1
+    recipe = db.recipes.find_one_and_update(
+        {"_id": obj_id},
+        {"$inc": {"likes": delta}},
+        return_document=True,
+    )
+    if not recipe:
+        return None
+    likes = max(0, recipe.get("likes", 0))
+    if likes != recipe.get("likes", 0):
+        db.recipes.update_one({"_id": obj_id}, {"$set": {"likes": 0}})
+    return {"likes": likes}
+
+
 def get_similar_recipes(recipe_id, limit=4):
     recipe = get_recipe_by_id(recipe_id)
     if not recipe:

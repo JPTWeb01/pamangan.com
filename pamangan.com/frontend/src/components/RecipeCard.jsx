@@ -1,5 +1,22 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { recipeApi } from "../services/api";
+
+const LIKED_KEY = "pamangan_liked";
+
+function getLiked() {
+  try { return JSON.parse(localStorage.getItem(LIKED_KEY) || "[]"); }
+  catch { return []; }
+}
+
+function toggleStored(id) {
+  const liked = getLiked();
+  const idx = liked.indexOf(id);
+  if (idx === -1) { liked.push(id); }
+  else { liked.splice(idx, 1); }
+  localStorage.setItem(LIKED_KEY, JSON.stringify(liked));
+  return idx === -1;
+}
 
 function Stars({ rating }) {
   const full = Math.floor(rating);
@@ -23,12 +40,31 @@ function difficultyClass(d) {
 }
 
 export default function RecipeCard({ recipe }) {
+  const [liked, setLiked] = useState(() => getLiked().includes(recipe.id));
+  const [likes, setLikes] = useState(recipe.likes || 0);
+
   const imgSrc =
     recipe.image_url ||
     `https://picsum.photos/seed/${recipe.id}/400/300`;
 
+  const handleLike = useCallback(async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const nowLiked = toggleStored(recipe.id);
+    setLiked(nowLiked);
+    setLikes((n) => Math.max(0, n + (nowLiked ? 1 : -1)));
+    try {
+      const res = await recipeApi.like(recipe.id, nowLiked ? "like" : "unlike");
+      if (res?.data?.likes !== undefined) setLikes(res.data.likes);
+    } catch {
+      toggleStored(recipe.id);
+      setLiked(!nowLiked);
+      setLikes((n) => Math.max(0, n + (nowLiked ? -1 : 1)));
+    }
+  }, [recipe.id]);
+
   return (
-    <div className="recipe-card h-100">
+    <div className="recipe-card h-100" style={{ position: "relative" }}>
       <Link to={`/recipe/${recipe.id}`} className="text-decoration-none d-flex flex-column h-100">
         <div className="recipe-card-img-wrapper">
           <img
@@ -87,6 +123,16 @@ export default function RecipeCard({ recipe }) {
           </div>
         </div>
       </Link>
+
+      {/* Heart button — outside Link so clicks don't navigate */}
+      <button
+        className={`recipe-card-like${liked ? " liked" : ""}`}
+        onClick={handleLike}
+        aria-label={liked ? "Unlike recipe" : "Like recipe"}
+      >
+        <i className={`bi ${liked ? "bi-heart-fill" : "bi-heart"}`}></i>
+        {likes > 0 && <span>{likes}</span>}
+      </button>
     </div>
   );
 }

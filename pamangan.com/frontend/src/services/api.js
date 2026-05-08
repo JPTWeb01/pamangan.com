@@ -24,6 +24,7 @@ export const recipeApi = {
   generate: (name) => api.post("/generate", { name }),
   popular: (limit = 8) => api.get("/popular", { params: { limit } }),
   byCategory: (cuisine, params) => api.get(`/cuisine/${cuisine}`, { params }),
+  like: (id, action) => api.post(`/recipes/${id}/like`, { action }),
 };
 
 export const aiApi = {
