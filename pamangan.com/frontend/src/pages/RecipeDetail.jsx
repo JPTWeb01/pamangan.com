@@ -132,52 +132,49 @@ export default function RecipeDetail() {
               </div>
             </div>
 
-            {/* AI Action buttons */}
-            <div className="d-flex flex-wrap gap-2 mb-4">
-              <button
-                className="btn btn-sm rounded-pill fw-semibold px-3"
-                style={{ background: "var(--ph-blue-light)", color: "var(--ph-blue)" }}
-                onClick={() => setModal("grocery")}
-              >
-                <i className="bi bi-cart3 me-2"></i>Grocery List
-              </button>
-              <button
-                className="btn btn-sm rounded-pill fw-semibold px-3"
-                style={{ background: "#d1fae5", color: "#065f46" }}
-                onClick={() => setModal("nutrition")}
-              >
-                <i className="bi bi-bar-chart-fill me-2"></i>Nutrition Info
-              </button>
-              <button
-                className="btn btn-sm rounded-pill fw-semibold px-3"
-                style={{ background: "#ede9fe", color: "#6d28d9" }}
-                onClick={() => setModal("history")}
-              >
-                <i className="bi bi-book me-2"></i>Food History
-              </button>
-              <button
-                className="btn btn-sm rounded-pill fw-semibold px-3"
-                style={{ background: "#fef3c7", color: "#92400e" }}
-                onClick={addToPlanner}
-              >
-                <i className={`bi ${addedToPlanner ? "bi-check2" : "bi-calendar-plus"} me-2`}></i>
-                {addedToPlanner ? "Added!" : "Add to Planner"}
-              </button>
-              <PDFDownloadLink
-                document={<RecipePDFDocument recipe={recipe} />}
-                fileName={`${recipe.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.pdf`}
-                style={{ textDecoration: "none" }}
-              >
-                {({ loading: pdfLoading }) => (
-                  <span
-                    className="btn btn-sm rounded-pill fw-semibold px-3"
-                    style={{ background: "#e0f2fe", color: "#0369a1" }}
-                  >
-                    <i className={`bi ${pdfLoading ? "bi-hourglass-split" : "bi-download"} me-2`}></i>
-                    {pdfLoading ? "Preparing…" : "Download Recipe"}
-                  </span>
-                )}
-              </PDFDownloadLink>
+            {/* Action cards */}
+            <div className="row g-2 mb-4">
+              {[
+                { key: "grocery",   icon: "bi-cart3",          label: "Grocery List",  desc: "Get a shopping list",   color: "#0038A8", bg: "var(--ph-blue-light)", action: () => setModal("grocery") },
+                { key: "nutrition", icon: "bi-bar-chart-fill", label: "Nutrition Info", desc: "Calories & macros",    color: "#16a34a", bg: "#d1fae5",              action: () => setModal("nutrition") },
+                { key: "history",   icon: "bi-book",           label: "Food History",  desc: "Cultural background",   color: "#7c3aed", bg: "#ede9fe",              action: () => setModal("history") },
+                { key: "planner",
+                  icon:  addedToPlanner ? "bi-check2-circle" : "bi-calendar-plus",
+                  label: addedToPlanner ? "Added!" : "Meal Planner",
+                  desc:  "Plan your week",
+                  color: "#d97706", bg: "#fef3c7",
+                  action: addToPlanner },
+              ].map((item) => (
+                <div key={item.key} className="col-6 col-sm">
+                  <button className="recipe-action-card" onClick={item.action}>
+                    <div className="recipe-action-icon" style={{ background: item.bg, color: item.color }}>
+                      <i className={`bi ${item.icon}`}></i>
+                    </div>
+                    <div className="recipe-action-label">{item.label}</div>
+                    <div className="recipe-action-desc">{item.desc}</div>
+                  </button>
+                </div>
+              ))}
+
+              {/* Download PDF card */}
+              <div className="col-6 col-sm">
+                <PDFDownloadLink
+                  document={<RecipePDFDocument recipe={recipe} />}
+                  fileName={`${recipe.name.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.pdf`}
+                  className="recipe-action-card"
+                  style={{ textDecoration: "none" }}
+                >
+                  {({ loading: pdfLoading }) => (
+                    <>
+                      <div className="recipe-action-icon" style={{ background: "#e0f2fe", color: "#0369a1" }}>
+                        <i className={`bi ${pdfLoading ? "bi-hourglass-split" : "bi-download"}`}></i>
+                      </div>
+                      <div className="recipe-action-label">{pdfLoading ? "Preparing…" : "Download"}</div>
+                      <div className="recipe-action-desc">Save as PDF</div>
+                    </>
+                  )}
+                </PDFDownloadLink>
+              </div>
             </div>
 
             {/* Ingredients */}

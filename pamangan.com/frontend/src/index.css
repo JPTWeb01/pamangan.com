@@ -564,6 +564,53 @@ img { max-width: 100%; height: auto; }
   .planner-day-col { margin-bottom: .75rem; }
 }
 
+/* ── Recipe action cards (Grocery, Nutrition, etc.) ───────────────────────── */
+.recipe-action-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 14px 10px;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  text-decoration: none;
+}
+.recipe-action-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: transparent;
+  color: var(--text-primary);
+}
+.recipe-action-card:active { transform: translateY(-1px); }
+.recipe-action-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+  flex-shrink: 0;
+}
+.recipe-action-label {
+  font-weight: 600;
+  font-size: .82rem;
+  line-height: 1.2;
+  margin-bottom: 3px;
+}
+.recipe-action-desc {
+  font-size: .72rem;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
 /* ── Recipe card heart button ──────────────────────────────────────────────── */
 .recipe-card-like {
   position: absolute;
