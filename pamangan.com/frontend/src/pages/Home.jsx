@@ -76,7 +76,7 @@ const FEATURES = [
   {
     icon: "bi-cart3",
     label: "Grocery List",
-    desc: "Combine ingredients from multiple recipes",
+    desc: "Open any recipe and tap 'Grocery List' to get a ready-to-shop ingredient list",
     color: "#0038A8",
     bg: "var(--ph-blue-light)",
     to: null,
@@ -85,7 +85,7 @@ const FEATURES = [
   {
     icon: "bi-bar-chart-fill",
     label: "Nutrition Info",
-    desc: "AI-estimated calories & macros",
+    desc: "View calorie counts, protein, carbs, and fat for any recipe you open",
     color: "#16a34a",
     bg: "#d1fae5",
     to: null,
@@ -94,7 +94,7 @@ const FEATURES = [
   {
     icon: "bi-book",
     label: "Food History",
-    desc: "Cultural stories behind every dish",
+    desc: "Learn the cultural origin and story behind any dish you cook",
     color: "#7c3aed",
     bg: "#ede9fe",
     to: null,
@@ -103,7 +103,7 @@ const FEATURES = [
   {
     icon: "bi-calendar3",
     label: "Meal Planner",
-    desc: "Plan your entire week",
+    desc: "Schedule your breakfast, lunch, and dinner for the whole week",
     color: "#d97706",
     bg: "#fef3c7",
     to: "/meal-planner",
