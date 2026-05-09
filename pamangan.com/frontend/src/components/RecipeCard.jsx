@@ -64,7 +64,7 @@ export default function RecipeCard({ recipe }) {
   }, [recipe.id]);
 
   return (
-    <div className="recipe-card h-100" style={{ position: "relative" }}>
+    <div className="recipe-card h-100">
       <Link to={`/recipe/${recipe.id}`} className="text-decoration-none d-flex flex-column h-100">
         <div className="recipe-card-img-wrapper">
           <img
@@ -78,6 +78,15 @@ export default function RecipeCard({ recipe }) {
           {recipe.cuisine && (
             <span className="recipe-card-badge">{recipe.cuisine}</span>
           )}
+          {/* Heart inside image wrapper — position: relative already set there */}
+          <button
+            className={`recipe-card-like${liked ? " liked" : ""}`}
+            onClick={handleLike}
+            aria-label={liked ? "Unlike recipe" : "Like recipe"}
+          >
+            <i className={`bi ${liked ? "bi-heart-fill" : "bi-heart"}`}></i>
+            {likes > 0 && <span>{likes}</span>}
+          </button>
         </div>
 
         <div className="recipe-card-body">
@@ -123,16 +132,6 @@ export default function RecipeCard({ recipe }) {
           </div>
         </div>
       </Link>
-
-      {/* Heart button — outside Link so clicks don't navigate */}
-      <button
-        className={`recipe-card-like${liked ? " liked" : ""}`}
-        onClick={handleLike}
-        aria-label={liked ? "Unlike recipe" : "Like recipe"}
-      >
-        <i className={`bi ${liked ? "bi-heart-fill" : "bi-heart"}`}></i>
-        {likes > 0 && <span>{likes}</span>}
-      </button>
     </div>
   );
 }
