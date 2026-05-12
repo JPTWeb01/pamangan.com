@@ -12,7 +12,8 @@ An AI-powered recipe platform celebrating Filipino cuisine and global flavors. D
 - **AI Nutrition Info** — Estimate nutritional breakdown per serving
 - **AI Food History** — Get cultural and historical background for any dish
 - **Meal Planner** — Plan breakfast, lunch, and dinner for each day of the week
-- **Categories & Cuisines** — Browse recipes by category or cuisine type
+- **Categories & Cuisines** — Browse recipes by category (Healthy, Snack, Dessert, Seafood, Vegetarian) or cuisine type (including grouped Asian sub-cuisines)
+- **Admin Dashboard** — Password-protected admin panel with WordPress-style sidebar layout; supports recipe create, edit, delete, image refresh, image upload, and server-side search across name, cuisine, and tags
 
 ---
 
@@ -68,7 +69,8 @@ pamangan.com/          ← repository root
     │   ├── models/
     │   │   └── recipe.py           # Recipe data model
     │   ├── routes/
-    │   │   └── api.py              # All API endpoints
+    │   │   ├── api.py              # Public API endpoints
+    │   │   └── admin.py            # Admin-only endpoints (JWT-protected)
     │   └── services/
     │       ├── ai_service.py       # Gemini & Groq AI calls
     │       ├── db_service.py       # MongoDB connection
@@ -95,7 +97,10 @@ pamangan.com/          ← repository root
             │   ├── RecipeDetail.jsx
             │   ├── Categories.jsx
             │   ├── MealPlanner.jsx
-            │   └── About.jsx
+            │   ├── About.jsx
+            │   ├── AdminLogin.jsx
+            │   ├── AdminLayout.jsx
+            │   └── AdminDashboard.jsx
             ├── context/
             │   └── AppContext.js
             └── services/
@@ -155,7 +160,11 @@ cp .env.example .env
 | `DB_NAME` | Database name (default: `pamangan`) |
 | `GEMINI_API_KEY` | Google Gemini API key |
 | `GROQ_API_KEY` | Groq API key (fallback) |
+| `PEXELS_API_KEY` | Pexels API key for recipe images |
+| `IMGBB_API_KEY` | ImgBB API key for admin image uploads |
 | `SECRET_KEY` | Flask secret key (use a long random string) |
+| `ADMIN_USERNAME` | Admin dashboard username |
+| `ADMIN_PASSWORD` | Admin dashboard password |
 | `DEBUG` | Set to `True` for development |
 | `FLASK_ENV` | `development` or `production` |
 | `PORT` | Port for the Flask server (default: `5000`) |
@@ -239,7 +248,11 @@ The app will be available at `http://localhost:3000`.
    - `MONGODB_URI` → your Atlas connection string
    - `GEMINI_API_KEY` → your Gemini API key
    - `GROQ_API_KEY` → your Groq API key
+   - `PEXELS_API_KEY` → your Pexels API key
+   - `IMGBB_API_KEY` → your ImgBB API key
    - `SECRET_KEY` → a long random string
+   - `ADMIN_USERNAME` → admin panel username
+   - `ADMIN_PASSWORD` → admin panel password
    - `DEBUG` → `False`
    - `FLASK_ENV` → `production`
    - `CORS_ORIGINS` → `https://yourdomain.com`
@@ -296,6 +309,8 @@ MongoDB Atlas                 → Database
 
 ## API Endpoints
 
+### Public
+
 | Method | Endpoint | Description |
 |---|---|---|
 | GET | `/api/recipes` | List / search recipes (`?q=`, `?cuisine=`, `?difficulty=`, `?page=`, `?limit=`) |
@@ -310,6 +325,18 @@ MongoDB Atlas                 → Database
 | GET | `/api/categories` | Get all recipe categories |
 | GET | `/api/cuisine/:cuisine` | Get recipes by cuisine |
 | GET | `/health` | Health check |
+
+### Admin (JWT-protected)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/admin/login` | Authenticate and receive a JWT token |
+| GET | `/api/admin/recipes` | List all recipes with server-side search (`?q=`, `?page=`, `?limit=`) |
+| POST | `/api/admin/recipes` | Create a recipe manually |
+| PATCH | `/api/admin/recipes/:id` | Update a recipe |
+| DELETE | `/api/admin/recipes/:id` | Delete a recipe |
+| POST | `/api/admin/recipes/:id/refresh-image` | Fetch a fresh image from Pexels |
+| POST | `/api/admin/upload-image` | Upload an image to ImgBB |
 
 ---
 
