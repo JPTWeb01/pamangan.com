@@ -23,7 +23,8 @@ An AI-powered recipe platform celebrating Filipino and global cuisine. Search an
 - **Filipino food discovery** — Browse curated recipes for classic dishes like Adobo, Sinigang, Kare-Kare, and more.
 - **On-demand recipe generation** — Ask for any recipe; Gemini generates it and it's saved permanently for the next user who searches.
 - **Meal planning** — Build a weekly meal plan and export a consolidated grocery list as a PDF.
-- **Nutrition lookup** — Get estimated nutritional info for any recipe.
+- **Nutrition lookup** — Get AI-estimated nutritional info per serving for any recipe.
+- **Cultural history** — Learn the origin story, regional variations, and cultural significance of any dish.
 - **Admin curation** — Manage the recipe database through a protected admin dashboard.
 
 ---
@@ -31,10 +32,12 @@ An AI-powered recipe platform celebrating Filipino and global cuisine. Search an
 ## Features
 
 - **Database-first search** — MongoDB text index is checked before any AI call; AI is only invoked on a cache miss.
-- **Automatic AI fallback** — Gemini (primary) → Groq llama-3.1-8b (fallback). Failures are silent to the user.
-- **PDF export** — Download individual recipes or full grocery lists as formatted PDFs.
+- **Automatic AI fallback** — Gemini `gemini-2.0-flash` (primary) → Groq `llama-3.1-8b-instant` (fallback). Failures are silent to the user.
+- **PDF export** — Download individual recipes or full grocery lists as formatted PDFs via `@react-pdf/renderer`.
 - **Meal planner** — Weekly planner persisted in `localStorage`.
-- **Admin panel** — JWT-authenticated dashboard at `/manage/dashboard` for CRUD on all recipes.
+- **Like / popularity system** — Users can like recipes; popular recipes are surfaced via `GET /api/popular`.
+- **Image management** — Admin can refresh recipe images from Pexels or upload custom images via ImgBB.
+- **Admin panel** — JWT-authenticated dashboard at `/manage/dashboard` for full CRUD on all recipes.
 - **Security headers** — `X-Frame-Options`, `X-Content-Type-Options`, HSTS, CSP, and `Permissions-Policy` on every response.
 - **Health endpoint** — `GET /health` for uptime monitoring.
 
@@ -44,12 +47,15 @@ An AI-powered recipe platform celebrating Filipino and global cuisine. Search an
 
 | Layer | Technology |
 |---|---|
-| Frontend | React 18, Bootstrap 5.3, React Router |
-| Backend | Flask (Python 3), Flask-CORS |
+| Frontend | React 18, React Router v6, Bootstrap 5.3, Axios |
+| PDF generation | @react-pdf/renderer |
+| Backend | Flask 3 (Python 3.11), Flask-CORS, Gunicorn |
 | Database | MongoDB Atlas (pymongo) |
-| AI — Primary | Google Gemini API |
-| AI — Fallback | Groq (llama-3.1-8b) |
-| Backend hosting | Hugging Face Spaces (Docker) |
+| AI — Primary | Google Gemini (`gemini-2.0-flash`) |
+| AI — Fallback | Groq (`llama-3.1-8b-instant`) |
+| Image APIs | Pexels (search), ImgBB (upload) |
+| Auth | PyJWT (HS256, 24-hour tokens) |
+| Backend hosting | Hugging Face Spaces (Docker, port 7860) |
 | Frontend hosting | Hostinger (static files via rsync) |
 | CI/CD | GitHub Actions |
 
@@ -62,17 +68,18 @@ An AI-powered recipe platform celebrating Filipino and global cuisine. Search an
 ```
 pamangan.com/
 ├── backend/
-│   ├── app.py                  # Flask app factory
+│   ├── app.py                  # Flask app factory & security headers
 │   ├── config.py               # Config loaded from environment
-│   ├── wsgi.py                 # WSGI entry point
+│   ├── wsgi.py                 # Gunicorn entry point
 │   ├── seed.py                 # Seeds 8 classic Filipino recipes
-│   ├── Dockerfile              # Container config for HF Spaces
-│   ├── Procfile                # Process declaration
+│   ├── Dockerfile              # Container config for HF Spaces (port 7860)
+│   ├── Procfile                # Heroku-style process declaration
+│   ├── runtime.txt             # Python 3.11
 │   ├── routes/
 │   │   ├── api.py              # Public API routes
 │   │   └── admin.py            # JWT-protected admin routes
 │   ├── services/
-│   │   ├── ai_service.py       # Gemini → Groq AI abstraction
+│   │   ├── ai_service.py       # Gemini → Groq fallback chain
 │   │   ├── recipe_service.py   # Business logic (search, generate, cache)
 │   │   └── db_service.py       # MongoDB connection and queries
 │   └── models/
@@ -86,12 +93,12 @@ pamangan.com/
         ├── context/
         │   └── AppContext.js   # Global state (React Context)
         ├── services/
-        │   └── api.js          # Axios API client
+        │   └── api.js          # Axios API client with JWT support
         ├── components/
         │   ├── Navbar.jsx
         │   ├── Footer.jsx
         │   ├── RecipeCard.jsx
-        │   ├── Modal.jsx       # Custom modal (no Bootstrap JS)
+        │   ├── Modal.jsx       # Custom modal (no Bootstrap JS — avoids VDOM conflicts)
         │   ├── NutritionModal.jsx
         │   ├── HistoryModal.jsx
         │   ├── GroceryModal.jsx
@@ -112,13 +119,47 @@ pamangan.com/
 
 ---
 
+## API Reference
+
+### Public endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/api/recipes` | List recipes (search, cuisine, difficulty, pagination) |
+| `GET` | `/api/recipes/:id` | Get a single recipe |
+| `GET` | `/api/recipes/:id/similar` | Get similar recipes |
+| `POST` | `/api/recipes/:id/like` | Like or unlike a recipe |
+| `POST` | `/api/search` | Text search (DB-first, AI fallback) |
+| `POST` | `/api/generate` | AI-generate a recipe by name |
+| `POST` | `/api/grocery` | AI-generate a grouped grocery list |
+| `POST` | `/api/nutrition` | AI-estimate nutrition info |
+| `POST` | `/api/history` | AI-generate cultural history of a dish |
+| `GET` | `/api/popular` | Top recipes by likes |
+| `GET` | `/api/categories` | List recipe categories |
+| `GET` | `/api/cuisine/:name` | Browse recipes by cuisine |
+| `GET` | `/health` | Health check |
+
+### Admin endpoints (JWT required)
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/api/admin/login` | Get JWT token |
+| `GET` | `/api/admin/recipes` | List all recipes |
+| `POST` | `/api/admin/recipes` | Create a recipe manually |
+| `PATCH` | `/api/admin/recipes/:id` | Update a recipe |
+| `DELETE` | `/api/admin/recipes/:id` | Delete a recipe |
+| `POST` | `/api/admin/recipes/:id/refresh-image` | Fetch a fresh image from Pexels |
+| `POST` | `/api/admin/upload-image` | Upload a custom image to ImgBB |
+
+---
+
 ## Getting Started
 
 ### Prerequisites
 
-- Python 3.10+
+- Python 3.11+
 - Node.js 18+
-- A MongoDB Atlas cluster
+- MongoDB Atlas cluster
 - Google Gemini API key
 - Groq API key (for fallback)
 
@@ -172,6 +213,10 @@ npm start
 | `GEMINI_API_KEY` | Google Gemini API key (primary AI) |
 | `GROQ_API_KEY` | Groq API key (fallback AI) |
 | `SECRET_KEY` | 64-character random string for JWT signing |
+| `ADMIN_USERNAME` | Admin panel login username |
+| `ADMIN_PASSWORD` | Admin panel login password |
+| `PEXELS_API_KEY` | Pexels API key for recipe image search |
+| `IMGBB_API_KEY` | ImgBB API key for custom image uploads |
 | `DEBUG` | `True` for local dev, `False` in production |
 | `FLASK_ENV` | `development` or `production` |
 | `PORT` | Port to bind (default `5000`) |
@@ -183,6 +228,10 @@ DB_NAME=pamangan
 GEMINI_API_KEY=your_gemini_api_key_here
 GROQ_API_KEY=your_groq_api_key_here
 SECRET_KEY=replace-with-a-64-character-random-string
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=your_admin_password_here
+PEXELS_API_KEY=your_pexels_api_key_here
+IMGBB_API_KEY=your_imgbb_api_key_here
 DEBUG=False
 FLASK_ENV=production
 PORT=5000
@@ -201,7 +250,7 @@ REACT_APP_API_URL=http://localhost:5000/api
 REACT_APP_SITE_NAME=pamangan.com
 ```
 
-> **Important:** `REACT_APP_API_URL` for production is defined in `frontend/.env.production`. Do **not** set it as a GitHub Actions secret or variable — doing so will override it with an empty string during the build.
+> **Important:** `REACT_APP_API_URL` for production is defined in `frontend/.env.production` (pointing to the HF Spaces backend). Do **not** set it as a GitHub Actions secret or variable — doing so will override it with an empty string during the build.
 
 ---
 
@@ -209,30 +258,29 @@ REACT_APP_SITE_NAME=pamangan.com
 
 ### Backend — Hugging Face Spaces
 
-The backend is containerized and deployed to HF Space `jptweb01/pamangan-api`.
+The backend runs as a Docker container on HF Space `jptweb01/pamangan-api`. The image uses Python 3.11-slim, runs Gunicorn with 2 workers on port 7860, and executes as a non-root user.
 
 1. Push changes to the backend directory.
-2. The Dockerfile at `backend/Dockerfile` defines the container.
-3. The HF Space rebuilds on push to the linked repo branch.
-4. Live at: `https://jptweb01-pamangan-api.hf.space`
+2. The HF Space rebuilds automatically via the linked GitHub repo.
+3. Live at: `https://jptweb01-pamangan-api.hf.space`
 
 ### Frontend — Hostinger via GitHub Actions
 
-The frontend is built and deployed over SSH using rsync.
+The frontend is built and rsync'd to Hostinger over SSH on every push to `main` that touches `pamangan.com/frontend/**`.
 
 **Required GitHub Secrets:**
 
 | Secret | Value |
 |---|---|
 | `SSH_HOST` | Hostinger server hostname |
-| `SSH_USER` | SSH username |
+| `SSH_USERNAME` | SSH username |
 | `SSH_PRIVATE_KEY` | Private key for SSH auth |
 | `SSH_PORT` | `65002` (Hostinger's non-standard SSH port) |
 | `DEPLOY_PATH` | `/home/<user>/domains/pamangan.com/public_html` |
 
 **Workflow steps:**
 1. `npm ci` — clean install
-2. `npm run build` — production React build
+2. `npm run build` — production React build (uses `frontend/.env.production`)
 3. `rsync` — sync `build/` to the Hostinger document root over SSH
 
 > After deploying, go to **hPanel → Advanced → Cache Manager → Purge All** if the new bundle doesn't load in the browser.
@@ -252,8 +300,8 @@ Browser
   │                 │     └── Text index search (cache hit → return immediately)
   │                 │
   │                 └──▶ AI Layer (cache miss only)
-  │                       ├── Google Gemini  (primary)
-  │                       └── Groq llama-3.1-8b  (fallback)
+  │                       ├── Gemini gemini-2.0-flash  (primary)
+  │                       └── Groq llama-3.1-8b-instant  (fallback)
   │                             └── Auto-save generated recipe → MongoDB
   │
   └──▶ Admin Panel (/manage)
@@ -261,30 +309,30 @@ Browser
 ```
 
 **Data flow for a recipe search:**
-1. User submits a search query from the React frontend.
+1. User submits a query from the React frontend.
 2. Frontend calls `POST /api/search`.
 3. Backend queries MongoDB text index.
 4. **Cache hit** → recipe returned immediately, no AI called.
 5. **Cache miss** → Gemini generates the recipe → saved to MongoDB → returned to user.
-6. Next user searching the same dish hits the cache.
+6. The next user searching the same dish hits the cache.
 
 ---
 
 ## Security
 
 ### Authentication
-- Admin routes are protected by **JWT tokens** issued at `POST /api/admin/login`.
+- Admin routes are protected by **JWT tokens** (HS256, 24-hour expiry) issued at `POST /api/admin/login`.
 - Tokens are stored in `localStorage` on the admin client.
 - Public recipe endpoints require no authentication.
 
 ### Authorization
-- All `/api/admin/*` routes validate the JWT on every request.
+- All `/api/admin/*` routes validate the JWT on every request via a `@token_required` decorator.
 - Regular users have read-only access to public endpoints.
 
 ### API Security
 - **CORS** is restricted to the configured `CORS_ORIGINS` list.
-- Input is validated server-side before any database or AI call.
-- AI prompt construction avoids direct user-string interpolation to reduce prompt injection surface.
+- User input is validated and sanitized server-side before any database or AI call.
+- AI prompts use structured schemas — user strings are not interpolated directly into prompt templates.
 
 ### Response Headers (applied globally)
 
@@ -298,9 +346,9 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains  # production onl
 ```
 
 ### Data Protection
-- MongoDB credentials and API keys are environment variables — never committed to the repo.
-- `.env.example` files are provided with placeholder values only.
-- `SECRET_KEY` should be a cryptographically random 64-character string.
+- All credentials and API keys are environment variables — never committed to the repo.
+- `.env.example` files contain placeholder values only.
+- `SECRET_KEY` must be a cryptographically random 64-character string in production.
 
 ---
 
