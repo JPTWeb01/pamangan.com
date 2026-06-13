@@ -2,6 +2,8 @@
 
 An AI-powered recipe platform celebrating Filipino and global cuisine. Search an ever-growing recipe database or let the AI generate a recipe on demand — every AI-generated result is cached to the database, making the platform smarter over time.
 
+**Live demo:** [pamangan.com](https://pamangan.com)
+
 ---
 
 ## Screenshots
