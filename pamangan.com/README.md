@@ -4,6 +4,18 @@ An AI-powered recipe platform celebrating Filipino and global cuisine. Search an
 
 ---
 
+## Screenshots
+
+| Home | Recipes |
+|---|---|
+| ![Home](docs/screenshots/home.png) | ![Recipes](docs/screenshots/recipes.png) |
+
+| Categories | Meal Planner |
+|---|---|
+| ![Categories](docs/screenshots/categories.png) | ![Meal Planner](docs/screenshots/meal-planner.png) |
+
+---
+
 ## Use Cases
 
 - **Filipino food discovery** — Browse curated recipes for classic dishes like Adobo, Sinigang, Kare-Kare, and more.
