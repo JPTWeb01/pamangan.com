@@ -1,53 +1,65 @@
 # pamangan.com
 
-An AI-powered recipe platform celebrating Filipino cuisine and global flavors. Discover, search, and generate recipes — complete with grocery lists, nutrition estimates, and cultural history — all powered by Google Gemini and Groq.
+An AI-powered recipe platform celebrating Filipino and global cuisine. Search an ever-growing recipe database or let the AI generate a recipe on demand — every AI-generated result is cached to the database, making the platform smarter over time.
+
+**Live demo:** [pamangan.com](https://pamangan.com)
+
+---
+
+## Screenshots
+
+| Home | Recipes |
+|---|---|
+| ![Home](pamangan.com/docs/screenshots/home.png) | ![Recipes](pamangan.com/docs/screenshots/recipes.png) |
+
+| Categories | Meal Planner |
+|---|---|
+| ![Categories](pamangan.com/docs/screenshots/categories.png) | ![Meal Planner](pamangan.com/docs/screenshots/meal-planner.png) |
+
+---
+
+## Use Cases
+
+- **Filipino food discovery** — Browse curated recipes for classic dishes like Adobo, Sinigang, Kare-Kare, and more.
+- **On-demand recipe generation** — Ask for any recipe; Gemini generates it and it's saved permanently for the next user who searches.
+- **Meal planning** — Build a weekly meal plan and export a consolidated grocery list as a PDF.
+- **Nutrition lookup** — Get AI-estimated nutritional info per serving for any recipe.
+- **Cultural history** — Learn the origin story, regional variations, and cultural significance of any dish.
+- **Admin curation** — Manage the recipe database through a protected admin dashboard.
 
 ---
 
 ## Features
 
-- **Recipe Browser** — Search and filter recipes by name, cuisine, and difficulty
-- **AI Recipe Generator** — Generate a full recipe for any dish by name
-- **AI Grocery List** — Combine ingredients from multiple recipes into an organized shopping list
-- **AI Nutrition Info** — Estimate nutritional breakdown per serving
-- **AI Food History** — Get cultural and historical background for any dish
-- **Meal Planner** — Plan breakfast, lunch, and dinner for each day of the week
-- **Categories & Cuisines** — Browse recipes by category (Healthy, Snack, Dessert, Seafood, Vegetarian) or cuisine type (including grouped Asian sub-cuisines)
-- **Admin Dashboard** — Password-protected admin panel with WordPress-style sidebar layout; supports recipe create, edit, delete, image refresh, image upload, and server-side search across name, cuisine, and tags
+- **Database-first search** — MongoDB text index is checked before any AI call; AI is only invoked on a cache miss.
+- **Automatic AI fallback** — Gemini `gemini-2.0-flash` (primary) → Groq `llama-3.1-8b-instant` (fallback). Failures are silent to the user.
+- **PDF export** — Download individual recipes or full grocery lists as formatted PDFs via `@react-pdf/renderer`.
+- **Meal planner** — Weekly planner persisted in `localStorage`.
+- **Like / popularity system** — Users can like recipes; popular recipes are surfaced via `GET /api/popular`.
+- **Image management** — Admin can refresh recipe images from Pexels or upload custom images via ImgBB.
+- **Admin panel** — JWT-authenticated dashboard at `/manage/dashboard` for full CRUD on all recipes.
+- **Security headers** — `X-Frame-Options`, `X-Content-Type-Options`, HSTS, CSP, and `Permissions-Policy` on every response.
+- **Health endpoint** — `GET /health` for uptime monitoring.
 
 ---
 
 ## Tech Stack
 
-### Frontend
-| Technology | Version |
+| Layer | Technology |
 |---|---|
-| React | 18.3 |
-| React Router | 6.24 |
-| Axios | 1.7 |
-| Bootstrap | 5.3 |
-| Bootstrap Icons | 1.11 |
+| Frontend | React 18, React Router v6, Bootstrap 5.3, Axios |
+| PDF generation | @react-pdf/renderer |
+| Backend | Flask 3 (Python 3.11), Flask-CORS, Gunicorn |
+| Database | MongoDB Atlas (pymongo) |
+| AI — Primary | Google Gemini (`gemini-2.0-flash`) |
+| AI — Fallback | Groq (`llama-3.1-8b-instant`) |
+| Image APIs | Pexels (search), ImgBB (upload) |
+| Auth | PyJWT (HS256, 24-hour tokens) |
+| Backend hosting | Hugging Face Spaces (Docker, port 7860) |
+| Frontend hosting | Hostinger (static files via rsync) |
+| CI/CD | GitHub Actions |
 
-### Backend
-| Technology | Version |
-|---|---|
-| Python | 3.x |
-| Flask | 3.0 |
-| Flask-CORS | 4.0 |
-| PyMongo | 4.8 |
-| Gunicorn | 22.0 |
-| python-dotenv | 1.0 |
-
-### Database
-| Technology | Notes |
-|---|---|
-| MongoDB | MongoDB Atlas for production, local for development |
-
-### AI Providers
-| Provider | Model | Role |
-|---|---|---|
-| Google Gemini | gemini-1.5-flash | Primary AI provider |
-| Groq | llama-3.1-8b-instant | Fallback AI provider |
+**Design system:** Filipino flag colors — Blue `#0038A8`, Red `#CE1126`, Yellow `#FCD116`. Defined as CSS variables in `pamangan.com/frontend/src/index.css`.
 
 ---
 
@@ -59,53 +71,92 @@ pamangan.com/          ← repository root
 ├── SECURITY.md
 ├── .gitignore
 └── pamangan.com/
+    ├── LICENSE
+    ├── docs/
+    │   └── screenshots/
     ├── backend/
-    │   ├── app.py                  # Flask app factory
-    │   ├── config.py               # Environment config
+    │   ├── app.py                  # Flask app factory & security headers
+    │   ├── config.py               # Config loaded from environment
     │   ├── wsgi.py                 # Gunicorn entry point
-    │   ├── seed.py                 # Database seed script
-    │   ├── requirements.txt
-    │   ├── .env.example
-    │   ├── models/
-    │   │   └── recipe.py           # Recipe data model
+    │   ├── seed.py                 # Seeds 8 classic Filipino recipes
+    │   ├── Dockerfile              # Container config for HF Spaces (port 7860)
+    │   ├── Procfile                # Heroku-style process declaration
+    │   ├── runtime.txt             # Python 3.11
     │   ├── routes/
-    │   │   ├── api.py              # Public API endpoints
-    │   │   └── admin.py            # Admin-only endpoints (JWT-protected)
-    │   └── services/
-    │       ├── ai_service.py       # Gemini & Groq AI calls
-    │       ├── db_service.py       # MongoDB connection
-    │       └── recipe_service.py   # Recipe business logic
+    │   │   ├── api.py              # Public API routes
+    │   │   └── admin.py            # JWT-protected admin routes
+    │   ├── services/
+    │   │   ├── ai_service.py       # Gemini → Groq fallback chain
+    │   │   ├── recipe_service.py   # Business logic (search, generate, cache)
+    │   │   └── db_service.py       # MongoDB connection and queries
+    │   └── models/
+    │       └── recipe.py           # Recipe schema/model
     └── frontend/
-        ├── package.json
-        ├── .env.example
+        ├── public/
+        │   └── index.html
         └── src/
-            ├── App.js
-            ├── index.js
-            ├── index.css
+            ├── App.js              # Routes and layout
+            ├── index.js            # Entry point
+            ├── context/
+            │   └── AppContext.js   # Global state (React Context)
+            ├── services/
+            │   └── api.js          # Axios API client with JWT support
             ├── components/
             │   ├── Navbar.jsx
             │   ├── Footer.jsx
             │   ├── RecipeCard.jsx
-            │   ├── LoadingSpinner.jsx
-            │   ├── Modal.jsx
-            │   ├── GroceryModal.jsx
+            │   ├── Modal.jsx       # Custom modal (no Bootstrap JS — avoids VDOM conflicts)
             │   ├── NutritionModal.jsx
-            │   └── HistoryModal.jsx
-            ├── pages/
-            │   ├── Home.jsx
-            │   ├── Recipes.jsx
-            │   ├── RecipeDetail.jsx
-            │   ├── Categories.jsx
-            │   ├── MealPlanner.jsx
-            │   ├── About.jsx
-            │   ├── AdminLogin.jsx
-            │   ├── AdminLayout.jsx
-            │   └── AdminDashboard.jsx
-            ├── context/
-            │   └── AppContext.js
-            └── services/
-                └── api.js
+            │   ├── HistoryModal.jsx
+            │   ├── GroceryModal.jsx
+            │   ├── RecipePDF.jsx
+            │   ├── GroceryPDF.jsx
+            │   └── LoadingSpinner.jsx
+            └── pages/
+                ├── Home.jsx
+                ├── Recipes.jsx
+                ├── RecipeDetail.jsx
+                ├── Categories.jsx
+                ├── MealPlanner.jsx
+                ├── About.jsx
+                ├── AdminLogin.jsx
+                ├── AdminLayout.jsx
+                └── AdminDashboard.jsx
 ```
+
+---
+
+## API Reference
+
+### Public endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/api/recipes` | List recipes (search, cuisine, difficulty, pagination) |
+| `GET` | `/api/recipes/:id` | Get a single recipe |
+| `GET` | `/api/recipes/:id/similar` | Get similar recipes |
+| `POST` | `/api/recipes/:id/like` | Like or unlike a recipe |
+| `POST` | `/api/search` | Text search (DB-first, AI fallback) |
+| `POST` | `/api/generate` | AI-generate a recipe by name |
+| `POST` | `/api/grocery` | AI-generate a grouped grocery list |
+| `POST` | `/api/nutrition` | AI-estimate nutrition info |
+| `POST` | `/api/history` | AI-generate cultural history of a dish |
+| `GET` | `/api/popular` | Top recipes by likes |
+| `GET` | `/api/categories` | List recipe categories |
+| `GET` | `/api/cuisine/:name` | Browse recipes by cuisine |
+| `GET` | `/health` | Health check |
+
+### Admin endpoints (JWT required)
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/api/admin/login` | Get JWT token |
+| `GET` | `/api/admin/recipes` | List all recipes |
+| `POST` | `/api/admin/recipes` | Create a recipe manually |
+| `PATCH` | `/api/admin/recipes/:id` | Update a recipe |
+| `DELETE` | `/api/admin/recipes/:id` | Delete a recipe |
+| `POST` | `/api/admin/recipes/:id/refresh-image` | Fetch a fresh image from Pexels |
+| `POST` | `/api/admin/upload-image` | Upload a custom image to ImgBB |
 
 ---
 
@@ -113,234 +164,198 @@ pamangan.com/          ← repository root
 
 ### Prerequisites
 
+- Python 3.11+
 - Node.js 18+
-- Python 3.10+
-- MongoDB (local) or a MongoDB Atlas connection string
-- A [Google Gemini API key](https://aistudio.google.com/) and/or a [Groq API key](https://console.groq.com/)
+- MongoDB Atlas cluster
+- Google Gemini API key
+- Groq API key (for fallback)
 
-### Backend Setup
+### 1. Clone the repo
 
 ```bash
-cd pamangan.com/backend
-
-# Create and activate virtual environment
-python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure environment variables
-cp .env.example .env
-# Edit .env and fill in your values
+git clone https://github.com/JPTWeb01/pamangan.com.git
+cd pamangan.com/pamangan.com
 ```
 
-### Frontend Setup
+### 2. Backend setup
 
 ```bash
-cd pamangan.com/frontend
-
-# Install dependencies
-npm install
-
-# Configure environment variables
+cd backend
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+pip install -r requirements.txt
 cp .env.example .env
-# Edit .env and set REACT_APP_API_URL if needed
+# Fill in your values in .env
+python app.py
+# Runs on http://localhost:5000
+```
+
+Seed the database with 8 starter recipes:
+
+```bash
+python seed.py
+```
+
+### 3. Frontend setup
+
+```bash
+cd ../frontend
+npm install
+cp .env.example .env
+# Set REACT_APP_API_URL=http://localhost:5000/api
+npm start
+# Runs on http://localhost:3000 (proxied to :5000)
 ```
 
 ---
 
 ## Environment Variables
 
-### Backend (`pamangan.com/backend/.env`)
+### Backend — `pamangan.com/backend/.env`
 
-| Variable | Description |
+| Variable | Purpose |
 |---|---|
-| `MONGODB_URI` | MongoDB connection string |
-| `DB_NAME` | Database name (default: `pamangan`) |
-| `GEMINI_API_KEY` | Google Gemini API key |
-| `GROQ_API_KEY` | Groq API key (fallback) |
-| `PEXELS_API_KEY` | Pexels API key for recipe images |
-| `IMGBB_API_KEY` | ImgBB API key for admin image uploads |
-| `SECRET_KEY` | Flask secret key (use a long random string) |
-| `ADMIN_USERNAME` | Admin dashboard username |
-| `ADMIN_PASSWORD` | Admin dashboard password |
-| `DEBUG` | Set to `True` for development |
+| `MONGODB_URI` | MongoDB Atlas connection string |
+| `DB_NAME` | Database name (e.g. `pamangan`) |
+| `GEMINI_API_KEY` | Google Gemini API key (primary AI) |
+| `GROQ_API_KEY` | Groq API key (fallback AI) |
+| `SECRET_KEY` | 64-character random string for JWT signing |
+| `ADMIN_USERNAME` | Admin panel login username |
+| `ADMIN_PASSWORD` | Admin panel login password |
+| `PEXELS_API_KEY` | Pexels API key for recipe image search |
+| `IMGBB_API_KEY` | ImgBB API key for custom image uploads |
+| `DEBUG` | `True` for local dev, `False` in production |
 | `FLASK_ENV` | `development` or `production` |
-| `PORT` | Port for the Flask server (default: `5000`) |
-| `CORS_ORIGINS` | Comma-separated list of allowed frontend origins |
+| `PORT` | Port to bind (default `5000`) |
+| `CORS_ORIGINS` | Comma-separated allowed origins |
 
-### Frontend (`pamangan.com/frontend/.env`)
+```env
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/pamangan
+DB_NAME=pamangan
+GEMINI_API_KEY=your_gemini_api_key_here
+GROQ_API_KEY=your_groq_api_key_here
+SECRET_KEY=replace-with-a-64-character-random-string
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=your_admin_password_here
+PEXELS_API_KEY=your_pexels_api_key_here
+IMGBB_API_KEY=your_imgbb_api_key_here
+DEBUG=False
+FLASK_ENV=production
+PORT=5000
+CORS_ORIGINS=http://localhost:3000,https://pamangan.com
+```
 
-| Variable | Description |
+### Frontend — `pamangan.com/frontend/.env`
+
+| Variable | Purpose |
 |---|---|
-| `REACT_APP_API_URL` | Backend API base URL (default: `http://localhost:5000/api`) |
-| `REACT_APP_SITE_NAME` | Site name displayed in the UI |
+| `REACT_APP_API_URL` | Base URL for the Flask API |
+| `REACT_APP_SITE_NAME` | Site name used in metadata |
 
----
-
-## Running Locally
-
-### Start the backend
-
-```bash
-cd pamangan.com/backend
-source venv/bin/activate        # Windows: venv\Scripts\activate
-python app.py
-```
-
-The API will be available at `http://localhost:5000`.
-
-### Seed the database (optional)
-
-```bash
-cd pamangan.com/backend
-python seed.py
-```
-
-### Start the frontend
-
-```bash
-cd pamangan.com/frontend
-npm start
-```
-
-The app will be available at `http://localhost:3000`.
-
----
-
-## Deployment
-
-### Production Stack
-
-| Part | Service | Cost |
-|---|---|---|
-| Frontend | Hostinger (shared hosting) | Already paid |
-| Backend | Koyeb | Free |
-| Database | MongoDB Atlas | Free |
-| Domain | Hostinger | Already paid |
-
----
-
-### Step 1 — MongoDB Atlas (Database)
-
-1. Sign up at [mongodb.com/atlas](https://www.mongodb.com/atlas)
-2. Create a free **M0 cluster**
-3. Create a database user (save username and password)
-4. Under **Network Access** → Add IP → `0.0.0.0/0`
-5. Click **Connect → Drivers** and copy your connection string:
-   ```
-   mongodb+srv://username:password@cluster0.xxxxx.mongodb.net/pamangan
-   ```
-
----
-
-### Step 2 — Deploy Backend to Koyeb
-
-1. Sign up at [koyeb.com](https://www.koyeb.com) with GitHub
-2. Click **Create App → GitHub**
-3. Select the `pamangan.com` repository
-4. Configure:
-   - **Root Directory:** `pamangan.com/backend`
-   - **Build Command:** `pip install -r requirements.txt`
-   - **Run Command:** `gunicorn wsgi:app`
-5. Add environment variables:
-   - `MONGODB_URI` → your Atlas connection string
-   - `GEMINI_API_KEY` → your Gemini API key
-   - `GROQ_API_KEY` → your Groq API key
-   - `PEXELS_API_KEY` → your Pexels API key
-   - `IMGBB_API_KEY` → your ImgBB API key
-   - `SECRET_KEY` → a long random string
-   - `ADMIN_USERNAME` → admin panel username
-   - `ADMIN_PASSWORD` → admin panel password
-   - `DEBUG` → `False`
-   - `FLASK_ENV` → `production`
-   - `CORS_ORIGINS` → `https://yourdomain.com`
-6. Deploy → copy your Koyeb URL (e.g. `https://pamangan-api-yourname.koyeb.app`)
-
----
-
-### Step 3 — Build the Frontend
-
-Create `pamangan.com/frontend/.env` with your Koyeb backend URL:
-
-```
-REACT_APP_API_URL=https://pamangan-api-yourname.koyeb.app/api
+```env
+REACT_APP_API_URL=http://localhost:5000/api
 REACT_APP_SITE_NAME=pamangan.com
 ```
 
-Then build:
-
-```bash
-cd pamangan.com/frontend
-npm install
-npm run build
-```
+> **Important:** `REACT_APP_API_URL` for production is defined in `pamangan.com/frontend/.env.production` (pointing to the HF Spaces backend). Do **not** set it as a GitHub Actions secret or variable — doing so will override it with an empty string during the build.
 
 ---
 
-### Step 4 — Upload Frontend to Hostinger
+## Deployment Workflow
 
-1. In **hPanel → File Manager** → go to `public_html/`
-2. Delete any existing default files
-3. Upload all contents of `pamangan.com/frontend/build/` to `public_html/`
-4. Create a `.htaccess` file in `public_html/` with:
+### Backend — Hugging Face Spaces
 
-```apache
-Options -MultiViews
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.html [QR,L]
-```
+The backend runs as a Docker container on HF Space `jptweb01/pamangan-api`. The image uses Python 3.11-slim, runs Gunicorn with 2 workers on port 7860, and executes as a non-root user.
+
+1. Push changes to `pamangan.com/backend/**` on `main`.
+2. `.github/workflows/deploy-huggingface.yml` mirrors `pamangan.com/backend/` into the linked Hugging Face Space repo and pushes, triggering a rebuild.
+3. Live at: `https://jptweb01-pamangan-api.hf.space`
+
+### Frontend — Hostinger via GitHub Actions
+
+The frontend is built and rsync'd to Hostinger over SSH on every push to `main` that touches `pamangan.com/frontend/**`.
+
+**Required GitHub Secrets:**
+
+| Secret | Value |
+|---|---|
+| `SSH_HOST` | Hostinger server hostname |
+| `SSH_USERNAME` | SSH username |
+| `SSH_PRIVATE_KEY` | Private key for SSH auth |
+| `SSH_PORT` | `65002` (Hostinger's non-standard SSH port) |
+| `DEPLOY_PATH` | `/home/<user>/domains/pamangan.com/public_html` |
+
+**Workflow steps:**
+1. `npm ci` — clean install
+2. `npm run build` — production React build (uses `pamangan.com/frontend/.env.production`)
+3. `rsync` — sync `build/` to the Hostinger document root over SSH
+
+> After deploying, go to **hPanel → Advanced → Cache Manager → Purge All** if the new bundle doesn't load in the browser.
 
 ---
 
-### Architecture Overview
+## Architecture Overview
 
 ```
-yourdomain.com                → Hostinger (React frontend)
-       ↓ API calls
-pamangan-api.koyeb.app        → Koyeb (Flask backend)
-       ↓ database queries
-MongoDB Atlas                 → Database
+Browser
+  │
+  ├──▶ React SPA (Hostinger)
+  │       │
+  │       └──▶ Flask API (Hugging Face Spaces)
+  │                 │
+  │                 ├──▶ MongoDB Atlas
+  │                 │     └── Text index search (cache hit → return immediately)
+  │                 │
+  │                 └──▶ AI Layer (cache miss only)
+  │                       ├── Gemini gemini-2.0-flash  (primary)
+  │                       └── Groq llama-3.1-8b-instant  (fallback)
+  │                             └── Auto-save generated recipe → MongoDB
+  │
+  └──▶ Admin Panel (/manage)
+          └──▶ Flask /api/admin/* (JWT protected)
 ```
 
----
-
-## API Endpoints
-
-### Public
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/recipes` | List / search recipes (`?q=`, `?cuisine=`, `?difficulty=`, `?page=`, `?limit=`) |
-| GET | `/api/recipes/:id` | Get a recipe by ID |
-| GET | `/api/recipes/:id/similar` | Get similar recipes |
-| POST | `/api/search` | Search recipes by query body |
-| POST | `/api/generate` | AI-generate a recipe by name |
-| POST | `/api/grocery` | AI-generate a grocery list from recipe IDs |
-| POST | `/api/nutrition` | AI-generate nutrition info for a recipe |
-| POST | `/api/history` | AI-generate cultural history for a recipe |
-| GET | `/api/popular` | Get popular recipes |
-| GET | `/api/categories` | Get all recipe categories |
-| GET | `/api/cuisine/:cuisine` | Get recipes by cuisine |
-| GET | `/health` | Health check |
-
-### Admin (JWT-protected)
-
-| Method | Endpoint | Description |
-|---|---|---|
-| POST | `/api/admin/login` | Authenticate and receive a JWT token |
-| GET | `/api/admin/recipes` | List all recipes with server-side search (`?q=`, `?page=`, `?limit=`) |
-| POST | `/api/admin/recipes` | Create a recipe manually |
-| PATCH | `/api/admin/recipes/:id` | Update a recipe |
-| DELETE | `/api/admin/recipes/:id` | Delete a recipe |
-| POST | `/api/admin/recipes/:id/refresh-image` | Fetch a fresh image from Pexels |
-| POST | `/api/admin/upload-image` | Upload an image to ImgBB |
+**Data flow for a recipe search:**
+1. User submits a query from the React frontend.
+2. Frontend calls `POST /api/search`.
+3. Backend queries MongoDB text index.
+4. **Cache hit** → recipe returned immediately, no AI called.
+5. **Cache miss** → Gemini generates the recipe → saved to MongoDB → returned to user.
+6. The next user searching the same dish hits the cache.
 
 ---
 
 ## Security
+
+### Authentication
+- Admin routes are protected by **JWT tokens** (HS256, 24-hour expiry) issued at `POST /api/admin/login`.
+- Tokens are stored in `localStorage` on the admin client.
+- Public recipe endpoints require no authentication.
+
+### Authorization
+- All `/api/admin/*` routes validate the JWT on every request via a `@token_required` decorator.
+- Regular users have read-only access to public endpoints.
+
+### API Security
+- **CORS** is restricted to the configured `CORS_ORIGINS` list.
+- User input is validated and sanitized server-side before any database or AI call.
+- AI prompts use structured schemas — user strings are not interpolated directly into prompt templates.
+
+### Response Headers (applied globally)
+
+```
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+Permissions-Policy: geolocation=(), microphone=(), camera=()
+Content-Security-Policy: default-src 'none'
+Strict-Transport-Security: max-age=31536000; includeSubDomains  # production only
+```
+
+### Data Protection
+- All credentials and API keys are environment variables — never committed to the repo.
+- `.env.example` files contain placeholder values only.
+- `SECRET_KEY` must be a cryptographically random 64-character string in production.
 
 See [SECURITY.md](SECURITY.md) for how to report vulnerabilities.
 
