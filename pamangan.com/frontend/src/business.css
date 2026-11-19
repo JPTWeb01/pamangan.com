@@ -21,6 +21,9 @@ body { background-color: var(--cream); }
 .wordmark { display: inline-flex; flex-direction: column; line-height: 1; color: var(--maroon); }
 .wordmark:hover { color: var(--maroon-dark); }
 .wordmark-name { font-family: 'Lobster', cursive; font-size: 2rem; letter-spacing: .2px; }
+.wordmark-p { position: relative; display: inline-block; }
+.salakot { position: absolute; width: .8em; height: auto; left: .15em; top: -.1em; transform: rotate(-12deg); transform-origin: 50% 85%; pointer-events: none; filter: drop-shadow(0 1px 1px rgba(43,26,20,.25)); transition: transform .35s cubic-bezier(.3, 1.6, .5, 1); }
+.wordmark:hover .salakot { transform: rotate(-22deg) translateY(-.06em); }
 .wordmark-tag { font-family: 'Inter', sans-serif; font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--text-secondary); margin-top: 4px; }
 
 /* Navbar */
