@@ -78,18 +78,22 @@ body { background-color: var(--cream); }
 
 /* Hero motion: waving flag, entrance, sun, floating badge */
 .biz-hero > .container { position: relative; z-index: 1; }
-.hero-flag { position: absolute; top: 2.25rem; width: min(66vw, 860px); aspect-ratio: 2 / 1; opacity: .23; pointer-events: none; z-index: 0;
-  --mask: radial-gradient(ellipse 75% 80% at var(--mask-x, 30%) 45%, #000 35%, transparent 78%);
-  -webkit-mask-image: var(--mask); mask-image: var(--mask);
+.hero-flag { position: absolute; aspect-ratio: 2 / 1; opacity: .23; pointer-events: none; z-index: 0;
+  -webkit-mask-composite: source-in; mask-composite: intersect;
   animation: flagIn 1.6s ease-out both; }
-.hero-flag--left { left: max(-4%, calc(50% - 760px)); --enter: -24px; }
+/* Philippine flag: anchored to the hero's top-left corner and tall enough to fill the hero,
+   so it bleeds off the edges (no empty strip above or beside it) and fades out toward the photo */
+.hero-flag--left { top: -1.5rem; left: -1.5rem; width: max(78vw, 1240px); --enter: -24px;
+  -webkit-mask-image: linear-gradient(to right, #000 28%, transparent 72%), linear-gradient(to bottom, #000 60%, transparent 98%);
+          mask-image: linear-gradient(to right, #000 28%, transparent 72%), linear-gradient(to bottom, #000 60%, transparent 98%); }
+.hero-flag--left .hero-flag-cloth { transform: perspective(1600px) rotateY(-8deg) rotateZ(-1.5deg); }
 /* Canadian flag sits behind the hero photo, sized from the photo column so it lines up at every width */
 .hero-photo-col { position: relative; container-type: inline-size; }
 .hero-photo-col .hero-flag--right { top: max(-15cqw, -4rem); left: -18%; width: 140%; opacity: .2; --enter: 24px; animation-delay: .25s;
   /* Fade every edge so the flag never shows a hard border, whatever the screen size */
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 70%, transparent 100%), linear-gradient(to right, transparent 0, #000 22%, #000 78%, transparent 100%);
           mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 70%, transparent 100%), linear-gradient(to right, transparent 0, #000 22%, #000 78%, transparent 100%);
-  -webkit-mask-composite: source-in; mask-composite: intersect; }
+}
 .hero-flag-cloth { position: absolute; inset: 0; transform: perspective(1200px) rotateY(-14deg) rotateZ(-3deg); transform-origin: left center; }
 .hero-flag--right .hero-flag-cloth { transform: perspective(1200px) rotateY(14deg) rotateZ(3deg); transform-origin: right center; }
 .hero-flag-strip { position: absolute; top: 0; bottom: 0; width: calc(100% / var(--n) + 1px); background-image: var(--flag); background-size: calc(var(--n) * 100%) 100%; background-repeat: no-repeat;
@@ -113,7 +117,7 @@ body { background-color: var(--cream); }
 @keyframes badgeFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
 
 @media (max-width: 991.98px) {
-  .hero-flag--left { top: 1rem; left: -12%; width: 125vw; opacity: .16; }
+  .hero-flag--left { top: -1rem; left: -1rem; width: max(135vw, 1000px); opacity: .17; }
   .hero-photo-col .hero-flag--right { opacity: .16; }
   .hero-sun { width: 170px; height: 170px; top: -48px; right: -36px; }
 }
@@ -124,7 +128,6 @@ body { background-color: var(--cream); }
   .hero-badge { left: 10px; bottom: 10px; padding: .45rem .8rem .45rem .6rem; gap: .45rem; border-radius: 14px; max-width: none; }
   .hero-badge i { font-size: 1.1rem; }
   .hero-badge .text-secondary { display: none; }
-  .hero-flag--left { top: .5rem; width: 140vw; }
 }
 @media (max-width: 359.98px) {
   .hero-cta .btn { font-size: .92rem; padding: .7rem .6rem !important; }
