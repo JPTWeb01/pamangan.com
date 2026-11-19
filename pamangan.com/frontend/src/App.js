@@ -9,7 +9,6 @@ import Menu from "./pages/Menu";
 import Order from "./pages/Order";
 import About from "./pages/About";
 import LoadingSpinner from "./components/LoadingSpinner";
-import { BUSINESS, telLink } from "./data/business";
 
 // Recipe Kitchen + admin are code-split so the business pages load fast.
 const Kitchen = lazy(() => import("./pages/Kitchen"));
@@ -36,9 +35,6 @@ function NotFound() {
 function MobileOrderBar() {
   return (
     <div className="mobile-order-bar">
-      <a href={telLink} className="btn btn-ghost rounded-pill" aria-label={`Call ${BUSINESS.phoneDisplay}`}>
-        <i className="bi bi-telephone me-1"></i>Call
-      </a>
       <Link to="/order" className="btn btn-maroon rounded-pill">
         <i className="bi bi-bag-heart me-1"></i>Order Now
       </Link>

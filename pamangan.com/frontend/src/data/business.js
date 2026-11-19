@@ -13,7 +13,6 @@ export const BUSINESS = {
   deliveryAreas: ["Stittsville", "Kanata"],
 };
 
-export const telLink = `tel:${BUSINESS.phoneE164}`;
 
 // `?&body=` works on both iOS and Android messaging apps.
 export const smsLink = (body = "") =>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { BUSINESS, telLink, smsLink } from "../data/business";
+import { BUSINESS, smsLink } from "../data/business";
 import { Wordmark } from "./Navbar";
 
 export default function Footer() {
@@ -42,7 +42,7 @@ export default function Footer() {
           <div className="col-lg-3 col-md-3 col-6">
             <h6>Order</h6>
             <ul className="list-unstyled d-grid gap-2" style={{ fontSize: ".92rem" }}>
-              <li><a href={telLink}><i className="bi bi-telephone me-2"></i>{BUSINESS.phoneDisplay}</a></li>
+              <li><i className="bi bi-chat-dots me-2"></i>{BUSINESS.phoneDisplay}</li>
               <li><a href={BUSINESS.messengerUrl} target="_blank" rel="noopener noreferrer"><i className="bi bi-messenger me-2"></i>Messenger</a></li>
               <li><Link to="/order#order-form"><i className="bi bi-ui-checks me-2"></i>Order form</Link></li>
             </ul>

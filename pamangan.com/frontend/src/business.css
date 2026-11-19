@@ -240,6 +240,7 @@ body { background-color: var(--cream); }
 /* Mobile sticky order bar */
 .mobile-order-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 1030; display: none; gap: .5rem; padding: .65rem 16px calc(.65rem + env(safe-area-inset-bottom)); background: rgba(251,246,238,.96); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-top: 1px solid var(--border); }
 .mobile-order-bar .btn { flex: 1; }
+.cta-number { display: inline-flex; align-items: center; padding: .5rem 1rem; font-size: 1.25rem; font-weight: 600; color: var(--maroon); }
 @media (max-width: 767.98px) {
   .mobile-order-bar { display: flex; }
   .has-order-bar { padding-bottom: 72px; }

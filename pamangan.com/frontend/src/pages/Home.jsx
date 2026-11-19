@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import MenuCard from "../components/MenuCard";
 import Gallery from "../components/Gallery";
 import HeroFlag, { sunRays } from "../components/HeroFlag";
-import { BUSINESS, ACTIVE_MENU, STEPS, TESTIMONIAL, GALLERY, telLink } from "../data/business";
+import { BUSINESS, ACTIVE_MENU, STEPS, TESTIMONIAL, GALLERY } from "../data/business";
 
 export default function Home() {
   const featured = ACTIVE_MENU.filter((m) => m.image).slice(0, 3);
@@ -205,9 +205,9 @@ export default function Home() {
             <Link to="/order" className="btn btn-maroon btn-lg rounded-pill px-4">
               <i className="bi bi-bag-heart me-2"></i>Order Now
             </Link>
-            <a href={telLink} className="btn btn-ghost btn-lg rounded-pill px-4">
-              <i className="bi bi-telephone me-2"></i>{BUSINESS.phoneDisplay}
-            </a>
+            <span className="cta-number">
+              <i className="bi bi-chat-dots me-2"></i>{BUSINESS.phoneDisplay}
+            </span>
           </div>
         </div>
       </section>

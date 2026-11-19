@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { BUSINESS, ACTIVE_MENU, STEPS, formatPrice, smsLink, telLink } from "../data/business";
+import { BUSINESS, ACTIVE_MENU, STEPS, formatPrice, smsLink } from "../data/business";
 
 const todayISO = () => {
   const d = new Date();
@@ -165,7 +165,7 @@ export default function Order() {
             <div className="col-md-4">
               <a href={smsLink()} className="info-tile d-block text-decoration-none">
                 <div className="ico"><i className="bi bi-chat-dots"></i></div>
-                <h3 style={{ color: "var(--ink)" }}>Call or text</h3>
+                <h3 style={{ color: "var(--ink)" }}>Text us</h3>
                 <p>{BUSINESS.phoneDisplay}</p>
               </a>
             </div>
@@ -368,7 +368,7 @@ export default function Order() {
                   </div>
 
                   <p className="small text-secondary mt-3 mb-0">
-                    Your order is confirmed once we reply. Questions? Call <a href={telLink}>{BUSINESS.phoneDisplay}</a>.
+                    Your order is confirmed once we reply. Questions? Text <span className="text-nowrap">{BUSINESS.phoneDisplay}</span>.
                   </p>
                 </div>
               </div>
