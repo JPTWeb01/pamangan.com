@@ -138,6 +138,17 @@ body { background-color: var(--cream); }
 .menu-card-placeholder i { font-size: 2.6rem; opacity: .75; }
 .menu-card-placeholder span { font-size: .8rem; color: var(--text-secondary); }
 .menu-tag { position: absolute; top: 12px; left: 12px; background: rgba(255,255,255,.95); color: var(--maroon); font-size: .72rem; font-weight: 700; padding: .3rem .65rem; border-radius: var(--radius-pill); box-shadow: var(--shadow-xs); }
+.qty-thumb.festive { background: linear-gradient(135deg, #5B2A86, #7B1E22); color: #fff; }
+.menu-tag.festive { background: #B3202A; color: #fff; }
+.menu-card.festive { border-color: rgba(179,32,42,.35); box-shadow: 0 0 0 3px rgba(179,32,42,.06); }
+.menu-card.festive .menu-card-placeholder { color: #fff; background:
+  radial-gradient(circle at 20% 25%, rgba(255,255,255,.35) 0 2px, transparent 3px),
+  radial-gradient(circle at 70% 15%, rgba(255,255,255,.3) 0 2px, transparent 3px),
+  radial-gradient(circle at 85% 60%, rgba(255,255,255,.3) 0 2px, transparent 3px),
+  radial-gradient(circle at 35% 75%, rgba(255,255,255,.25) 0 2px, transparent 3px),
+  linear-gradient(135deg, #5B2A86 0%, #7B1E22 100%); }
+.menu-card.festive .menu-card-placeholder span { color: rgba(255,255,255,.85); }
+.menu-card.festive .menu-serving { color: #B3202A; }
 .menu-card-body { padding: 1.25rem 1.35rem 1.4rem; display: flex; flex-direction: column; flex: 1; }
 .menu-card-body h3 { font-family: 'Fraunces', Georgia, serif; font-size: 1.3rem; margin: 0; color: var(--ink); }
 .menu-price { font-family: 'Fraunces', Georgia, serif; font-weight: 700; color: var(--maroon); font-size: 1.35rem; white-space: nowrap; }

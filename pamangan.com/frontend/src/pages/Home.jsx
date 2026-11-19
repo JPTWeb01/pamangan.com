@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import MenuCard from "../components/MenuCard";
 import Gallery from "../components/Gallery";
 import HeroFlag, { sunRays } from "../components/HeroFlag";
-import { BUSINESS, MENU, STEPS, TESTIMONIAL, GALLERY, telLink } from "../data/business";
+import { BUSINESS, ACTIVE_MENU, STEPS, TESTIMONIAL, GALLERY, telLink } from "../data/business";
 
 export default function Home() {
-  const featured = MENU.filter((m) => m.image).slice(0, 3);
+  const featured = ACTIVE_MENU.filter((m) => m.image).slice(0, 3);
 
   return (
     <>

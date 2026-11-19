@@ -22,6 +22,22 @@ export const smsLink = (body = "") =>
 // price: number in CAD, or null → "Message us for price"
 export const MENU = [
   {
+    id: "puto-bumbong",
+    name: "Puto Bumbong",
+    native: "Puto Bumbong",
+    category: "Kakanin & Sweets",
+    price: null,
+    serving: "Christmas special · December only",
+    description:
+      "Purple sticky rice steamed in bamboo, topped with butter, grated coconut and muscovado sugar — the taste of Simbang Gabi.",
+    image: null,
+    icon: "bi-snow2",
+    tags: ["Christmas special"],
+    festive: true,
+    // Shown Nov–Dec so customers can pre-order for December; hidden the rest of the year
+    showMonths: [11, 12],
+  },
+  {
     id: "sisig",
     name: "Kapampangan Sisig",
     native: "Sisig",
@@ -82,6 +98,12 @@ export const MENU = [
     tags: ["Party staple"],
   },
 ];
+
+// Menu items available right now (seasonal items only show in their months)
+export function isInSeason(item, date = new Date()) {
+  return !item.showMonths || item.showMonths.includes(date.getMonth() + 1);
+}
+export const ACTIVE_MENU = MENU.filter((m) => isInSeason(m));
 
 export const formatPrice = (price) =>
   price == null ? "Message for price" : `$${price}`;

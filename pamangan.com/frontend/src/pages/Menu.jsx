@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import MenuCard from "../components/MenuCard";
-import { MENU, BUSINESS } from "../data/business";
+import { ACTIVE_MENU, BUSINESS } from "../data/business";
 
 export default function Menu() {
   return (
@@ -20,7 +20,7 @@ export default function Menu() {
       <section className="pb-5">
         <div className="container">
           <div className="row g-4">
-            {MENU.map((item) => (
+            {ACTIVE_MENU.map((item) => (
               <div className="col-md-6 col-lg-4" key={item.id}>
                 <MenuCard item={item} />
               </div>

@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { BUSINESS, MENU, STEPS, formatPrice, smsLink, telLink } from "../data/business";
+import { BUSINESS, ACTIVE_MENU, STEPS, formatPrice, smsLink, telLink } from "../data/business";
 
 const todayISO = () => {
   const d = new Date();
@@ -37,7 +37,7 @@ export default function Order() {
   const preselect = params.get("item");
 
   const [qty, setQty] = useState(() =>
-    Object.fromEntries(MENU.map((m) => [m.id, m.id === preselect ? 1 : 0]))
+    Object.fromEntries(ACTIVE_MENU.map((m) => [m.id, m.id === preselect ? 1 : 0]))
   );
   const [form, setForm] = useState({
     name: "",
@@ -53,7 +53,7 @@ export default function Order() {
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const bump = (id, d) => setQty((q) => ({ ...q, [id]: Math.max(0, Math.min(20, q[id] + d)) }));
 
-  const chosen = MENU.filter((m) => qty[m.id] > 0);
+  const chosen = ACTIVE_MENU.filter((m) => qty[m.id] > 0);
   const knownTotal = chosen.reduce((sum, m) => sum + (m.price ?? 0) * qty[m.id], 0);
   const hasUnpriced = chosen.some((m) => m.price == null);
 
@@ -69,7 +69,8 @@ export default function Order() {
     const lines = [`Hi Pamangan! I'd like to place a pre-order:`, ""];
     chosen.forEach((m) => {
       const line = m.price != null ? ` — $${m.price * qty[m.id]}` : "";
-      lines.push(`• ${qty[m.id]} × ${m.name}${line}`);
+      const note = m.festive ? " (December)" : "";
+      lines.push(`• ${qty[m.id]} × ${m.name}${note}${line}`);
     });
     if (chosen.length) {
       lines.push("");
@@ -168,12 +169,12 @@ export default function Order() {
 
                 <fieldset className="mb-4">
                   <legend className="form-label mb-1">1. Choose your trays</legend>
-                  {MENU.map((m) => (
+                  {ACTIVE_MENU.map((m) => (
                     <div className="qty-row" key={m.id}>
                       {m.image ? (
                         <img className="qty-thumb" src={m.image} alt="" loading="lazy" />
                       ) : (
-                        <span className="qty-thumb"><i className="bi bi-egg-fried"></i></span>
+                        <span className={`qty-thumb${m.festive ? " festive" : ""}`}><i className={`bi ${m.icon || "bi-egg-fried"}`}></i></span>
                       )}
                       <div className="flex-grow-1" style={{ minWidth: 0 }}>
                         <div className="fw-semibold" style={{ color: "var(--ink)" }}>{m.name}</div>

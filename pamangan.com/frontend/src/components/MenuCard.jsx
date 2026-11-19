@@ -4,17 +4,22 @@ import { formatPrice } from "../data/business";
 
 export default function MenuCard({ item, showOrder = true }) {
   return (
-    <article className="menu-card">
+    <article className={`menu-card${item.festive ? " festive" : ""}`}>
       <div className="menu-card-img">
         {item.image ? (
           <img src={item.image} alt={item.name} loading="lazy" width="800" height="600" />
         ) : (
           <div className="menu-card-placeholder" role="img" aria-label={item.name}>
-            <i className="bi bi-egg-fried"></i>
+            <i className={`bi ${item.icon || "bi-egg-fried"}`}></i>
             <span>Photo coming soon</span>
           </div>
         )}
-        {item.tags?.[0] && <span className="menu-tag">{item.tags[0]}</span>}
+        {item.tags?.[0] && (
+          <span className={`menu-tag${item.festive ? " festive" : ""}`}>
+            {item.festive && <i className="bi bi-gift-fill me-1"></i>}
+            {item.tags[0]}
+          </span>
+        )}
       </div>
       <div className="menu-card-body">
         <div className="d-flex justify-content-between align-items-start gap-2">
