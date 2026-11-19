@@ -57,7 +57,10 @@ function AppContent() {
     );
   }
 
-  const showOrderBar = pathname !== "/order";
+  // Hide the floating "Order Now" bar on the order page and the Recipe Kitchen pages,
+  // so it doesn't look like recipes can be ordered.
+  const isKitchen = /^\/(kitchen|recipes|recipe|categories|meal-planner)(\/|$)/.test(pathname);
+  const showOrderBar = pathname !== "/order" && !isKitchen;
 
   return (
     <div className={`d-flex flex-column min-vh-100 ${showOrderBar ? "has-order-bar" : ""}`}>
