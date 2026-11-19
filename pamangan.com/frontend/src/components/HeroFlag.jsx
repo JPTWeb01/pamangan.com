@@ -27,19 +27,31 @@ export function sunRays(cx, cy, inner, outer) {
 }
 
 const GOLD = "#FCD116";
-const FLAG_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" preserveAspectRatio="none">
+const PH_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" preserveAspectRatio="none">
 <rect width="1200" height="300" fill="#0038A8"/><rect y="300" width="1200" height="300" fill="#CE1126"/>
 <path d="M0,0L519.6,300L0,600Z" fill="#fff"/>
 <circle cx="173" cy="300" r="40" fill="${GOLD}"/><path d="${sunRays(173, 300, 46, 112)}" fill="${GOLD}"/>
 <path d="${star(58, 62, 27)}" fill="${GOLD}"/><path d="${star(58, 538, 27)}" fill="${GOLD}"/><path d="${star(452, 300, 27)}" fill="${GOLD}"/>
 </svg>`;
-const FLAG_URL = `url("data:image/svg+xml,${encodeURIComponent(FLAG_SVG)}")`;
+
+// Canadian maple leaf (official geometry), scaled into the centre square
+const MAPLE_LEAF =
+  "m-90 2030 45-863a95 95 0 0 0-111-98l-859 151 116-320a65 65 0 0 0-20-73l-941-762 212-99a65 65 0 0 0 34-79l-186-572 542 115a65 65 0 0 0 73-38l105-247 423 454a65 65 0 0 0 111-57l-204-1052 327 189a65 65 0 0 0 91-27l332-652 332 652a65 65 0 0 0 91 27l327-189-204 1052a65 65 0 0 0 111 57l423-454 105 247a65 65 0 0 0 73 38l542-115-186 572a65 65 0 0 0 34 79l212 99-941 762a65 65 0 0 0-20 73l116 320-859-151a95 95 0 0 0-111 98l45 863z";
+const CA_RED = "#D52B1E";
+const CA_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" preserveAspectRatio="none">
+<rect width="1200" height="600" fill="#fff"/><rect width="300" height="600" fill="${CA_RED}"/><rect x="900" width="300" height="600" fill="${CA_RED}"/>
+<path transform="translate(600 298) scale(.122)" d="${MAPLE_LEAF}" fill="${CA_RED}"/>
+</svg>`;
+
+const toUrl = (svg) => `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+const FLAGS = { ph: toUrl(PH_SVG), ca: toUrl(CA_SVG) };
 
 const STRIPS = 44;
 
-// Decorative waving Philippine flag for the hero background.
+// Decorative waving flag for the hero background.
 // Built from thin vertical strips animated with transforms only (GPU-friendly).
-export default function HeroFlag() {
+// `side="right"` mirrors the cloth so the flag flies from a pole on the right.
+export default function HeroFlag({ country = "ph", side = "left" }) {
   const ref = useRef(null);
   const [paused, setPaused] = useState(false);
 
@@ -55,23 +67,27 @@ export default function HeroFlag() {
   return (
     <div
       ref={ref}
-      className={`hero-flag${paused ? " is-paused" : ""}`}
-      style={{ "--flag": FLAG_URL, "--n": STRIPS }}
+      className={`hero-flag hero-flag--${side}${paused ? " is-paused" : ""}`}
+      style={{ "--flag": FLAGS[country] || FLAGS.ph, "--n": STRIPS }}
       aria-hidden="true"
     >
       <div className="hero-flag-cloth">
-        {Array.from({ length: STRIPS }, (_, i) => (
-          <span
-            key={i}
-            className="hero-flag-strip"
-            style={{
-              "--i": i,
-              "--amp": `${(2 + 14 * (i / (STRIPS - 1))).toFixed(2)}px`,
-              left: `${(i * 100) / STRIPS}%`,
-              backgroundPosition: `${(i * 100) / (STRIPS - 1)}% 0`,
-            }}
-          />
-        ))}
+        {Array.from({ length: STRIPS }, (_, i) => {
+          // Distance from the pole: the wave starts there and grows toward the free edge
+          const d = side === "right" ? STRIPS - 1 - i : i;
+          return (
+            <span
+              key={i}
+              className="hero-flag-strip"
+              style={{
+                "--i": d,
+                "--amp": `${(2 + 14 * (d / (STRIPS - 1))).toFixed(2)}px`,
+                left: `${(i * 100) / STRIPS}%`,
+                backgroundPosition: `${(i * 100) / (STRIPS - 1)}% 0`,
+              }}
+            />
+          );
+        })}
       </div>
     </div>
   );

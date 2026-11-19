@@ -12,7 +12,7 @@ export default function Home() {
     <>
       {/* ── Hero ── */}
       <section className="biz-hero">
-        <HeroFlag />
+        <HeroFlag country="ph" side="left" />
         <div className="container">
           <div className="row align-items-center g-5">
             <div className="col-lg-6">
@@ -41,7 +41,8 @@ export default function Home() {
                 <span><i className="bi bi-check-circle-fill"></i>Delivery near Kanata</span>
               </div>
             </div>
-            <div className="col-lg-6">
+            <div className="col-lg-6 hero-photo-col">
+              <HeroFlag country="ca" side="right" />
               <div className="biz-hero-img hero-anim hero-anim-img" style={{ "--d": ".2s" }}>
                 <svg className="hero-sun" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
                   <circle cx="120" cy="120" r="34" />
