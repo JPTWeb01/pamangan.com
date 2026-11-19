@@ -31,7 +31,7 @@ export default function About() {
               </p>
               <p className="biz-lead mb-4">
                 Whether you're Kapampangan and missing home, or trying Filipino food for the first time —
-                welcome, ka-Pamangan. Kain na!
+                welcome, ka-Pamangan. Mangan ta na!
               </p>
               <div className="d-flex flex-wrap gap-3">
                 <Link to="/menu" className="btn btn-maroon rounded-pill px-4">See the menu</Link>

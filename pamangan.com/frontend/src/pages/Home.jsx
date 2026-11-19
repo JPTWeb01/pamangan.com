@@ -189,7 +189,7 @@ export default function Home() {
       <section className="biz-section deep text-center">
         <div className="container">
           <h2 className="biz-title mb-3">
-            Hungry? <span className="font-script" style={{ color: "var(--maroon)" }}>Kain na!</span>
+            Hungry? <span className="font-script" style={{ color: "var(--maroon)" }}>Mangan tana abe!</span>
           </h2>
           <p className="biz-lead mx-auto mb-4">
             Send us your order through the form, Messenger, or a quick text to <span className="text-nowrap">{BUSINESS.phoneDisplay}</span>.
