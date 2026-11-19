@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import MenuCard from "../components/MenuCard";
+import MenuRequest from "../components/MenuRequest";
 import { ACTIVE_MENU, BUSINESS } from "../data/business";
 
 export default function Menu() {
@@ -27,7 +28,12 @@ export default function Menu() {
             ))}
           </div>
 
-          <div className="row g-4 mt-4">
+          <p className="text-center mt-4 mb-0 request-nudge">
+            Don't see your favourite?{" "}
+            <Link to="/menu#request-a-dish">Request a dish <i className="bi bi-arrow-down-short"></i></Link>
+          </p>
+
+          <div className="row g-4 mt-3">
             <div className="col-md-4">
               <div className="info-tile">
                 <div className="ico"><i className="bi bi-calendar-check"></i></div>
@@ -66,6 +72,8 @@ export default function Menu() {
           </div>
         </div>
       </section>
+
+      <MenuRequest />
     </>
   );
 }

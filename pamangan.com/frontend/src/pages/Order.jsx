@@ -1,36 +1,13 @@
 import React, { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { BUSINESS, ACTIVE_MENU, STEPS, formatPrice, smsLink } from "../data/business";
+import { copyText } from "../utils/clipboard";
 
 const todayISO = () => {
   const d = new Date();
   d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
   return d.toISOString().slice(0, 10);
 };
-
-function copyText(text) {
-  if (navigator.clipboard && window.isSecureContext) {
-    return navigator.clipboard.writeText(text).then(() => true, () => fallbackCopy(text));
-  }
-  return Promise.resolve(fallbackCopy(text));
-}
-
-function fallbackCopy(text) {
-  try {
-    const ta = document.createElement("textarea");
-    ta.value = text;
-    ta.setAttribute("readonly", "");
-    ta.style.position = "fixed";
-    ta.style.opacity = "0";
-    document.body.appendChild(ta);
-    ta.select();
-    const ok = document.execCommand("copy");
-    document.body.removeChild(ta);
-    return ok;
-  } catch {
-    return false;
-  }
-}
 
 // One order line per size: items with a half option get a second line at half the price
 const ORDER_LINES = ACTIVE_MENU.flatMap((m) => {

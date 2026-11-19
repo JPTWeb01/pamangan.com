@@ -3,6 +3,7 @@ from flask_cors import CORS
 from config import Config
 from routes.api import api_bp
 from routes.admin import admin_bp
+from routes.menu_requests import menu_requests_bp, admin_menu_requests_bp
 
 
 def create_app():
@@ -13,6 +14,8 @@ def create_app():
 
     app.register_blueprint(api_bp, url_prefix="/api")
     app.register_blueprint(admin_bp, url_prefix="/api/admin")
+    app.register_blueprint(menu_requests_bp, url_prefix="/api")
+    app.register_blueprint(admin_menu_requests_bp, url_prefix="/api/admin")
 
     @app.after_request
     def add_security_headers(response):

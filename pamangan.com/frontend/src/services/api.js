@@ -33,6 +33,10 @@ export const aiApi = {
   history: (recipe_id) => api.post("/history", { recipe_id }),
 };
 
+export const menuRequestApi = {
+  create: (data) => api.post("/menu-requests", data, { timeout: 20000 }),
+};
+
 export const categoryApi = {
   list: () => api.get("/categories"),
 };
@@ -74,6 +78,9 @@ export const adminApiService = {
   deleteRecipe: (id) => adminApi.delete(`/admin/recipes/${id}`),
   createRecipe: (data) => adminApi.post("/admin/recipes", data),
   refreshImage: (id) => adminApi.post(`/admin/recipes/${id}/refresh-image`),
+  listMenuRequests: (params) => adminApi.get("/admin/menu-requests", { params }),
+  updateMenuRequest: (id, status) => adminApi.patch(`/admin/menu-requests/${id}`, { status }),
+  deleteMenuRequest: (id) => adminApi.delete(`/admin/menu-requests/${id}`),
 };
 
 export default api;

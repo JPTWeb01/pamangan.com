@@ -4,9 +4,10 @@ import logo from "../assets/logo.png";
 const NAV_ITEMS = [
   { key: "overview", label: "Dashboard", icon: "bi-speedometer2" },
   { key: "recipes",  label: "Recipes",   icon: "bi-journal-richtext" },
+  { key: "requests", label: "Menu Requests", icon: "bi-envelope-heart" },
 ];
 
-export default function AdminLayout({ activeSection, onSectionChange, onLogout, children }) {
+export default function AdminLayout({ activeSection, onSectionChange, onLogout, badges = {}, children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const closeSidebar = () => setSidebarOpen(false);
@@ -39,6 +40,9 @@ export default function AdminLayout({ activeSection, onSectionChange, onLogout, 
             >
               <i className={`bi ${item.icon}`}></i>
               {item.label}
+              {badges[item.key] > 0 && (
+                <span className="admin-nav-badge" aria-label={`${badges[item.key]} new`}>{badges[item.key]}</span>
+              )}
             </button>
           ))}
         </nav>

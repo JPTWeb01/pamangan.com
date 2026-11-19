@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { adminApiService } from "../services/api";
 import Modal from "../components/Modal";
 import AdminLayout from "./AdminLayout";
+import AdminMenuRequests from "../components/AdminMenuRequests";
 
 const DIFFICULTIES = ["Easy", "Medium", "Hard"];
 
@@ -69,6 +70,7 @@ export default function AdminDashboard() {
   const [refreshingImage, setRefreshingImage] = useState(null);
   const [imageModal, setImageModal] = useState(null);
   const navigate = useNavigate();
+  const [requestCounts, setRequestCounts] = useState(null);
 
   const logout = useCallback(() => {
     localStorage.removeItem("adminToken");
@@ -99,6 +101,15 @@ export default function AdminDashboard() {
       setLoading(false);
     }
   }, [page, debouncedQuery, logout]);
+
+  // New dish-request count for the sidebar badge and overview card
+  useEffect(() => {
+    if (!localStorage.getItem("adminToken")) return;
+    adminApiService
+      .listMenuRequests({ limit: 1 })
+      .then((res) => setRequestCounts((res?.data ?? res)?.counts ?? null))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!localStorage.getItem("adminToken")) {
@@ -203,6 +214,7 @@ export default function AdminDashboard() {
       activeSection={activeSection}
       onSectionChange={(section) => { setActiveSection(section); setShowForm(false); setError(""); }}
       onLogout={logout}
+      badges={{ requests: requestCounts?.new ?? 0 }}
     >
       {error && <div className="alert alert-danger">{error}</div>}
 
@@ -231,15 +243,41 @@ export default function AdminDashboard() {
                 <i className="bi bi-stars mt-2" style={{ fontSize: "1.4rem", color: "#d1fae5" }}></i>
               </div>
             </div>
+            <div className="col-sm-6 col-lg-3">
+              <button
+                type="button"
+                className="card border-0 shadow-sm rounded-3 p-4 h-100 w-100 text-start"
+                onClick={() => setActiveSection("requests")}
+              >
+                <div style={{ fontSize: "2rem", fontWeight: 700, color: "var(--ph-red)", lineHeight: 1 }}>
+                  {requestCounts ? requestCounts.new : "—"}
+                </div>
+                <div className="text-secondary mt-1" style={{ fontSize: ".85rem" }}>New Menu Requests</div>
+                <i className="bi bi-envelope-heart mt-2" style={{ fontSize: "1.4rem", color: "#fde2d6" }}></i>
+              </button>
+            </div>
           </div>
 
-          <button
-            className="btn btn-primary rounded-pill px-4"
-            onClick={() => setActiveSection("recipes")}
-          >
-            <i className="bi bi-journal-richtext me-2"></i>Manage Recipes
-          </button>
+          <div className="d-flex flex-wrap gap-2">
+            <button
+              className="btn btn-primary rounded-pill px-4"
+              onClick={() => setActiveSection("recipes")}
+            >
+              <i className="bi bi-journal-richtext me-2"></i>Manage Recipes
+            </button>
+            <button
+              className="btn btn-outline-primary rounded-pill px-4"
+              onClick={() => setActiveSection("requests")}
+            >
+              <i className="bi bi-envelope-heart me-2"></i>View Menu Requests
+            </button>
+          </div>
         </div>
+      )}
+
+      {/* ── Menu requests ── */}
+      {activeSection === "requests" && (
+        <AdminMenuRequests onCountsChange={setRequestCounts} onAuthError={logout} />
       )}
 
       {/* ── Recipes ── */}
