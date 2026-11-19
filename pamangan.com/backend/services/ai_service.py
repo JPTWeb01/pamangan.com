@@ -1,6 +1,7 @@
 import json
 import re
 import logging
+import requests
 from config import Config
 
 logger = logging.getLogger(__name__)
@@ -67,31 +68,47 @@ def _extract_json(text):
     return text
 
 
-def _call_gemini(prompt):
-    import google.generativeai as genai
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+# Both providers must fit inside the frontend's 45s request timeout
+GEMINI_TIMEOUT = 26
+GROQ_TIMEOUT = 16
 
-    genai.configure(api_key=Config.GEMINI_API_KEY)
-    model = genai.GenerativeModel("gemini-2.0-flash")
-    response = model.generate_content(
-        prompt,
-        generation_config=genai.GenerationConfig(
-            response_mime_type="application/json",
-            temperature=0.2,
-        ),
+
+def _call_gemini(prompt):
+    # REST call (the google-generativeai SDK is discontinued)
+    resp = requests.post(
+        GEMINI_URL.format(model=Config.GEMINI_MODEL),
+        headers={"x-goog-api-key": Config.GEMINI_API_KEY, "Content-Type": "application/json"},
+        json={
+            "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+            "generationConfig": {"responseMimeType": "application/json"},
+        },
+        timeout=GEMINI_TIMEOUT,
     )
-    return response.text
+    if resp.status_code != 200:
+        raise RuntimeError(f"Gemini HTTP {resp.status_code}: {resp.text[:300]}")
+    data = resp.json()
+    try:
+        parts = data["candidates"][0]["content"]["parts"]
+    except (KeyError, IndexError, TypeError):
+        raise RuntimeError(f"Gemini returned no content: {str(data)[:300]}")
+    text = "".join(p.get("text", "") for p in parts if not p.get("thought"))
+    if not text.strip():
+        raise RuntimeError("Gemini returned an empty response")
+    return text
 
 
 def _call_groq(prompt):
     from groq import Groq
 
-    client = Groq(api_key=Config.GROQ_API_KEY)
+    client = Groq(api_key=Config.GROQ_API_KEY, timeout=GROQ_TIMEOUT)
     completion = client.chat.completions.create(
         messages=[{"role": "user", "content": prompt}],
-        model="llama-3.1-8b-instant",
+        model=Config.GROQ_MODEL,
         temperature=0.2,
-        max_tokens=2048,
+        max_tokens=6000,  # gpt-oss reasons before answering; leave room for both
         response_format={"type": "json_object"},
+        extra_body={"reasoning_effort": "low"},
     )
     return completion.choices[0].message.content
 
@@ -102,14 +119,14 @@ def _generate(prompt):
             text = _call_gemini(prompt)
             return json.loads(_extract_json(text))
         except Exception as exc:
-            logger.warning("Gemini failed, trying Groq: %s", exc)
+            logger.warning("Gemini (%s) failed, trying Groq: %s", Config.GEMINI_MODEL, exc)
 
     if Config.GROQ_API_KEY:
         try:
             text = _call_groq(prompt)
             return json.loads(_extract_json(text))
         except Exception as exc:
-            logger.error("Groq failed: %s", exc)
+            logger.error("Groq (%s) failed: %s", Config.GROQ_MODEL, exc)
 
     raise RuntimeError("All AI providers failed. Check your API keys in .env")
 

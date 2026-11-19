@@ -9,6 +9,9 @@ class Config:
     DB_NAME = os.getenv("DB_NAME", "pamangan")
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
     GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+    # Model IDs are configurable so a provider retiring a model only needs an env change
+    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.6-flash")
+    GROQ_MODEL = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
     SECRET_KEY = os.getenv("SECRET_KEY", "pamangan-dev-secret-change-in-prod")
     ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
     ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")
