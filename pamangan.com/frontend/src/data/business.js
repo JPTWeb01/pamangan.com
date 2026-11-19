@@ -48,6 +48,7 @@ export const MENU = [
       "The pride of Pampanga — crispy, savoury chopped pork with onions, chili and calamansi. Rich, tangy and perfect with rice.",
     image: "/images/menu/sisig.jpg",
     tags: ["Best seller", "Kapampangan classic"],
+    half: { serving: "Half tray · good for 2–3 people" },
   },
   {
     id: "kutsinta",
@@ -60,6 +61,7 @@ export const MENU = [
       "Soft, chewy steamed rice cakes topped with grated coconut, served with our homemade dulce de leche dip.",
     image: "/images/menu/kutsinta.jpg",
     tags: ["Best seller", "Sweet"],
+    half: { serving: "25 pieces · with dulce de leche dip" },
   },
   {
     id: "sushi-bake",

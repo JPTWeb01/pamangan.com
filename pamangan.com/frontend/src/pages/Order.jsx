@@ -32,12 +32,29 @@ function fallbackCopy(text) {
   }
 }
 
+// One order line per size: items with a half option get a second line at half the price
+const ORDER_LINES = ACTIVE_MENU.flatMap((m) => {
+  const whole = { ...m, key: m.id, label: m.name };
+  if (!m.half) return [whole];
+  return [
+    whole,
+    {
+      ...m,
+      key: `${m.id}-half`,
+      label: `${m.name} (half)`,
+      price: m.price == null ? null : m.price / 2,
+      serving: m.half.serving,
+      isHalf: true,
+    },
+  ];
+});
+
 export default function Order() {
   const [params] = useSearchParams();
   const preselect = params.get("item");
 
   const [qty, setQty] = useState(() =>
-    Object.fromEntries(ACTIVE_MENU.map((m) => [m.id, m.id === preselect ? 1 : 0]))
+    Object.fromEntries(ORDER_LINES.map((m) => [m.key, m.key === preselect ? 1 : 0]))
   );
   const [form, setForm] = useState({
     name: "",
@@ -53,8 +70,8 @@ export default function Order() {
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const bump = (id, d) => setQty((q) => ({ ...q, [id]: Math.max(0, Math.min(20, q[id] + d)) }));
 
-  const chosen = ACTIVE_MENU.filter((m) => qty[m.id] > 0);
-  const knownTotal = chosen.reduce((sum, m) => sum + (m.price ?? 0) * qty[m.id], 0);
+  const chosen = ORDER_LINES.filter((m) => qty[m.key] > 0);
+  const knownTotal = chosen.reduce((sum, m) => sum + (m.price ?? 0) * qty[m.key], 0);
   const hasUnpriced = chosen.some((m) => m.price == null);
 
   const errors = {
@@ -68,9 +85,9 @@ export default function Order() {
   const message = useMemo(() => {
     const lines = [`Hi Pamangan! I'd like to place a pre-order:`, ""];
     chosen.forEach((m) => {
-      const line = m.price != null ? ` — $${m.price * qty[m.id]}` : "";
+      const line = m.price != null ? ` — $${m.price * qty[m.key]}` : "";
       const note = m.festive ? " (December)" : "";
-      lines.push(`• ${qty[m.id]} × ${m.name}${note}${line}`);
+      lines.push(`• ${qty[m.key]} × ${m.label}${note}${line}`);
     });
     if (chosen.length) {
       lines.push("");
@@ -169,25 +186,29 @@ export default function Order() {
 
                 <fieldset className="mb-4">
                   <legend className="form-label mb-1">1. Choose your trays</legend>
-                  {ACTIVE_MENU.map((m) => (
-                    <div className="qty-row" key={m.id}>
-                      {m.image ? (
+                  {ORDER_LINES.map((m) => (
+                    <div className={`qty-row${m.isHalf ? " is-half" : ""}`} key={m.key}>
+                      {m.isHalf ? (
+                        <span className="qty-thumb qty-half" aria-hidden="true">½</span>
+                      ) : m.image ? (
                         <img className="qty-thumb" src={m.image} alt="" loading="lazy" />
                       ) : (
                         <span className={`qty-thumb${m.festive ? " festive" : ""}`}><i className={`bi ${m.icon || "bi-egg-fried"}`}></i></span>
                       )}
                       <div className="flex-grow-1" style={{ minWidth: 0 }}>
-                        <div className="fw-semibold" style={{ color: "var(--ink)" }}>{m.name}</div>
+                        <div className="fw-semibold" style={{ color: "var(--ink)" }}>
+                          {m.isHalf ? <>Half order <span className="visually-hidden">of {m.name}</span></> : m.name}
+                        </div>
                         <div className="text-secondary text-truncate" style={{ fontSize: ".8rem" }}>
                           {formatPrice(m.price)} · {m.serving}
                         </div>
                       </div>
-                      <div className="qty-ctrl" role="group" aria-label={`Quantity for ${m.name}`}>
-                        <button type="button" onClick={() => bump(m.id, -1)} disabled={qty[m.id] === 0} aria-label={`Remove one ${m.name}`}>
+                      <div className="qty-ctrl" role="group" aria-label={`Quantity for ${m.label}`}>
+                        <button type="button" onClick={() => bump(m.key, -1)} disabled={qty[m.key] === 0} aria-label={`Remove one ${m.label}`}>
                           <i className="bi bi-dash"></i>
                         </button>
-                        <span aria-live="polite">{qty[m.id]}</span>
-                        <button type="button" onClick={() => bump(m.id, 1)} disabled={qty[m.id] >= 20} aria-label={`Add one ${m.name}`}>
+                        <span aria-live="polite">{qty[m.key]}</span>
+                        <button type="button" onClick={() => bump(m.key, 1)} disabled={qty[m.key] >= 20} aria-label={`Add one ${m.label}`}>
                           <i className="bi bi-plus"></i>
                         </button>
                       </div>
@@ -290,10 +311,10 @@ export default function Order() {
                   ) : (
                     <ul className="list-unstyled mb-3">
                       {chosen.map((m) => (
-                        <li key={m.id} className="d-flex justify-content-between py-1" style={{ fontSize: ".95rem" }}>
-                          <span>{qty[m.id]} × {m.name}</span>
+                        <li key={m.key} className="d-flex justify-content-between py-1" style={{ fontSize: ".95rem" }}>
+                          <span>{qty[m.key]} × {m.label}</span>
                           <span className="fw-semibold">
-                            {m.price != null ? `$${m.price * qty[m.id]}` : "TBC"}
+                            {m.price != null ? `$${m.price * qty[m.key]}` : "TBC"}
                           </span>
                         </li>
                       ))}
