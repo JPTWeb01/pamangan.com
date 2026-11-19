@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import MenuCard from "../components/MenuCard";
 import Gallery from "../components/Gallery";
+import HeroFlag, { sunRays } from "../components/HeroFlag";
 import { BUSINESS, MENU, STEPS, TESTIMONIAL, GALLERY, telLink } from "../data/business";
 
 export default function Home() {
@@ -11,20 +12,22 @@ export default function Home() {
     <>
       {/* ── Hero ── */}
       <section className="biz-hero">
+        <HeroFlag />
         <div className="container">
           <div className="row align-items-center g-5">
             <div className="col-lg-6">
-              <span className="eyebrow mb-3">Homemade in Stittsville</span>
+              <span className="eyebrow mb-3 hero-anim" style={{ "--d": ".05s" }}>Homemade in Stittsville</span>
               <h1 className="mb-4">
-                <span className="font-script">Taste the heart</span>
-                <br />
-                of Pampanga.
+                <span className="hero-line hero-anim" style={{ "--d": ".15s" }}>
+                  <span className="font-script">Taste the heart</span>
+                </span>
+                <span className="hero-line hero-anim" style={{ "--d": ".3s" }}>of Pampanga.</span>
               </h1>
-              <p className="biz-lead mb-4">
+              <p className="biz-lead mb-4 hero-anim" style={{ "--d": ".45s" }}>
                 Authentic Kapampangan sisig, black kutsinta, sushi bake and more —
                 cooked fresh in small batches and ready for pickup in Stittsville.
               </p>
-              <div className="d-flex flex-wrap gap-3 mb-4">
+              <div className="d-flex flex-wrap gap-3 mb-4 hero-anim hero-cta" style={{ "--d": ".6s" }}>
                 <Link to="/order" className="btn btn-maroon btn-lg rounded-pill px-4">
                   <i className="bi bi-bag-heart me-2"></i>Pre-order Now
                 </Link>
@@ -32,14 +35,18 @@ export default function Home() {
                   View Menu
                 </Link>
               </div>
-              <div className="hero-points">
+              <div className="hero-points hero-anim" style={{ "--d": ".75s" }}>
                 <span><i className="bi bi-check-circle-fill"></i>Made fresh to order</span>
                 <span><i className="bi bi-check-circle-fill"></i>Pickup in Stittsville</span>
                 <span><i className="bi bi-check-circle-fill"></i>Delivery near Kanata</span>
               </div>
             </div>
             <div className="col-lg-6">
-              <div className="biz-hero-img">
+              <div className="biz-hero-img hero-anim hero-anim-img" style={{ "--d": ".2s" }}>
+                <svg className="hero-sun" viewBox="0 0 240 240" aria-hidden="true" focusable="false">
+                  <circle cx="120" cy="120" r="34" />
+                  <path d={sunRays(120, 120, 42, 118)} />
+                </svg>
                 <img
                   src="/images/hero.jpg"
                   alt="Pamangan trays of black kutsinta, sushi bake, Kapampangan sisig and chicken roll"

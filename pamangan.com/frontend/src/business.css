@@ -73,6 +73,51 @@ body { background-color: var(--cream); }
   .biz-hero-img::before { inset: 12px -10px -12px 10px; }
 }
 
+/* Hero motion: waving flag, entrance, sun, floating badge */
+.biz-hero > .container { position: relative; z-index: 1; }
+.hero-flag { position: absolute; top: 2.25rem; left: max(-4%, calc(50% - 760px)); width: min(66vw, 860px); aspect-ratio: 2 / 1; opacity: .23; pointer-events: none; z-index: 0;
+  -webkit-mask-image: radial-gradient(ellipse 75% 80% at 30% 45%, #000 35%, transparent 78%);
+          mask-image: radial-gradient(ellipse 75% 80% at 30% 45%, #000 35%, transparent 78%);
+  animation: flagIn 1.6s ease-out both; }
+.hero-flag-cloth { position: absolute; inset: 0; transform: perspective(1200px) rotateY(-14deg) rotateZ(-3deg); transform-origin: left center; }
+.hero-flag-strip { position: absolute; top: 0; bottom: 0; width: calc(100% / var(--n) + 1px); background-image: var(--flag); background-size: calc(var(--n) * 100%) 100%; background-repeat: no-repeat;
+  will-change: transform; animation: flagWave 3.4s ease-in-out infinite; animation-delay: calc(var(--i) * -.075s); }
+.hero-flag-strip::after { content: ''; position: absolute; inset: 0; background: #1a0a06; opacity: 0;
+  animation: flagShade 3.4s ease-in-out infinite; animation-delay: calc(var(--i) * -.075s - .85s); }
+.hero-flag.is-paused .hero-flag-strip, .hero-flag.is-paused .hero-flag-strip::after { animation-play-state: paused; }
+@keyframes flagWave { 0%, 100% { transform: translate3d(0, var(--amp), 0); } 50% { transform: translate3d(0, calc(var(--amp) * -1), 0); } }
+@keyframes flagShade { 0%, 100% { opacity: 0; } 50% { opacity: .28; } }
+@keyframes flagIn { from { opacity: 0; transform: translateX(-24px); } }
+
+.hero-line { display: block; }
+.hero-anim { animation: heroUp .85s cubic-bezier(.2, .7, .2, 1) both; animation-delay: var(--d, 0s); }
+.hero-anim-img { animation-name: heroImg; animation-duration: 1.1s; }
+@keyframes heroUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
+@keyframes heroImg { from { opacity: 0; transform: translateY(26px) scale(.96); } to { opacity: 1; transform: none; } }
+
+.hero-sun { position: absolute; width: 230px; height: 230px; top: -78px; right: -70px; z-index: -2; fill: var(--gold); opacity: .55; animation: sunSpin 70s linear infinite; pointer-events: none; }
+@keyframes sunSpin { to { transform: rotate(360deg); } }
+.hero-badge { animation: badgeFloat 5.5s ease-in-out 1.4s infinite; }
+@keyframes badgeFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+@media (max-width: 991.98px) {
+  .hero-flag { top: 1rem; left: -12%; width: 125vw; opacity: .16; }
+  .hero-sun { width: 170px; height: 170px; top: -48px; right: -36px; }
+}
+
+@media (max-width: 575.98px) {
+  .hero-cta { gap: .6rem !important; flex-wrap: nowrap !important; }
+  .hero-cta .btn { flex: 1 1 auto; font-size: 1rem; padding: .75rem .9rem !important; white-space: nowrap; }
+  .hero-badge { left: 10px; bottom: 10px; padding: .45rem .8rem .45rem .6rem; gap: .45rem; border-radius: 14px; max-width: none; }
+  .hero-badge i { font-size: 1.1rem; }
+  .hero-badge .text-secondary { display: none; }
+  .hero-flag { top: .5rem; width: 140vw; }
+}
+@media (max-width: 359.98px) {
+  .hero-cta .btn { font-size: .92rem; padding: .7rem .6rem !important; }
+  .hero-cta .btn i { margin-right: .35rem !important; }
+}
+
 /* Sections */
 .biz-section { padding: 5rem 0; }
 .biz-section.alt { background: #fff; }
