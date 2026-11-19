@@ -1,16 +1,50 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import React, { Suspense, lazy } from "react";
+import { BrowserRouter, Routes, Route, Link, useLocation } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import ScrollManager from "./components/ScrollManager";
 import Home from "./pages/Home";
-import Recipes from "./pages/Recipes";
-import RecipeDetail from "./pages/RecipeDetail";
-import Categories from "./pages/Categories";
-import MealPlanner from "./pages/MealPlanner";
+import Menu from "./pages/Menu";
+import Order from "./pages/Order";
 import About from "./pages/About";
-import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
+import LoadingSpinner from "./components/LoadingSpinner";
+import { BUSINESS, telLink } from "./data/business";
+
+// Recipe Kitchen + admin are code-split so the business pages load fast.
+const Kitchen = lazy(() => import("./pages/Kitchen"));
+const Recipes = lazy(() => import("./pages/Recipes"));
+const RecipeDetail = lazy(() => import("./pages/RecipeDetail"));
+const Categories = lazy(() => import("./pages/Categories"));
+const MealPlanner = lazy(() => import("./pages/MealPlanner"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+
+function NotFound() {
+  return (
+    <section className="biz-section text-center">
+      <div className="container">
+        <span className="eyebrow mb-2">404</span>
+        <h1 className="biz-title mb-3">This page isn't on the menu</h1>
+        <p className="biz-lead mx-auto mb-4">The page you're looking for doesn't exist or has moved.</p>
+        <Link to="/" className="btn btn-maroon rounded-pill px-4">Back to home</Link>
+      </div>
+    </section>
+  );
+}
+
+function MobileOrderBar() {
+  return (
+    <div className="mobile-order-bar">
+      <a href={telLink} className="btn btn-ghost rounded-pill" aria-label={`Call ${BUSINESS.phoneDisplay}`}>
+        <i className="bi bi-telephone me-1"></i>Call
+      </a>
+      <Link to="/order" className="btn btn-maroon rounded-pill">
+        <i className="bi bi-bag-heart me-1"></i>Order Now
+      </Link>
+    </div>
+  );
+}
 
 function AppContent() {
   const { pathname } = useLocation();
@@ -18,27 +52,39 @@ function AppContent() {
 
   if (isAdmin) {
     return (
-      <Routes>
-        <Route path="/manage/login" element={<AdminLogin />} />
-        <Route path="/manage/dashboard" element={<AdminDashboard />} />
-      </Routes>
+      <Suspense fallback={<LoadingSpinner />}>
+          <Routes>
+          <Route path="/manage/login" element={<AdminLogin />} />
+          <Route path="/manage/dashboard" element={<AdminDashboard />} />
+        </Routes>
+      </Suspense>
     );
   }
 
+  const showOrderBar = pathname !== "/order";
+
   return (
-    <div className="d-flex flex-column min-vh-100">
+    <div className={`d-flex flex-column min-vh-100 ${showOrderBar ? "has-order-bar" : ""}`}>
+      <ScrollManager />
       <Navbar />
       <main className="flex-grow-1">
-        <Routes>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/menu" element={<Menu />} />
+          <Route path="/order" element={<Order />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/kitchen" element={<Kitchen />} />
           <Route path="/recipes" element={<Recipes />} />
           <Route path="/recipe/:id" element={<RecipeDetail />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/meal-planner" element={<MealPlanner />} />
-          <Route path="/about" element={<About />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
+        </Suspense>
       </main>
       <Footer />
+      {showOrderBar && <MobileOrderBar />}
     </div>
   );
 }

@@ -1,379 +1,209 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import RecipeCard from "../components/RecipeCard";
-import LoadingSpinner from "../components/LoadingSpinner";
-import Modal from "../components/Modal";
-import { recipeApi } from "../services/api";
-
-const CATEGORIES = [
-  {
-    name: "Filipino",
-    emoji: "🇵🇭",
-    image: "https://flagcdn.com/w40/ph.png",
-    bg: "linear-gradient(135deg,#0038A8,#002d87)",
-    count: "Classic dishes",
-    link: "/recipes?cuisine=Filipino",
-  },
-  {
-    name: "Asian",
-    emoji: "🍜",
-    bg: "linear-gradient(135deg,#CE1126,#8b0011)",
-    count: "Pan-Asian flavors",
-    link: "/recipes?cuisine=Asian",
-  },
-  {
-    name: "Healthy",
-    emoji: "🥗",
-    bg: "linear-gradient(135deg,#16a34a,#0f6b31)",
-    count: "Nutritious picks",
-    link: "/recipes?cuisine=Healthy",
-  },
-  {
-    name: "Quick & Easy",
-    emoji: "⚡",
-    bg: "linear-gradient(135deg,#d97706,#b45309)",
-    count: "30 min or less",
-    link: "/recipes?q=quick",
-  },
-  {
-    name: "Soup",
-    emoji: "🍲",
-    bg: "linear-gradient(135deg,#7c3aed,#5b21b6)",
-    count: "Warm & comforting",
-    link: "/recipes?q=soup",
-  },
-  {
-    name: "Snack",
-    emoji: "🍢",
-    bg: "linear-gradient(135deg,#0891b2,#0e7490)",
-    count: "Light bites",
-    link: "/recipes?cuisine=Snack",
-  },
-  {
-    name: "Dessert",
-    emoji: "🍰",
-    bg: "linear-gradient(135deg,#db2777,#9d174d)",
-    count: "Sweet treats",
-    link: "/recipes?cuisine=Dessert",
-  },
-  {
-    name: "Seafood",
-    emoji: "🐟",
-    bg: "linear-gradient(135deg,#0369a1,#075985)",
-    count: "Fresh from the sea",
-    link: "/recipes?cuisine=Seafood",
-  },
-  {
-    name: "Vegetarian",
-    emoji: "🥦",
-    bg: "linear-gradient(135deg,#15803d,#166534)",
-    count: "Plant-based picks",
-    link: "/recipes?cuisine=Vegetarian",
-  },
-];
-
-const FEATURES = [
-  {
-    icon: "bi-cart3",
-    label: "Grocery List",
-    desc: "Open any recipe and tap 'Grocery List' to get a ready-to-shop ingredient list",
-    color: "#0038A8",
-    bg: "var(--ph-blue-light)",
-    to: null,
-    action: "grocery",
-  },
-  {
-    icon: "bi-bar-chart-fill",
-    label: "Nutrition Info",
-    desc: "View calorie counts, protein, carbs, and fat for any recipe you open",
-    color: "#16a34a",
-    bg: "#d1fae5",
-    to: null,
-    action: "nutrition",
-  },
-  {
-    icon: "bi-book",
-    label: "Food History",
-    desc: "Learn the cultural origin and story behind any dish you cook",
-    color: "#7c3aed",
-    bg: "#ede9fe",
-    to: null,
-    action: "history",
-  },
-  {
-    icon: "bi-calendar3",
-    label: "Meal Planner",
-    desc: "Schedule your breakfast, lunch, and dinner for the whole week",
-    color: "#d97706",
-    bg: "#fef3c7",
-    to: "/meal-planner",
-  },
-];
+import React from "react";
+import { Link } from "react-router-dom";
+import MenuCard from "../components/MenuCard";
+import Gallery from "../components/Gallery";
+import { BUSINESS, MENU, STEPS, TESTIMONIAL, GALLERY, telLink } from "../data/business";
 
 export default function Home() {
-  const [query, setQuery] = useState("");
-  const [popular, setPopular] = useState([]);
-  const [loadingPopular, setLoadingPopular] = useState(true);
-  const [generateModal, setGenerateModal] = useState(false);
-  const [generateName, setGenerateName] = useState("");
-  const [generating, setGenerating] = useState(false);
-  const [generateError, setGenerateError] = useState("");
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    recipeApi
-      .popular(8)
-      .then((res) => setPopular(res.data || []))
-      .catch(() => {})
-      .finally(() => setLoadingPopular(false));
-  }, []);
-
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (query.trim()) navigate(`/recipes?q=${encodeURIComponent(query.trim())}`);
-  };
-
-  const handleGenerate = async (e) => {
-    e.preventDefault();
-    if (!generateName.trim()) return;
-    setGenerating(true);
-    setGenerateError("");
-    try {
-      const res = await recipeApi.generate(generateName.trim());
-      navigate(`/recipe/${res.data.id}`);
-    } catch (err) {
-      setGenerateError(err.message);
-      setGenerating(false);
-    }
-  };
+  const featured = MENU.filter((m) => m.image).slice(0, 3);
 
   return (
     <>
       {/* ── Hero ── */}
-      <section className="hero-section">
-        <div className="container position-relative" style={{ zIndex: 1 }}>
-          <div className="row justify-content-center text-center">
-            <div className="col-lg-8">
-              <span className="badge-pill mb-4">
-                <i className="bi bi-stars"></i>AI-Powered Recipe Platform
-              </span>
-              <h1
-                className="text-white fw-black mb-3"
-                style={{ fontSize: "clamp(2rem, 5vw, 3.25rem)", lineHeight: 1.1 }}
-              >
-                Discover Filipino &amp;{" "}
-                <span style={{ color: "#FCD116" }}>Global Recipes</span>
+      <section className="biz-hero">
+        <div className="container">
+          <div className="row align-items-center g-5">
+            <div className="col-lg-6">
+              <span className="eyebrow mb-3">Homemade in Stittsville</span>
+              <h1 className="mb-4">
+                <span className="font-script">Taste the heart</span>
+                <br />
+                of Pampanga.
               </h1>
-              <p className="text-white mb-4" style={{ opacity: 0.8, fontSize: "1.05rem" }}>
-                Search thousands of authentic recipes or request a custom one
-                — ready instantly.
+              <p className="biz-lead mb-4">
+                Authentic Kapampangan sisig, black kutsinta, sushi bake and more —
+                cooked fresh in small batches and ready for pickup in Stittsville.
               </p>
-
-              <div className="hero-search-wrapper mx-auto mb-4">
-                <form onSubmit={handleSearch}>
-                  <i className="bi bi-search search-icon"></i>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder={'Try "Chicken Adobo", "Sinigang", "Pasta"…'}
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                  />
-                  <button type="submit" className="btn-search">
-                    Search
-                  </button>
-                </form>
-              </div>
-
-              <div className="d-flex gap-3 justify-content-center flex-wrap">
-                <Link
-                  to="/recipes"
-                  className="btn rounded-pill px-4 fw-semibold"
-                  style={{ background: "rgba(255,255,255,.15)", color: "#fff", border: "1px solid rgba(255,255,255,.3)", backdropFilter: "blur(6px)" }}
-                >
-                  <i className="bi bi-grid me-2"></i>Browse All Recipes
+              <div className="d-flex flex-wrap gap-3 mb-4">
+                <Link to="/order" className="btn btn-maroon btn-lg rounded-pill px-4">
+                  <i className="bi bi-bag-heart me-2"></i>Pre-order Now
                 </Link>
-                <button
-                  className="btn rounded-pill px-4 fw-semibold"
-                  style={{ background: "#FCD116", color: "#111" }}
-                  onClick={() => setGenerateModal(true)}
-                >
-                  <i className="bi bi-stars me-2"></i>Request a Recipe
-                </button>
+                <Link to="/menu" className="btn btn-ghost btn-lg rounded-pill px-4">
+                  View Menu
+                </Link>
+              </div>
+              <div className="hero-points">
+                <span><i className="bi bi-check-circle-fill"></i>Made fresh to order</span>
+                <span><i className="bi bi-check-circle-fill"></i>Pickup in Stittsville</span>
+                <span><i className="bi bi-check-circle-fill"></i>Delivery near Kanata</span>
+              </div>
+            </div>
+            <div className="col-lg-6">
+              <div className="biz-hero-img">
+                <img
+                  src="/images/hero.jpg"
+                  alt="Pamangan trays of black kutsinta, sushi bake, Kapampangan sisig and chicken roll"
+                  width="900"
+                  height="666"
+                  fetchpriority="high"
+                />
+                <div className="hero-badge">
+                  <i className="bi bi-heart-fill"></i>
+                  <div style={{ fontSize: ".85rem", lineHeight: 1.3 }}>
+                    <strong>Lutong bahay</strong>
+                    <div className="text-secondary">Home-cooked Kapampangan recipes</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── Features ── */}
-      <section className="py-5">
+      {/* ── Best sellers ── */}
+      <section className="biz-section alt">
         <div className="container">
-          <div className="text-center mb-4">
-            <h2 className="section-title">What You Can Do</h2>
-            <p className="section-subtitle">AI-powered tools to level up your cooking</p>
-          </div>
-          <div className="row g-3">
-            {FEATURES.map((f) => (
-              <div className="col-6 col-lg-3" key={f.label}>
-                <FeatureCard feature={f} />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Popular Recipes ── */}
-      <section className="py-5" style={{ background: "var(--surface)" }}>
-        <div className="container">
-          <div className="d-flex align-items-end justify-content-between mb-4">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-5">
             <div>
-              <h2 className="section-title">Popular Recipes</h2>
-              <p className="section-subtitle mb-0">Most viewed dishes on the platform</p>
+              <span className="eyebrow mb-2">Our best sellers</span>
+              <h2 className="biz-title mb-0">Favourites from our kitchen</h2>
             </div>
-            <Link to="/recipes" className="btn btn-sm btn-outline-primary rounded-pill px-3">
-              View all <i className="bi bi-arrow-right ms-1"></i>
+            <Link to="/menu" className="btn btn-ghost rounded-pill px-4 align-self-start align-self-md-auto">
+              Full menu <i className="bi bi-arrow-right ms-1"></i>
             </Link>
           </div>
-
-          {loadingPopular ? (
-            <LoadingSpinner message="Loading recipes…" />
-          ) : popular.length === 0 ? (
-            <div className="text-center py-5 text-secondary">
-              <i className="bi bi-egg-fried display-4 d-block mb-3" style={{ opacity: .3 }}></i>
-              <p>No recipes yet — add some by running the seed script.</p>
-            </div>
-          ) : (
-            <div className="row g-3">
-              {popular.map((r) => (
-                <div className="col-6 col-md-4 col-lg-3" key={r.id}>
-                  <RecipeCard recipe={r} />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* ── Categories ── */}
-      <section className="py-5">
-        <div className="container">
-          <div className="text-center mb-4">
-            <h2 className="section-title">Explore by Category</h2>
-            <p className="section-subtitle">From Filipino classics to global favorites</p>
-          </div>
-          <div className="row g-3">
-            {CATEGORIES.map((cat) => (
-              <div className="col-6 col-md-4 col-lg-2" key={cat.name}>
-                <Link
-                  to={cat.link}
-                  className="text-decoration-none"
-                >
-                  <div
-                    className="rounded-3 p-3 text-center text-white"
-                    style={{
-                      background: cat.bg,
-                      transition: "transform .2s, box-shadow .2s",
-                      cursor: "pointer",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "translateY(-4px)";
-                      e.currentTarget.style.boxShadow = "var(--shadow-md)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "";
-                      e.currentTarget.style.boxShadow = "";
-                    }}
-                  >
-                    <div style={{ height: "2.5rem", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: ".35rem" }}>
-                      {cat.image
-                        ? <img src={cat.image} alt={cat.name} style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "contain", borderRadius: 3 }} />
-                        : <span style={{ fontSize: "2rem", lineHeight: 1 }}>{cat.emoji}</span>}
-                    </div>
-                    <div className="fw-bold" style={{ fontSize: ".95rem" }}>{cat.name}</div>
-                    <div style={{ fontSize: ".72rem", opacity: .75 }}>{cat.count}</div>
-                  </div>
-                </Link>
+          <div className="row g-4">
+            {featured.map((item) => (
+              <div className="col-md-6 col-lg-4" key={item.id}>
+                <MenuCard item={item} />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── CTA Banner ── */}
-      <section
-        className="py-5"
-        style={{ background: "linear-gradient(135deg,#0038A8 0%,#001a5c 100%)" }}
-      >
-        <div className="container text-center text-white">
-          <h2 className="fw-black mb-2" style={{ fontSize: "clamp(1.5rem,3vw,2.25rem)" }}>
-            Can't find a recipe?
-          </h2>
-          <p className="mb-4" style={{ opacity: .8 }}>
-            You can request any recipe you crave — instantly saved for everyone.
-          </p>
-          <button
-            className="btn rounded-pill px-5 py-2 fw-bold"
-            style={{ background: "#FCD116", color: "#111", fontSize: "1.05rem" }}
-            onClick={() => setGenerateModal(true)}
-          >
-            <i className="bi bi-stars me-2"></i>Request a Recipe
-          </button>
+      {/* ── How it works ── */}
+      <section className="biz-section">
+        <div className="container">
+          <div className="text-center mb-5">
+            <span className="eyebrow mb-2">How it works</span>
+            <h2 className="biz-title">Ordering is easy</h2>
+            <p className="biz-lead mx-auto">
+              We cook on scheduled days, so every tray is fresh. Just pre-order before the cut-off.
+            </p>
+          </div>
+          <div className="row g-4">
+            {STEPS.map((s, i) => (
+              <div className="col-md-4" key={s.title}>
+                <div className="step-card">
+                  <span className="step-num" aria-hidden="true">{i + 1}</span>
+                  <div className="step-icon"><i className={`bi ${s.icon}`}></i></div>
+                  <h3>{s.title}</h3>
+                  <p>{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="text-center mt-5">
+            <Link to="/order" className="btn btn-maroon btn-lg rounded-pill px-5">
+              Start your order
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* ── Generate Modal ── */}
-      <Modal
-        show={generateModal}
-        onClose={() => { setGenerateModal(false); setGenerateError(""); }}
-        title={<span><i className="bi bi-stars me-2 text-primary"></i>Request a Recipe</span>}
-        footer={
-          <button
-            className="btn btn-primary rounded-pill px-4 fw-semibold"
-            onClick={handleGenerate}
-            disabled={generating || !generateName.trim()}
-          >
-            {generating ? (
-              <><span className="spinner-border spinner-border-sm me-2"></span>Requesting…</>
-            ) : (
-              <><i className="bi bi-stars me-2"></i>Request a Recipe</>
-            )}
-          </button>
-        }
-      >
-        <p className="text-secondary mb-3">
-          Type any dish name and we'll create a complete recipe with ingredients,
-          instructions, and more.
-        </p>
-        <form onSubmit={handleGenerate}>
-          <input
-            type="text"
-            className="form-control form-control-lg rounded-3"
-            placeholder="e.g. Chicken Adobo, Carbonara, Pad Thai…"
-            value={generateName}
-            onChange={(e) => setGenerateName(e.target.value)}
-            autoFocus
-          />
-        </form>
-        {generateError && (
-          <div className="alert alert-danger mt-3 mb-0">{generateError}</div>
-        )}
-      </Modal>
+      {/* ── Testimonial ── */}
+      <section className="biz-section deep">
+        <div className="container">
+          <div className="quote-card">
+            <div className="row g-4 align-items-center">
+              <div className="col-lg-8">
+                <span className="eyebrow mb-3" style={{ color: "var(--gold)" }}>What our customers say</span>
+                <p className="quote-original mb-3">“{TESTIMONIAL.original}”</p>
+                <p className="quote-translation mb-3">
+                  <i className="bi bi-translate me-2"></i>{TESTIMONIAL.translation}
+                </p>
+                <div style={{ fontWeight: 600 }}>— {TESTIMONIAL.author}</div>
+              </div>
+              <div className="col-lg-4 d-none d-lg-block">
+                <img
+                  src="/images/gallery/5.jpg"
+                  alt="A family enjoying Pamangan food at the dinner table"
+                  loading="lazy"
+                  className="w-100"
+                  style={{ borderRadius: 20, position: "relative", zIndex: 1 }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Gallery ── */}
+      <section className="biz-section alt">
+        <div className="container">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-5">
+            <div>
+              <span className="eyebrow mb-2">Mga ka-Pamangan</span>
+              <h2 className="biz-title mb-0">Made with love, served with pride</h2>
+            </div>
+            <a
+              href={BUSINESS.facebookUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-ghost rounded-pill px-4 align-self-start align-self-md-auto"
+            >
+              <i className="bi bi-facebook me-2"></i>Follow us
+            </a>
+          </div>
+          <Gallery images={GALLERY.slice(0, 9)} />
+        </div>
+      </section>
+
+      {/* ── Recipe Kitchen teaser ── */}
+      <section className="biz-section">
+        <div className="container">
+          <div className="kitchen-teaser">
+            <div className="row g-4 align-items-center">
+              <div className="col-lg-8">
+                <span className="badge-ai mb-3"><i className="bi bi-stars"></i>Pamangan Recipe Kitchen</span>
+                <h2 className="text-white mb-3" style={{ fontSize: "clamp(1.6rem,3.4vw,2.3rem)" }}>
+                  Want to cook Filipino at home?
+                </h2>
+                <p className="mb-0" style={{ color: "rgba(255,255,255,.78)", maxWidth: 560 }}>
+                  Browse our free recipe library or generate any recipe instantly with AI —
+                  complete with grocery lists, nutrition info and the story behind each dish.
+                </p>
+              </div>
+              <div className="col-lg-4 text-lg-end">
+                <Link to="/kitchen" className="btn btn-gold btn-lg rounded-pill px-4">
+                  <i className="bi bi-stars me-2"></i>Try the Recipe Kitchen
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Final CTA ── */}
+      <section className="biz-section deep text-center">
+        <div className="container">
+          <h2 className="biz-title mb-3">
+            Hungry? <span className="font-script" style={{ color: "var(--maroon)" }}>Kain na!</span>
+          </h2>
+          <p className="biz-lead mx-auto mb-4">
+            Send us your order through the form, Messenger, or a quick text to <span className="text-nowrap">{BUSINESS.phoneDisplay}</span>.
+          </p>
+          <div className="d-flex flex-wrap gap-3 justify-content-center">
+            <Link to="/order" className="btn btn-maroon btn-lg rounded-pill px-4">
+              <i className="bi bi-bag-heart me-2"></i>Order Now
+            </Link>
+            <a href={telLink} className="btn btn-ghost btn-lg rounded-pill px-4">
+              <i className="bi bi-telephone me-2"></i>{BUSINESS.phoneDisplay}
+            </a>
+          </div>
+        </div>
+      </section>
     </>
   );
-}
-
-function FeatureCard({ feature: f }) {
-  const inner = (
-    <div className="feature-card h-100">
-      <div className="feature-icon" style={{ background: f.bg, color: f.color }}>
-        <i className={`bi ${f.icon}`}></i>
-      </div>
-      <div className="fw-bold mb-1" style={{ fontSize: ".95rem" }}>{f.label}</div>
-      <div className="text-secondary" style={{ fontSize: ".82rem" }}>{f.desc}</div>
-    </div>
-  );
-
-  if (f.to) return <Link to={f.to} className="text-decoration-none d-block h-100">{inner}</Link>;
-  return inner;
 }

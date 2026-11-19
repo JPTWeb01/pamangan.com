@@ -256,7 +256,7 @@ export default function AdminDashboard() {
               <div className="position-relative">
                 <i
                   className="bi bi-search position-absolute top-50 translate-middle-y"
-                  style={{ left: 12, color: "#9ca3af", fontSize: ".82rem", pointerEvents: "none" }}
+                  style={{ left: 12, color: "#A08E80", fontSize: ".82rem", pointerEvents: "none" }}
                 ></i>
                 <input
                   type="search"

@@ -8,14 +8,14 @@ const PRESET_CATEGORIES = [
     name: "Filipino",
     description: "Authentic Philippine cuisine — from adobo to sinigang.",
     emoji: "🇵🇭",
-    gradient: "linear-gradient(135deg,#0038A8,#001a5c)",
+    gradient: "linear-gradient(135deg,#7B1E22,#4A1013)",
     featured: true,
   },
   {
     name: "Asian",
     description: "Pan-Asian flavors spanning Japan, China, Korea, Thailand.",
     emoji: "🍜",
-    gradient: "linear-gradient(135deg,#CE1126,#7a000b)",
+    gradient: "linear-gradient(135deg,#B5402A,#7a000b)",
     featured: true,
   },
   {
@@ -132,7 +132,7 @@ export default function Categories() {
                     color: "var(--ph-blue)",
                     fontSize: ".85rem",
                     fontWeight: 500,
-                    border: "1px solid rgba(0,56,168,.15)",
+                    border: "1px solid rgba(123,30,34,.15)",
                   }}
                 >
                   {name}

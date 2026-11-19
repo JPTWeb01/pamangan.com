@@ -135,7 +135,7 @@ export default function RecipeDetail() {
             {/* Action cards */}
             <div className="row g-2 mb-4">
               {[
-                { key: "grocery",   icon: "bi-cart3",          label: "Grocery List",  desc: "Get a shopping list",   color: "#0038A8", bg: "var(--ph-blue-light)", action: () => setModal("grocery") },
+                { key: "grocery",   icon: "bi-cart3",          label: "Grocery List",  desc: "Get a shopping list",   color: "#7B1E22", bg: "var(--ph-blue-light)", action: () => setModal("grocery") },
                 { key: "nutrition", icon: "bi-bar-chart-fill", label: "Nutrition Info", desc: "Calories & macros",    color: "#16a34a", bg: "#d1fae5",              action: () => setModal("nutrition") },
                 { key: "history",   icon: "bi-book",           label: "Food History",  desc: "Cultural background",   color: "#7c3aed", bg: "#ede9fe",              action: () => setModal("history") },
                 { key: "planner",

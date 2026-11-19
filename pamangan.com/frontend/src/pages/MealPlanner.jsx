@@ -292,7 +292,7 @@ export default function MealPlanner() {
         }
       >
         <div className="position-relative mb-3">
-          <i className="bi bi-search position-absolute top-50 translate-middle-y" style={{ left: 12, color: "#9ca3af" }}></i>
+          <i className="bi bi-search position-absolute top-50 translate-middle-y" style={{ left: 12, color: "#A08E80" }}></i>
           <input
             type="search"
             className="form-control rounded-3"

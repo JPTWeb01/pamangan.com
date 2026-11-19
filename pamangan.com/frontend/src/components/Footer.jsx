@@ -1,92 +1,72 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { BUSINESS, telLink, smsLink } from "../data/business";
+import { Wordmark } from "./Navbar";
 
 export default function Footer() {
   return (
-    <footer className="site-footer">
+    <footer className="biz-footer">
       <div className="container">
-        <div className="row g-4">
+        <div className="row g-4 g-lg-5">
           <div className="col-lg-4 col-md-6">
-            <div className="footer-brand mb-2">pamangan.com</div>
-            <p style={{ fontSize: ".9rem", color: "rgba(255,255,255,.6)", maxWidth: 300 }}>
-              An AI-powered recipe platform celebrating Filipino cuisine and global
-              flavors. Discover, generate, and cook with confidence.
+            <Link to="/" aria-label={`${BUSINESS.name} home`}>
+              <Wordmark />
+            </Link>
+            <p className="mt-3 mb-4" style={{ fontSize: ".92rem", maxWidth: 320 }}>
+              Homemade Kapampangan food, cooked with love in Stittsville. Pre-order
+              for pickup, with delivery to selected areas near Stittsville and Kanata.
             </p>
-            <div className="d-flex gap-3 mt-3">
-              {["facebook", "instagram", "youtube"].map((icon) => (
-                <button
-                  key={icon}
-                  className="d-flex align-items-center justify-content-center rounded-circle border-0"
-                  style={{
-                    width: 36,
-                    height: 36,
-                    background: "rgba(255,255,255,.1)",
-                    transition: "background .2s",
-                    cursor: "default",
-                  }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,.2)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(255,255,255,.1)")}
-                >
-                  <i className={`bi bi-${icon}`} style={{ color: "#fff", fontSize: ".9rem" }}></i>
-                </button>
-              ))}
+            <div className="d-flex gap-2">
+              <a href={BUSINESS.facebookUrl} target="_blank" rel="noopener noreferrer" className="social-btn" aria-label="Facebook">
+                <i className="bi bi-facebook"></i>
+              </a>
+              <a href={BUSINESS.messengerUrl} target="_blank" rel="noopener noreferrer" className="social-btn" aria-label="Messenger">
+                <i className="bi bi-messenger"></i>
+              </a>
+              <a href={smsLink()} className="social-btn" aria-label="Send a text">
+                <i className="bi bi-chat-dots"></i>
+              </a>
             </div>
           </div>
 
           <div className="col-lg-2 col-md-3 col-6">
-            <h6>Explore</h6>
-            <ul className="list-unstyled" style={{ fontSize: ".9rem" }}>
-              {[
-                { to: "/recipes", label: "All Recipes" },
-                { to: "/categories", label: "Categories" },
-                { to: "/meal-planner", label: "Meal Planner" },
-                { to: "/about", label: "About Us" },
-              ].map(({ to, label }) => (
-                <li key={to} className="mb-1">
-                  <Link to={to}>{label}</Link>
-                </li>
-              ))}
+            <h6>Visit</h6>
+            <ul className="list-unstyled d-grid gap-2" style={{ fontSize: ".92rem" }}>
+              <li><Link to="/menu">Menu</Link></li>
+              <li><Link to="/order">How to Order</Link></li>
+              <li><Link to="/about">Our Story</Link></li>
+              <li><Link to="/kitchen">Recipe Kitchen</Link></li>
             </ul>
           </div>
 
-          <div className="col-lg-2 col-md-3 col-6">
-            <h6>Cuisine</h6>
-            <ul className="list-unstyled" style={{ fontSize: ".9rem" }}>
-              {["Filipino", "Asian", "Italian", "Mexican", "Healthy"].map((c) => (
-                <li key={c} className="mb-1">
-                  <Link to={`/recipes?cuisine=${c}`}>{c}</Link>
-                </li>
-              ))}
+          <div className="col-lg-3 col-md-3 col-6">
+            <h6>Order</h6>
+            <ul className="list-unstyled d-grid gap-2" style={{ fontSize: ".92rem" }}>
+              <li><a href={telLink}><i className="bi bi-telephone me-2"></i>{BUSINESS.phoneDisplay}</a></li>
+              <li><a href={BUSINESS.messengerUrl} target="_blank" rel="noopener noreferrer"><i className="bi bi-messenger me-2"></i>Messenger</a></li>
+              <li><Link to="/order#order-form"><i className="bi bi-ui-checks me-2"></i>Order form</Link></li>
             </ul>
           </div>
 
-          <div className="col-lg-4 col-md-6">
-            <h6>Request a Recipe</h6>
-            <p style={{ fontSize: ".85rem", color: "rgba(255,255,255,.6)" }}>
-              Can't find a recipe? You can request one and it'll be ready instantly.
+          <div className="col-lg-3 col-md-6">
+            <h6>Pickup &amp; Delivery</h6>
+            <p className="mb-2" style={{ fontSize: ".92rem" }}>
+              <i className="bi bi-geo-alt me-2"></i>Pickup in {BUSINESS.pickupArea}
             </p>
-            <Link
-              to="/recipes?generate=1"
-              className="btn btn-sm rounded-pill px-4 fw-semibold"
-              style={{ background: "#FCD116", color: "#111" }}
-            >
-              <i className="bi bi-stars me-2"></i>Request a Recipe
-            </Link>
+            <p className="mb-2" style={{ fontSize: ".92rem" }}>
+              <i className="bi bi-truck me-2"></i>Delivery to selected areas near Stittsville &amp; Kanata (fee applies)
+            </p>
+            <p className="mb-0" style={{ fontSize: ".92rem" }}>
+              <i className="bi bi-calendar-check me-2"></i>Pre-order only, by schedule
+            </p>
           </div>
         </div>
 
-        <hr className="footer-divider" />
+        <hr style={{ borderColor: "rgba(255,255,255,.12)", margin: "2.5rem 0 1.5rem" }} />
 
-        <div
-          className="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2"
-          style={{ fontSize: ".8rem", color: "rgba(255,255,255,.4)" }}
-        >
-          <span>© {new Date().getFullYear()} pamangan.com — All rights reserved.</span>
-          <span>
-            Powered by{" "}
-            <span style={{ color: "rgba(255,255,255,.6)" }}>Google Gemini</span> &amp;{" "}
-            <span style={{ color: "rgba(255,255,255,.6)" }}>Groq</span>
-          </span>
+        <div className="d-flex flex-column flex-md-row justify-content-between gap-2" style={{ fontSize: ".82rem", color: "rgba(255,255,255,.5)" }}>
+          <span>© {new Date().getFullYear()} {BUSINESS.name} · Stittsville, Ontario</span>
+          <span>Maraming salamat, mga ka-Pamangan!</span>
         </div>
       </div>
     </footer>

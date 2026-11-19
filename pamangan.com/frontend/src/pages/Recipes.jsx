@@ -95,7 +95,7 @@ export default function Recipes() {
             <div className="col-12 col-md-4">
               <label className="form-label small fw-semibold text-secondary mb-1">Search</label>
               <div className="position-relative">
-                <i className="bi bi-search position-absolute top-50 translate-middle-y" style={{ left: 12, color: "#9ca3af", fontSize: ".85rem" }}></i>
+                <i className="bi bi-search position-absolute top-50 translate-middle-y" style={{ left: 12, color: "#A08E80", fontSize: ".85rem" }}></i>
                 <input
                   type="search"
                   className="form-control rounded-3"

@@ -28,9 +28,9 @@ export default function NutritionModal({ show, onClose, recipeId, recipeName }) 
 
   const macros = data
     ? [
-        { value: data.calories_per_serving, label: "Calories", unit: "kcal", color: "#CE1126" },
-        { value: data.protein_g, label: "Protein", unit: "g", color: "#0038A8" },
-        { value: data.carbohydrates_g, label: "Carbs", unit: "g", color: "#FCD116" },
+        { value: data.calories_per_serving, label: "Calories", unit: "kcal", color: "#B5402A" },
+        { value: data.protein_g, label: "Protein", unit: "g", color: "#7B1E22" },
+        { value: data.carbohydrates_g, label: "Carbs", unit: "g", color: "#E9B949" },
         { value: data.fat_g, label: "Fat", unit: "g", color: "#16a34a" },
         { value: data.fiber_g, label: "Fiber", unit: "g", color: "#7c3aed" },
         { value: data.sodium_mg, label: "Sodium", unit: "mg", color: "#ea580c" },

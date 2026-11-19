@@ -1,16 +1,16 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
-const BLUE = "#0038A8";
-const LIGHT_BLUE = "#e8edf8";
-const YELLOW = "#FCD116";
+const BLUE = "#7B1E22";
+const LIGHT_BLUE = "#F7E9E4";
+const YELLOW = "#E9B949";
 
 const s = StyleSheet.create({
   page: {
     padding: 40,
     fontFamily: "Helvetica",
     fontSize: 10,
-    color: "#111827",
+    color: "#2B1A14",
     backgroundColor: "#ffffff",
   },
 
@@ -25,7 +25,7 @@ const s = StyleSheet.create({
     marginBottom: 20,
   },
   brand: { fontSize: 18, fontFamily: "Helvetica-Bold", color: BLUE },
-  brandSub: { fontSize: 8, color: "#9ca3af", marginTop: 2 },
+  brandSub: { fontSize: 8, color: "#A08E80", marginTop: 2 },
   badgeRow: { flexDirection: "row" },
   badge: {
     backgroundColor: BLUE,
@@ -36,11 +36,11 @@ const s = StyleSheet.create({
   },
   badgeText: { fontSize: 8, color: "#ffffff", fontFamily: "Helvetica-Bold" },
   badgeYellow: { backgroundColor: YELLOW },
-  badgeYellowText: { color: "#111827" },
+  badgeYellowText: { color: "#2B1A14" },
 
   /* Title */
   title: { fontSize: 22, fontFamily: "Helvetica-Bold", marginBottom: 6 },
-  description: { fontSize: 10, color: "#6b7280", lineHeight: 1.5, marginBottom: 14 },
+  description: { fontSize: 10, color: "#6E5A4E", lineHeight: 1.5, marginBottom: 14 },
 
   /* Stats */
   statsBox: {
@@ -52,7 +52,7 @@ const s = StyleSheet.create({
   },
   statItem: { flex: 1, alignItems: "center" },
   statValue: { fontSize: 10, fontFamily: "Helvetica-Bold", color: BLUE },
-  statLabel: { fontSize: 7, color: "#6b7280", marginTop: 2 },
+  statLabel: { fontSize: 7, color: "#6E5A4E", marginTop: 2 },
 
   /* Section heading */
   sectionHeading: {
@@ -70,18 +70,18 @@ const s = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 5,
     borderBottomWidth: 0.5,
-    borderBottomColor: "#e5e7eb",
+    borderBottomColor: "#EADFCF",
   },
   checkbox: {
     width: 10,
     height: 10,
     borderWidth: 0.75,
-    borderColor: "#9ca3af",
+    borderColor: "#A08E80",
     borderRadius: 2,
     marginRight: 8,
   },
   ingredientName: { flex: 1, fontSize: 10 },
-  ingredientQty: { fontSize: 10, color: "#6b7280", fontFamily: "Helvetica-Bold" },
+  ingredientQty: { fontSize: 10, color: "#6E5A4E", fontFamily: "Helvetica-Bold" },
 
   /* Instructions */
   stepRow: { flexDirection: "row", marginBottom: 8, alignItems: "flex-start" },
@@ -128,10 +128,10 @@ const s = StyleSheet.create({
     right: 40,
     textAlign: "center",
     fontSize: 8,
-    color: "#9ca3af",
+    color: "#A08E80",
     paddingTop: 6,
     borderTopWidth: 0.5,
-    borderTopColor: "#e5e7eb",
+    borderTopColor: "#EADFCF",
   },
 });
 

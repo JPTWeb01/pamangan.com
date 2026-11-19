@@ -1,101 +1,92 @@
 import React, { useState, useEffect } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import logo from "../assets/logo.png";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { BUSINESS } from "../data/business";
+
+const LINKS = [
+  { to: "/", label: "Home", end: true },
+  { to: "/menu", label: "Menu" },
+  { to: "/order", label: "How to Order" },
+  { to: "/kitchen", label: "Recipe Kitchen" },
+  { to: "/about", label: "Our Story" },
+];
+
+export function Wordmark({ className = "" }) {
+  return (
+    <span className={`wordmark ${className}`}>
+      <span className="wordmark-name">{BUSINESS.name}</span>
+      <span className="wordmark-tag">{BUSINESS.tagline}</span>
+    </span>
+  );
+}
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (query.trim()) {
-      navigate(`/recipes?q=${encodeURIComponent(query.trim())}`);
-      setQuery("");
-      setMenuOpen(false);
-    }
-  };
+  // Close the mobile menu whenever the route changes
+  useEffect(() => setMenuOpen(false), [pathname]);
+
+  // Keep "Recipe Kitchen" highlighted on the recipe sub-pages
+  const kitchenActive = ["/kitchen", "/recipes", "/recipe/", "/categories", "/meal-planner"].some(
+    (p) => pathname.startsWith(p)
+  );
 
   return (
-    <nav
-      className={`navbar navbar-expand-lg sticky-top ${
-        scrolled ? "bg-white shadow-sm" : "bg-white border-bottom"
-      }`}
-      style={{ transition: "box-shadow .25s", paddingTop: 0, paddingBottom: 0 }}
-    >
+    <nav className={`navbar navbar-expand-lg sticky-top biz-nav ${scrolled ? "scrolled" : ""}`}>
       <div className="container">
-        {/* Brand */}
-        <Link to="/" className="navbar-brand">
-          <img src={logo} alt="Pamangan" className="navbar-logo" />
+        <Link to="/" className="navbar-brand py-0 me-4" aria-label={`${BUSINESS.name} home`}>
+          <Wordmark />
         </Link>
 
-        {/* Hamburger */}
         <button
-          className="navbar-toggler border-0"
+          className="navbar-toggler border-0 px-2"
           type="button"
-          aria-label="Toggle navigation"
+          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={menuOpen}
+          aria-controls="mainNav"
           onClick={() => setMenuOpen((o) => !o)}
         >
-          <i className={`bi ${menuOpen ? "bi-x" : "bi-list"} fs-4`}></i>
+          <i className={`bi ${menuOpen ? "bi-x-lg" : "bi-list"} fs-3`}></i>
         </button>
 
-        <div className={`collapse navbar-collapse ${menuOpen ? "show" : ""}`} id="navMenu">
-          {/* Nav links */}
-          <ul className="navbar-nav me-auto ms-3 gap-1">
-            {[
-              { to: "/", label: "Home", exact: true },
-              { to: "/recipes", label: "Recipes" },
-              { to: "/categories", label: "Categories" },
-              { to: "/meal-planner", label: "Meal Planner" },
-              { to: "/about", label: "About" },
-            ].map(({ to, label, exact }) => (
+        <div className={`collapse navbar-collapse ${menuOpen ? "show" : ""}`} id="mainNav">
+          <ul className="navbar-nav mx-auto gap-lg-1">
+            {LINKS.map(({ to, label, end }) => (
               <li className="nav-item" key={to}>
                 <NavLink
                   to={to}
-                  end={exact}
+                  end={end}
                   className={({ isActive }) =>
-                    `nav-link px-2 ${isActive ? "text-primary fw-semibold" : "text-secondary"}`
+                    `nav-link ${isActive || (to === "/kitchen" && kitchenActive) ? "active" : ""}`
                   }
-                  onClick={() => setMenuOpen(false)}
                 >
                   {label}
                 </NavLink>
               </li>
             ))}
           </ul>
-
-          {/* Search */}
-          <form className="d-flex align-items-center gap-2" onSubmit={handleSearch}>
-            <div className="position-relative">
-              <i
-                className="bi bi-search position-absolute top-50 translate-middle-y"
-                style={{ left: "12px", color: "#9ca3af", fontSize: ".85rem" }}
-              ></i>
-              <input
-                type="search"
-                className="form-control form-control-sm rounded-pill"
-                placeholder="Search recipes…"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                style={{ paddingLeft: "34px", paddingRight: "12px", minWidth: "200px" }}
-              />
-            </div>
-            <Link
-              to="/recipes?generate=1"
-              className="btn btn-sm rounded-pill px-3 fw-semibold"
-              style={{ background: "#0038A8", color: "#fff", whiteSpace: "nowrap" }}
-              onClick={() => setMenuOpen(false)}
+          <div className="d-flex gap-2 mt-2 mt-lg-0">
+            <a
+              href={BUSINESS.facebookUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-ghost rounded-pill px-3 d-none d-xl-inline-flex align-items-center"
+              aria-label="Pamangan on Facebook"
             >
-              <i className="bi bi-stars me-1"></i>Request a Recipe
+              <i className="bi bi-facebook"></i>
+            </a>
+            <Link to="/order" className="btn btn-maroon rounded-pill px-4 flex-grow-1 flex-lg-grow-0">
+              <i className="bi bi-bag-heart me-2"></i>Order Now
             </Link>
-          </form>
+          </div>
         </div>
       </div>
     </nav>

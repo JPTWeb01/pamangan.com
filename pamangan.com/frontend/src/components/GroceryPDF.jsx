@@ -1,15 +1,15 @@
 import React from "react";
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
-const BLUE = "#0038A8";
-const LIGHT_BLUE = "#e8edf8";
+const BLUE = "#7B1E22";
+const LIGHT_BLUE = "#F7E9E4";
 
 const s = StyleSheet.create({
   page: {
     padding: 40,
     fontFamily: "Helvetica",
     fontSize: 10,
-    color: "#111827",
+    color: "#2B1A14",
     backgroundColor: "#ffffff",
   },
 
@@ -24,11 +24,11 @@ const s = StyleSheet.create({
     alignItems: "flex-end",
   },
   brand: { fontSize: 18, fontFamily: "Helvetica-Bold", color: BLUE },
-  brandSub: { fontSize: 8, color: "#9ca3af", marginTop: 2 },
+  brandSub: { fontSize: 8, color: "#A08E80", marginTop: 2 },
 
   /* Title */
   title: { fontSize: 22, fontFamily: "Helvetica-Bold", marginBottom: 4 },
-  fromText: { fontSize: 9, color: "#6b7280", marginBottom: 18 },
+  fromText: { fontSize: 9, color: "#6E5A4E", marginBottom: 18 },
 
   /* Section */
   sectionHeading: {
@@ -49,24 +49,24 @@ const s = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 5,
     borderBottomWidth: 0.5,
-    borderBottomColor: "#e5e7eb",
+    borderBottomColor: "#EADFCF",
   },
   checkbox: {
     width: 10,
     height: 10,
     borderWidth: 0.75,
-    borderColor: "#9ca3af",
+    borderColor: "#A08E80",
     borderRadius: 2,
     marginRight: 10,
     flexShrink: 0,
   },
   itemName: { flex: 1, fontSize: 10 },
-  itemQty: { fontSize: 10, color: "#6b7280", fontFamily: "Helvetica-Bold" },
+  itemQty: { fontSize: 10, color: "#6E5A4E", fontFamily: "Helvetica-Bold" },
 
   /* Summary */
   summary: {
     fontSize: 9,
-    color: "#6b7280",
+    color: "#6E5A4E",
     marginBottom: 4,
   },
 
@@ -78,10 +78,10 @@ const s = StyleSheet.create({
     right: 40,
     textAlign: "center",
     fontSize: 8,
-    color: "#9ca3af",
+    color: "#A08E80",
     paddingTop: 6,
     borderTopWidth: 0.5,
-    borderTopColor: "#e5e7eb",
+    borderTopColor: "#EADFCF",
   },
 });
 

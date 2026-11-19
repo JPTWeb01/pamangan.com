@@ -1,21 +1,21 @@
 /* ── Brand tokens ─────────────────────────────────────────────────────────── */
 :root {
-  --ph-blue:   #0038A8;
-  --ph-red:    #CE1126;
-  --ph-yellow: #FCD116;
+  --ph-blue:   #7B1E22;
+  --ph-red:    #B5402A;
+  --ph-yellow: #E9B949;
   --ph-white:  #ffffff;
 
-  --ph-blue-dark:  #002d87;
-  --ph-blue-light: #e8edf8;
-  --ph-red-light:  #fdeaea;
+  --ph-blue-dark:  #5C1418;
+  --ph-blue-light: #F7E9E4;
+  --ph-red-light:  #FBEDE6;
 
-  --surface:      #f9fafb;
+  --surface:      #FBF6EE;
   --surface-card: #ffffff;
-  --border:       #e5e7eb;
+  --border:       #EADFCF;
 
-  --text-primary:   #111827;
-  --text-secondary: #6b7280;
-  --text-muted:     #9ca3af;
+  --text-primary:   #2B1A14;
+  --text-secondary: #6E5A4E;
+  --text-muted:     #A08E80;
 
   --radius-sm:  6px;
   --radius-md:  12px;
@@ -42,7 +42,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-weight: 700;
   line-height: 1.25;
 }
@@ -69,7 +69,7 @@ img { max-width: 100%; height: auto; }
   border-color: var(--ph-red);
   font-weight: 600;
 }
-.btn-danger:hover { background-color: #a8001e; border-color: #a8001e; }
+.btn-danger:hover { background-color: #8E3020; border-color: #8E3020; }
 
 .btn-warning {
   background-color: var(--ph-yellow);
@@ -77,7 +77,7 @@ img { max-width: 100%; height: auto; }
   color: var(--text-primary);
   font-weight: 600;
 }
-.btn-warning:hover { background-color: #e6bc00; border-color: #e6bc00; color: var(--text-primary); }
+.btn-warning:hover { background-color: #D9A632; border-color: #D9A632; color: var(--text-primary); }
 
 .btn-outline-primary {
   color: var(--ph-blue);
@@ -97,7 +97,7 @@ img { max-width: 100%; height: auto; }
 
 /* ── Navbar ───────────────────────────────────────────────────────────────── */
 .navbar-brand {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-weight: 800;
   font-size: 1.4rem;
   letter-spacing: -0.5px;
@@ -128,7 +128,7 @@ img { max-width: 100%; height: auto; }
 
 /* ── Hero ─────────────────────────────────────────────────────────────────── */
 .hero-section {
-  background: linear-gradient(135deg, #001a5c 0%, var(--ph-blue) 40%, #1a0a3e 100%);
+  background: linear-gradient(135deg, #4A1013 0%, var(--ph-blue) 40%, #2B1A14 100%);
   min-height: 520px;
   display: flex;
   align-items: center;
@@ -141,8 +141,8 @@ img { max-width: 100%; height: auto; }
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 60% 60% at 70% 50%, rgba(252,209,22,.12) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 80% at 10% 80%, rgba(206,17,38,.15) 0%, transparent 60%);
+    radial-gradient(ellipse 60% 60% at 70% 50%, rgba(233,185,73,.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 80% at 10% 80%, rgba(181,64,42,.15) 0%, transparent 60%);
   pointer-events: none;
 }
 
@@ -176,7 +176,7 @@ img { max-width: 100%; height: auto; }
 }
 .hero-search-wrapper input:focus {
   border-color: var(--ph-yellow);
-  box-shadow: 0 0 0 4px rgba(252,209,22,.25);
+  box-shadow: 0 0 0 4px rgba(233,185,73,.25);
   outline: none;
 }
 
@@ -204,7 +204,7 @@ img { max-width: 100%; height: auto; }
   transition: background var(--transition), transform var(--transition);
 }
 .hero-search-wrapper .btn-search:hover {
-  background: #a8001e;
+  background: #8E3020;
   transform: scale(1.03);
 }
 
@@ -515,7 +515,7 @@ img { max-width: 100%; height: auto; }
 .site-footer h6 { color: #fff; font-weight: 700; margin-bottom: .75rem; }
 .site-footer a { color: rgba(255,255,255,.6); transition: color var(--transition); }
 .site-footer a:hover { color: #fff; }
-.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.3rem; color: #fff; }
+.footer-brand { font-family: 'Fraunces', Georgia, serif; font-weight: 800; font-size: 1.3rem; color: #fff; }
 .footer-divider { border-color: rgba(255,255,255,.1); margin: 1.5rem 0; }
 
 /* ── Spinner ──────────────────────────────────────────────────────────────── */
@@ -624,7 +624,7 @@ img { max-width: 100%; height: auto; }
   align-items: center;
   gap: 4px;
   font-size: .8rem;
-  color: #9ca3af;
+  color: #A08E80;
   cursor: pointer;
   backdrop-filter: blur(4px);
   box-shadow: 0 1px 6px rgba(0, 0, 0, .12);
