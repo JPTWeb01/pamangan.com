@@ -184,12 +184,18 @@ def get_recipe_by_name(name):
     return serialize_recipe(recipe) if recipe else None
 
 
-def generate_and_save(name):
+def generate_and_save(name, before_ai=None):
     existing = get_recipe_by_name(name)
     if existing:
         return existing, False
 
+    if before_ai:
+        before_ai()  # rate limit: only new recipes use the AI
     data = generate_recipe(name)
+    # The AI may fix the spelling ("adobbo" -> "Adobo"); reuse that recipe if we have it
+    existing = get_recipe_by_name(data.get("name", ""))
+    if existing:
+        return existing, False
     search_query = data.get("image_search_query", "")
     doc = create_recipe(data, source="ai")
     db = get_db()
@@ -211,12 +217,14 @@ def generate_and_save(name):
     return serialized, True
 
 
-def get_or_generate_nutrition(recipe_id):
+def get_or_generate_nutrition(recipe_id, before_ai=None):
     recipe = get_recipe_by_id(recipe_id)
     if not recipe:
         return None
     if recipe.get("nutrition"):
         return recipe["nutrition"]
+    if before_ai:
+        before_ai()
     nutrition = generate_nutrition(recipe["name"], recipe.get("ingredients", []))
     get_db().recipes.update_one(
         {"_id": ObjectId(recipe["id"])},
@@ -225,12 +233,14 @@ def get_or_generate_nutrition(recipe_id):
     return nutrition
 
 
-def get_or_generate_history(recipe_id):
+def get_or_generate_history(recipe_id, before_ai=None):
     recipe = get_recipe_by_id(recipe_id)
     if not recipe:
         return None
     if recipe.get("history"):
         return recipe["history"]
+    if before_ai:
+        before_ai()
     history = generate_history(recipe["name"])
     get_db().recipes.update_one(
         {"_id": ObjectId(recipe["id"])},
@@ -352,23 +362,39 @@ def refresh_recipe_image(recipe_id):
     return image_url
 
 
-def like_recipe(recipe_id, action="like"):
+_likes_index_ready = False
+
+
+def like_recipe(recipe_id, action="like", visitor=None):
+    """One like per visitor per recipe; repeat likes from the same visitor don't stack."""
+    global _likes_index_ready
     db = get_db()
     try:
         obj_id = ObjectId(recipe_id)
     except Exception:
         return None
-    delta = 1 if action == "like" else -1
-    recipe = db.recipes.find_one_and_update(
-        {"_id": obj_id},
-        {"$inc": {"likes": delta}},
-        return_document=True,
-    )
-    if not recipe:
+    if not db.recipes.find_one({"_id": obj_id}, {"_id": 1}):
         return None
-    likes = max(0, recipe.get("likes", 0))
-    if likes != recipe.get("likes", 0):
+    if not _likes_index_ready:
+        db.recipe_likes.create_index([("recipe_id", 1), ("visitor", 1)], unique=True)
+        _likes_index_ready = True
+
+    delta = 0
+    key = {"recipe_id": obj_id, "visitor": visitor or "unknown"}
+    if action == "like":
+        res = db.recipe_likes.update_one(key, {"$setOnInsert": {"at": datetime.now(timezone.utc)}}, upsert=True)
+        delta = 1 if res.upserted_id else 0
+    elif db.recipe_likes.delete_one(key).deleted_count:
+        delta = -1
+
+    if delta:
+        recipe = db.recipes.find_one_and_update({"_id": obj_id}, {"$inc": {"likes": delta}}, return_document=True)
+    else:
+        recipe = db.recipes.find_one({"_id": obj_id}, {"likes": 1})
+    likes = recipe.get("likes", 0) if recipe else 0
+    if likes < 0:
         db.recipes.update_one({"_id": obj_id}, {"$set": {"likes": 0}})
+        likes = 0
     return {"likes": likes}
 
 

@@ -9,6 +9,7 @@ from routes.menu_requests import menu_requests_bp, admin_menu_requests_bp
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    app.config["MAX_CONTENT_LENGTH"] = 8 * 1024 * 1024  # hard cap for any request (image uploads)
 
     CORS(app, origins=Config.CORS_ORIGINS, supports_credentials=True)
 
@@ -35,6 +36,14 @@ def create_app():
     @app.errorhandler(404)
     def not_found(_):
         return {"success": False, "error": "Not found"}, 404
+
+    @app.errorhandler(413)
+    def too_large(_):
+        return {"success": False, "error": "Request too large."}, 413
+
+    @app.errorhandler(405)
+    def not_allowed(_):
+        return {"success": False, "error": "Method not allowed"}, 405
 
     @app.errorhandler(500)
     def server_error(_):

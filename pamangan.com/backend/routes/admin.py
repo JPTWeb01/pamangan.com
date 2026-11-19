@@ -1,3 +1,4 @@
+import hmac
 import jwt
 import base64
 import logging
@@ -6,6 +7,7 @@ from datetime import datetime, timezone, timedelta
 from functools import wraps
 from flask import Blueprint, request, jsonify
 from config import Config
+from services import rate_limit
 from services.recipe_service import (
     get_all_recipes_admin,
     delete_recipe,
@@ -37,13 +39,28 @@ def token_required(f):
 
 @admin_bp.route("/login", methods=["POST"])
 def login():
-    body = request.get_json(silent=True) or {}
-    username = body.get("username", "").strip()
-    password = body.get("password", "")
     if not Config.ADMIN_PASSWORD:
         return jsonify({"success": False, "error": "Admin not configured"}), 503
-    if username != Config.ADMIN_USERNAME or password != Config.ADMIN_PASSWORD:
+    locked = rate_limit.login_locked()
+    if locked:
+        resp = jsonify({
+            "success": False,
+            "error": f"Too many failed attempts. Please try again in {rate_limit.wait_text(locked)}.",
+        })
+        resp.headers["Retry-After"] = str(int(locked))
+        return resp, 429
+
+    body = request.get_json(silent=True)
+    body = body if isinstance(body, dict) else {}
+    username = body.get("username") if isinstance(body.get("username"), str) else ""
+    password = body.get("password") if isinstance(body.get("password"), str) else ""
+    # Constant-time comparison so response timing doesn't leak the credentials
+    user_ok = hmac.compare_digest(username.strip().encode()[:256], Config.ADMIN_USERNAME.encode())
+    pass_ok = hmac.compare_digest(password.encode()[:256], Config.ADMIN_PASSWORD.encode())
+    if not (user_ok and pass_ok):
+        rate_limit.record_login_failure()
         return jsonify({"success": False, "error": "Invalid credentials"}), 401
+    rate_limit.clear_login_failures()
     token = jwt.encode(
         {"exp": datetime.now(timezone.utc) + timedelta(hours=24)},
         Config.SECRET_KEY,

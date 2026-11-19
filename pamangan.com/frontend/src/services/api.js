@@ -6,6 +6,17 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
+// Logged-in admins send their token so the AI rate limits don't apply to them
+api.interceptors.request.use((config) => {
+  try {
+    const token = localStorage.getItem("adminToken");
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+  } catch {
+    /* storage unavailable */
+  }
+  return config;
+});
+
 api.interceptors.response.use(
   (res) => res.data,
   (err) => {

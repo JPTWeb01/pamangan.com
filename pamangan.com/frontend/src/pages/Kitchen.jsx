@@ -352,6 +352,7 @@ export default function Kitchen() {
             placeholder="e.g. Chicken Adobo, Carbonara, Pad Thai…"
             value={generateName}
             onChange={(e) => setGenerateName(e.target.value)}
+            maxLength={60}
             autoFocus
           />
         </form>

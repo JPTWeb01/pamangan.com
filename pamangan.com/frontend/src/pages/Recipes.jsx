@@ -231,6 +231,7 @@ export default function Recipes() {
             placeholder="e.g. Beef Kare-Kare, Tiramisu, Ramen…"
             value={generateName}
             onChange={(e) => setGenerateName(e.target.value)}
+            maxLength={60}
             autoFocus
           />
         </form>
