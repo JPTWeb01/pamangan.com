@@ -33,6 +33,8 @@ export const MENU = [
     icon: "bi-snow2",
     tags: ["Christmas special"],
     festive: true,
+    // Set aside for now — change to true to put it back on the menu
+    available: false,
     // Shown Nov–Dec so customers can pre-order for December; hidden the rest of the year
     showMonths: [11, 12],
   },
@@ -44,7 +46,7 @@ export const MENU = [
     price: 60,
     serving: "Tray · good for 5–6 people",
     description:
-      "The pride of Pampanga — crispy, savoury chopped pork with onions, chili and calamansi. Rich, tangy and perfect with rice.",
+      "The pride of Pampanga — savoury chopped pork with onions, chili and calamansi. Rich, tangy and perfect with rice.",
     image: "/images/menu/sisig.jpg",
     tags: ["Best seller", "Kapampangan classic"],
     half: { serving: "Half tray · good for 2–3 people" },
@@ -100,8 +102,9 @@ export const MENU = [
   },
 ];
 
-// Menu items available right now (seasonal items only show in their months)
+// Menu items available right now: skips items set aside, and seasonal items outside their months
 export function isInSeason(item, date = new Date()) {
+  if (item.available === false) return false;
   return !item.showMonths || item.showMonths.includes(date.getMonth() + 1);
 }
 export const ACTIVE_MENU = MENU.filter((m) => isInSeason(m));
