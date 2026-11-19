@@ -85,7 +85,11 @@ body { background-color: var(--cream); }
 .hero-flag--left { left: max(-4%, calc(50% - 760px)); --enter: -24px; }
 /* Canadian flag sits behind the hero photo, sized from the photo column so it lines up at every width */
 .hero-photo-col { position: relative; container-type: inline-size; }
-.hero-photo-col .hero-flag--right { top: -24cqw; left: -22%; width: 150%; opacity: .2; --mask-x: 50%; --enter: 24px; animation-delay: .25s; }
+.hero-photo-col .hero-flag--right { top: max(-15cqw, -4rem); left: -18%; width: 140%; opacity: .2; --enter: 24px; animation-delay: .25s;
+  /* Fade every edge so the flag never shows a hard border, whatever the screen size */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 70%, transparent 100%), linear-gradient(to right, transparent 0, #000 22%, #000 78%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0, #000 22%, #000 70%, transparent 100%), linear-gradient(to right, transparent 0, #000 22%, #000 78%, transparent 100%);
+  -webkit-mask-composite: source-in; mask-composite: intersect; }
 .hero-flag-cloth { position: absolute; inset: 0; transform: perspective(1200px) rotateY(-14deg) rotateZ(-3deg); transform-origin: left center; }
 .hero-flag--right .hero-flag-cloth { transform: perspective(1200px) rotateY(14deg) rotateZ(3deg); transform-origin: right center; }
 .hero-flag-strip { position: absolute; top: 0; bottom: 0; width: calc(100% / var(--n) + 1px); background-image: var(--flag); background-size: calc(var(--n) * 100%) 100%; background-repeat: no-repeat;
