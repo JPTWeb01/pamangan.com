@@ -1,8 +1,9 @@
 // Google Analytics 4 with consent. Nothing loads and nothing is tracked until
-// REACT_APP_GA_ID is set at build time AND the visitor accepts analytics cookies.
+// the visitor accepts analytics cookies.
 // Admin pages (/manage) are never tracked.
 
-export const GA_ID = (process.env.REACT_APP_GA_ID || "").trim();
+// Measurement ID is public (it appears in every page). The build variable can override it.
+export const GA_ID = (process.env.REACT_APP_GA_ID || "G-9EXG0GJHF6").trim();
 const CONSENT_KEY = "pmConsent"; // "granted" | "denied"
 
 let loaded = false;

@@ -33,7 +33,7 @@ jobs:
         working-directory: pamangan.com/frontend
         run: npm run build
         env:
-          # GA4 Measurement ID (G-XXXXXXX), set as a repository variable; empty = analytics off
+          # Optional override of the GA4 Measurement ID (default is in src/utils/analytics.js)
           REACT_APP_GA_ID: ${{ vars.GA_MEASUREMENT_ID }}
 
       - name: Deploy via rsync over SSH

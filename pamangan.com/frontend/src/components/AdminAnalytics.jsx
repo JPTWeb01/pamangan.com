@@ -138,7 +138,6 @@ function SetupGuide() {
         Visitor numbers, traffic sources and order clicks appear here once Google Analytics 4 is connected:
       </p>
       <ol className="small mb-0 ps-3">
-        <li>Website tracking: set <code>REACT_APP_GA_ID</code> (your <code>G-…</code> Measurement ID) as a GitHub Actions variable.</li>
         <li>Dashboard: add the <code>GA_PROPERTY_ID</code> and <code>GA_SERVICE_ACCOUNT_JSON</code> secrets on the Hugging Face Space.</li>
         <li>In GA4 → Admin → Property access management, add the service account email as a <strong>Viewer</strong>.</li>
       </ol>
