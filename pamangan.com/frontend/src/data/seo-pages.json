@@ -1,0 +1,81 @@
+{
+  "site": {
+    "name": "Pamangan",
+    "url": "https://pamangan.com",
+    "image": "https://pamangan.com/images/og-image.jpg",
+    "locale": "en_CA"
+  },
+  "pages": {
+    "/": {
+      "title": "Pamangan — Homemade Kapampangan Filipino Food in Stittsville & Kanata",
+      "description": "Homemade Kapampangan Filipino food in Stittsville, Ottawa. Pre-order sisig, black kutsinta, sushi bake, chicken roll and pansit for pickup, with delivery near Stittsville and Kanata.",
+      "priority": "1.0",
+      "changefreq": "weekly"
+    },
+    "/menu": {
+      "title": "Menu — Filipino Food Trays in Stittsville | Pamangan",
+      "description": "See the Pamangan menu: Kapampangan sisig, black kutsinta, sushi bake, chicken roll and pansit trays. Homemade Filipino food for pickup in Stittsville or delivery near Kanata.",
+      "priority": "0.9",
+      "changefreq": "weekly"
+    },
+    "/order": {
+      "title": "How to Order — Pre-order Filipino Food in Stittsville | Pamangan",
+      "description": "Pre-order homemade Kapampangan food from Pamangan by form, Messenger or text (613-252-4037). Pickup in Stittsville, delivery near Stittsville and Kanata for a small fee.",
+      "priority": "0.9",
+      "changefreq": "monthly"
+    },
+    "/about": {
+      "title": "Our Story — Kapampangan Home Cooking in Ottawa | Pamangan",
+      "description": "Meet Pamangan, a home kitchen in Stittsville bringing the true taste of Pampanga to Ottawa. Family recipes, cooked fresh in small batches.",
+      "priority": "0.7",
+      "changefreq": "monthly"
+    },
+    "/kitchen": {
+      "title": "Recipe Kitchen — Free Filipino & World Recipes | Pamangan",
+      "description": "Browse free Filipino and world recipes or create any recipe instantly with AI in the Pamangan Recipe Kitchen. Ingredients, steps, nutrition and food history.",
+      "priority": "0.8",
+      "changefreq": "daily"
+    },
+    "/recipes": {
+      "title": "All Recipes — Pamangan Recipe Kitchen",
+      "description": "Explore every recipe in the Pamangan Recipe Kitchen: Filipino classics like adobo, sinigang and kare-kare plus favourites from around the world.",
+      "priority": "0.8",
+      "changefreq": "daily"
+    },
+    "/categories": {
+      "title": "Recipe Categories by Cuisine — Pamangan Recipe Kitchen",
+      "description": "Find recipes by cuisine and category in the Pamangan Recipe Kitchen, from Filipino and Kapampangan dishes to Japanese, Italian, Mexican and more.",
+      "priority": "0.6",
+      "changefreq": "weekly"
+    },
+    "/meal-planner": {
+      "title": "Weekly Meal Planner — Pamangan Recipe Kitchen",
+      "description": "Plan your week of meals with recipes from the Pamangan Recipe Kitchen and build a combined grocery list in one tap.",
+      "priority": "0.5",
+      "changefreq": "monthly"
+    }
+  },
+  "noindex": ["/manage"],
+  "faq": [
+    {
+      "q": "How do I order from Pamangan?",
+      "a": "Fill in the order form on our website and send it through Facebook Messenger, message our Pamangan Facebook page directly, or call or text 613-252-4037. We'll reply to confirm your order, the total and your pickup or delivery time."
+    },
+    {
+      "q": "Where is pickup?",
+      "a": "Pickup is in Stittsville, Ottawa. When we confirm your order, we'll agree on your pickup time."
+    },
+    {
+      "q": "Do you deliver?",
+      "a": "Yes, we deliver to selected areas near Stittsville and Kanata for a small fee based on your location."
+    },
+    {
+      "q": "How far ahead should I order?",
+      "a": "We cook fresh in small batches on scheduled cook days, so please pre-order before the cut-off for the next cook day. Message us to check the next available date."
+    },
+    {
+      "q": "Can I request a dish that isn't on the menu?",
+      "a": "Yes! Use the Request a dish form on our Menu page. The most-requested Kapampangan and Filipino dishes go on the menu first."
+    }
+  ]
+}

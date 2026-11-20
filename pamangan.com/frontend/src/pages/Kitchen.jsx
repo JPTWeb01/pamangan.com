@@ -140,7 +140,7 @@ export default function Kitchen() {
     setGenerateError("");
     try {
       const res = await recipeApi.generate(generateName.trim());
-      navigate(`/recipe/${res.data.id}`);
+      navigate(`/recipe/${res.data.slug || res.data.id}`);
     } catch (err) {
       setGenerateError(err.message);
       setGenerating(false);

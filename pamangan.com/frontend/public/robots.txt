@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /manage
+Disallow: /seo.php
+Disallow: /recipe-upload.php
+
+Sitemap: https://pamangan.com/sitemap.xml

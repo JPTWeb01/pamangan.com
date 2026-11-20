@@ -65,7 +65,7 @@ export default function RecipeCard({ recipe }) {
 
   return (
     <div className="recipe-card h-100">
-      <Link to={`/recipe/${recipe.id}`} className="text-decoration-none d-flex flex-column h-100">
+      <Link to={`/recipe/${recipe.slug || recipe.id}`} className="text-decoration-none d-flex flex-column h-100">
         <div className="recipe-card-img-wrapper">
           <img
             src={imgSrc}

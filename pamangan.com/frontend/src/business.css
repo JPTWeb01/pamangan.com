@@ -276,3 +276,14 @@ body { background-color: var(--cream); }
 }
 
 [id] { scroll-margin-top: 96px; }
+
+/* FAQ (Order page) */
+.faq-list { display: grid; gap: .75rem; }
+.faq-item { background: #fff; border: 1px solid rgba(123,30,34,.12); border-radius: 14px; padding: 0 1.25rem; transition: box-shadow .2s; }
+.faq-item[open] { box-shadow: 0 6px 20px rgba(123,30,34,.08); }
+.faq-item summary { list-style: none; cursor: pointer; padding: 1.1rem 2rem 1.1rem 0; font-weight: 600; color: var(--maroon); position: relative; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary::after { content: '+'; position: absolute; right: 0; top: 50%; transform: translateY(-50%); font-size: 1.4rem; color: var(--gold); transition: transform .2s; }
+.faq-item[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+.faq-item summary:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; border-radius: 4px; }
+.faq-item p { margin: 0 0 1.1rem; color: var(--text-secondary, #555); line-height: 1.65; }

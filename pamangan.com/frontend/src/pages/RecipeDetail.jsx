@@ -27,6 +27,7 @@ export default function RecipeDetail() {
     Promise.all([recipeApi.get(id), recipeApi.similar(id)])
       .then(([rRes, sRes]) => {
         setRecipe(rRes.data);
+        if (rRes.data?.name) document.title = `${rRes.data.name} Recipe — Pamangan Recipe Kitchen`;
         setSimilar(sRes.data || []);
       })
       .catch((e) => setError(e.message))
@@ -46,7 +47,7 @@ export default function RecipeDetail() {
     const slots = ["breakfast", "lunch", "dinner"];
     const free = slots.find((s) => !saved[today][s]);
     if (free) {
-      saved[today][free] = { id: recipe.id, name: recipe.name };
+      saved[today][free] = { id: recipe.id, slug: recipe.slug, name: recipe.name };
       localStorage.setItem("mealPlan", JSON.stringify(saved));
       setAddedToPlanner(true);
       setTimeout(() => setAddedToPlanner(false), 3000);

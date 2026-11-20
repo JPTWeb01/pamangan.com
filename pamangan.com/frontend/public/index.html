@@ -31,6 +31,7 @@
       {
         "@context": "https://schema.org",
         "@type": "FoodEstablishment",
+        "@id": "https://pamangan.com/#business",
         "name": "Pamangan",
         "slogan": "Taste the heart of Pampanga",
         "description": "Homemade Kapampangan Filipino food. Pre-order for pickup in Stittsville, with delivery to selected areas near Stittsville and Kanata.",
@@ -38,14 +39,26 @@
         "telephone": "+1-613-252-4037",
         "url": "https://pamangan.com/",
         "image": "https://pamangan.com/images/og-image.jpg",
+        "logo": "https://pamangan.com/logo192.png",
         "priceRange": "$$",
+        "currenciesAccepted": "CAD",
+        "hasMenu": "https://pamangan.com/menu",
+        "acceptsReservations": false,
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "Stittsville",
           "addressRegion": "ON",
           "addressCountry": "CA"
         },
-        "areaServed": ["Stittsville", "Kanata", "Ottawa"],
+        "areaServed": [
+          { "@type": "Place", "name": "Stittsville, Ottawa, ON" },
+          { "@type": "Place", "name": "Kanata, Ottawa, ON" }
+        ],
+        "potentialAction": {
+          "@type": "OrderAction",
+          "target": "https://pamangan.com/order",
+          "deliveryMethod": ["http://purl.org/goodrelations/v1#DeliveryModePickUp", "http://purl.org/goodrelations/v1#DeliveryModeOwnFleet"]
+        },
         "sameAs": ["https://www.facebook.com/profile.php?id=61582639019954"]
       }
     </script>

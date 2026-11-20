@@ -75,7 +75,7 @@ export default function MealPlanner() {
   const pickRecipe = (recipe) => {
     if (!addModal) return;
     const { dateKey, slot } = addModal;
-    const updated = { ...plan, [dateKey]: { ...(plan[dateKey] || {}), [slot.toLowerCase()]: { id: recipe.id, name: recipe.name } } };
+    const updated = { ...plan, [dateKey]: { ...(plan[dateKey] || {}), [slot.toLowerCase()]: { id: recipe.id, slug: recipe.slug, name: recipe.name } } };
     savePlan(updated);
     setAddModal(null);
   };
@@ -179,7 +179,7 @@ export default function MealPlanner() {
                           {meal ? (
                             <div className="d-flex align-items-start justify-content-between gap-1 mt-1">
                               <Link
-                                to={`/recipe/${meal.id}`}
+                                to={`/recipe/${meal.slug || meal.id}`}
                                 className="text-decoration-none"
                                 style={{ fontSize: ".78rem", fontWeight: 600, color: "var(--text-primary)", lineHeight: 1.3 }}
                               >
@@ -245,7 +245,7 @@ export default function MealPlanner() {
                       <span className="text-secondary fw-semibold me-2" style={{ minWidth: 70 }}>{slot}</span>
                       {meal ? (
                         <div className="d-flex align-items-center justify-content-between flex-grow-1 gap-2">
-                          <Link to={`/recipe/${meal.id}`} className="fw-medium text-decoration-none" style={{ color: "var(--text-primary)" }}>
+                          <Link to={`/recipe/${meal.slug || meal.id}`} className="fw-medium text-decoration-none" style={{ color: "var(--text-primary)" }}>
                             {meal.name}
                           </Link>
                           <button className="btn p-0 text-secondary" onClick={() => removeSlot(dateKey, slot)}>

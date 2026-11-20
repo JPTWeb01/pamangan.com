@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { BUSINESS, ACTIVE_MENU, STEPS, formatPrice, smsLink } from "../data/business";
 import { copyText } from "../utils/clipboard";
+import SEO from "../data/seo-pages.json";
 
 const todayISO = () => {
   const d = new Date();
@@ -367,6 +368,22 @@ export default function Order() {
                   <p>{s.desc}</p>
                 </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="biz-section" id="faq">
+        <div className="container" style={{ maxWidth: 820 }}>
+          <span className="eyebrow mb-2">Questions</span>
+          <h2 className="mb-4">Frequently asked questions</h2>
+          <div className="faq-list">
+            {SEO.faq.map((f) => (
+              <details key={f.q} className="faq-item">
+                <summary>{f.q}</summary>
+                <p>{f.a}</p>
+              </details>
             ))}
           </div>
         </div>

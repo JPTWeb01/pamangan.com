@@ -1,23 +1,14 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import SEO from "../data/seo-pages.json";
 
-const TITLES = {
-  "/": "Pamangan — Homemade Kapampangan Food in Stittsville",
-  "/menu": "Menu — Pamangan",
-  "/order": "How to Order — Pamangan",
-  "/about": "Our Story — Pamangan",
-  "/kitchen": "Recipe Kitchen — Pamangan",
-  "/recipes": "Recipes — Pamangan Recipe Kitchen",
-  "/categories": "Categories — Pamangan Recipe Kitchen",
-  "/meal-planner": "Meal Planner — Pamangan Recipe Kitchen",
-};
 
 // Scrolls to top (or to #hash) on navigation and sets the document title.
 export default function ScrollManager() {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    document.title = TITLES[pathname] || (pathname.startsWith("/recipe/") ? "Recipe — Pamangan Recipe Kitchen" : "Pamangan");
+    document.title = SEO.pages[pathname]?.title || (pathname.startsWith("/recipe/") ? "Recipe — Pamangan Recipe Kitchen" : "Pamangan");
   }, [pathname]);
 
   useEffect(() => {
