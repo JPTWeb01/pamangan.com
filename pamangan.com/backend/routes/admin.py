@@ -7,7 +7,7 @@ from datetime import datetime, timezone, timedelta
 from functools import wraps
 from flask import Blueprint, request, jsonify
 from config import Config
-from services import rate_limit
+from services import rate_limit, analytics_service
 from services.recipe_service import (
     get_all_recipes_admin,
     delete_recipe,
@@ -144,3 +144,38 @@ def upload_image():
     except Exception:
         logger.exception("Image upload error")
         return jsonify({"success": False, "error": "Upload failed"}), 500
+
+
+@admin_bp.route("/analytics", methods=["GET"])
+@token_required
+def analytics():
+    try:
+        days = int(request.args.get("days", 28))
+    except ValueError:
+        days = 28
+    data = {"site": None, "ga": None, "ga_configured": analytics_service.is_configured(), "ga_error": None}
+    try:
+        data["site"] = analytics_service.site_stats(days)
+    except Exception:
+        logger.exception("Site stats failed")
+    if data["ga_configured"]:
+        try:
+            data["ga"] = analytics_service.get_dashboard(days)
+        except analytics_service.AnalyticsError as exc:
+            data["ga_error"] = str(exc)
+        except Exception:
+            logger.exception("GA4 report failed")
+            data["ga_error"] = "Couldn't reach Google Analytics. Try again in a minute."
+    return jsonify({"success": True, "data": data})
+
+
+@admin_bp.route("/analytics/realtime", methods=["GET"])
+@token_required
+def analytics_realtime():
+    if not analytics_service.is_configured():
+        return jsonify({"success": True, "data": {"active_users": None}})
+    try:
+        return jsonify({"success": True, "data": analytics_service.get_realtime()})
+    except Exception:
+        logger.exception("GA4 realtime failed")
+        return jsonify({"success": True, "data": {"active_users": None}})

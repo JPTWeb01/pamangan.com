@@ -4,6 +4,7 @@ import { adminApiService } from "../services/api";
 import Modal from "../components/Modal";
 import AdminLayout from "./AdminLayout";
 import AdminMenuRequests from "../components/AdminMenuRequests";
+import AdminAnalytics from "../components/AdminAnalytics";
 
 const DIFFICULTIES = ["Easy", "Medium", "Hard"];
 
@@ -271,9 +272,18 @@ export default function AdminDashboard() {
             >
               <i className="bi bi-envelope-heart me-2"></i>View Menu Requests
             </button>
+            <button
+              className="btn btn-outline-primary rounded-pill px-4"
+              onClick={() => setActiveSection("analytics")}
+            >
+              <i className="bi bi-graph-up me-2"></i>Analytics
+            </button>
           </div>
         </div>
       )}
+
+      {/* ── Analytics ── */}
+      {activeSection === "analytics" && <AdminAnalytics onAuthError={logout} />}
 
       {/* ── Menu requests ── */}
       {activeSection === "requests" && (

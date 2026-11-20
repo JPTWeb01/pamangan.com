@@ -5,6 +5,7 @@ const NAV_ITEMS = [
   { key: "overview", label: "Dashboard", icon: "bi-speedometer2" },
   { key: "recipes",  label: "Recipes",   icon: "bi-journal-richtext" },
   { key: "requests", label: "Menu Requests", icon: "bi-envelope-heart" },
+  { key: "analytics", label: "Analytics", icon: "bi-graph-up" },
 ];
 
 export default function AdminLayout({ activeSection, onSectionChange, onLogout, badges = {}, children }) {

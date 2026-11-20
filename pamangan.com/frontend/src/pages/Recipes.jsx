@@ -4,6 +4,7 @@ import RecipeCard from "../components/RecipeCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import Modal from "../components/Modal";
 import { recipeApi } from "../services/api";
+import { track } from "../utils/analytics";
 
 const CUISINES = ["All", "Filipino", "Asian", "Italian", "Mexican", "American", "Healthy"];
 const DIFFICULTIES = ["All", "Easy", "Medium", "Hard"];
@@ -61,9 +62,11 @@ export default function Recipes() {
     setGenerateError("");
     try {
       const res = await recipeApi.generate(generateName.trim());
+      track("generate_recipe", { dish: res.data.name });
       navigate(`/recipe/${res.data.slug || res.data.id}`);
     } catch (err) {
       setGenerateError(err.message);
+      track("generate_recipe_failed", { status: err.status });
     } finally {
       setGenerating(false);
     }

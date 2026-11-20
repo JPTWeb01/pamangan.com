@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import SEO from "../data/seo-pages.json";
+import { pageView } from "../utils/analytics";
 
 
 // Scrolls to top (or to #hash) on navigation and sets the document title.
@@ -9,6 +10,9 @@ export default function ScrollManager() {
 
   useEffect(() => {
     document.title = SEO.pages[pathname]?.title || (pathname.startsWith("/recipe/") ? "Recipe — Pamangan Recipe Kitchen" : "Pamangan");
+    // Recipe pages set their own title once loaded; give it a moment
+    const t = setTimeout(pageView, pathname.startsWith("/recipe/") ? 1200 : 0);
+    return () => clearTimeout(t);
   }, [pathname]);
 
   useEffect(() => {

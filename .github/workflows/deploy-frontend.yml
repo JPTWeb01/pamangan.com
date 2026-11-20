@@ -32,6 +32,9 @@ jobs:
       - name: Build
         working-directory: pamangan.com/frontend
         run: npm run build
+        env:
+          # GA4 Measurement ID (G-XXXXXXX), set as a repository variable; empty = analytics off
+          REACT_APP_GA_ID: ${{ vars.GA_MEASUREMENT_ID }}
 
       - name: Deploy via rsync over SSH
         env:

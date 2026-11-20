@@ -5,6 +5,9 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import "./index.css";
 import "./business.css";
 import App from "./App";
+import { initAnalytics } from "./utils/analytics";
+
+initAnalytics();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

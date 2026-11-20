@@ -4,6 +4,7 @@ import { AppProvider } from "./context/AppContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ScrollManager from "./components/ScrollManager";
+import ConsentBanner from "./components/ConsentBanner";
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import Order from "./pages/Order";
@@ -84,6 +85,7 @@ function AppContent() {
       </main>
       <Footer />
       {showOrderBar && <MobileOrderBar />}
+      <ConsentBanner />
     </div>
   );
 }

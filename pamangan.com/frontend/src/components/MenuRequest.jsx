@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { BUSINESS } from "../data/business";
 import { menuRequestApi } from "../services/api";
 import { copyText } from "../utils/clipboard";
+import { track } from "../utils/analytics";
 
 const LIMITS = { dish: 80, name: 60, contact: 80, message: 500 };
 const EMPTY = { dish: "", name: "", contact: "", message: "" };
@@ -56,6 +57,7 @@ export default function MenuRequest() {
     const key = JSON.stringify(payload);
     if (key === lastSaved.current) return;
     lastSaved.current = key;
+    track("dish_request", { dish: payload.dish.slice(0, 80) });
     menuRequestApi
       .create({ ...payload, website: honeypot, t: Date.now() - startedAt.current })
       .catch(() => { lastSaved.current = ""; });

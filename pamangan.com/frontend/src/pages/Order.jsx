@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { BUSINESS, ACTIVE_MENU, STEPS, formatPrice, smsLink } from "../data/business";
 import { copyText } from "../utils/clipboard";
 import SEO from "../data/seo-pages.json";
+import { track } from "../utils/analytics";
 
 const todayISO = () => {
   const d = new Date();
@@ -99,11 +100,13 @@ export default function Order() {
 
   const onMessenger = (e) => {
     if (!guard(e)) return;
+    track("order_form_sent", { method: form.method, via: "messenger" });
     copyText(message).then((ok) => setCopied(ok ? "messenger" : "failed"));
   };
 
   const onCopy = (e) => {
     if (!guard(e)) return;
+    track("order_form_sent", { method: form.method, via: "copy" });
     copyText(message).then((ok) => setCopied(ok ? "copy" : "failed"));
   };
 

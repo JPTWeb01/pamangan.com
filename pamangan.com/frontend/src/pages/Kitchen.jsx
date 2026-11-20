@@ -4,6 +4,7 @@ import RecipeCard from "../components/RecipeCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import Modal from "../components/Modal";
 import { recipeApi } from "../services/api";
+import { track } from "../utils/analytics";
 
 const CATEGORIES = [
   {
@@ -140,9 +141,11 @@ export default function Kitchen() {
     setGenerateError("");
     try {
       const res = await recipeApi.generate(generateName.trim());
+      track("generate_recipe", { dish: res.data.name });
       navigate(`/recipe/${res.data.slug || res.data.id}`);
     } catch (err) {
       setGenerateError(err.message);
+      track("generate_recipe_failed", { status: err.status });
       setGenerating(false);
     }
   };

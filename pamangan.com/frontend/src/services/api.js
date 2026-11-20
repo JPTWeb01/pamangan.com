@@ -22,7 +22,9 @@ api.interceptors.response.use(
   (err) => {
     const message =
       err.response?.data?.error || err.message || "Something went wrong";
-    return Promise.reject(new Error(message));
+    const error = new Error(message);
+    error.status = err.response?.status || 0;
+    return Promise.reject(error);
   }
 );
 
@@ -92,6 +94,8 @@ export const adminApiService = {
   listMenuRequests: (params) => adminApi.get("/admin/menu-requests", { params }),
   updateMenuRequest: (id, status) => adminApi.patch(`/admin/menu-requests/${id}`, { status }),
   deleteMenuRequest: (id) => adminApi.delete(`/admin/menu-requests/${id}`),
+  analytics: (days) => adminApi.get("/admin/analytics", { params: { days } }),
+  analyticsRealtime: () => adminApi.get("/admin/analytics/realtime"),
 };
 
 export default api;
